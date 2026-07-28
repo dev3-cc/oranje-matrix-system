@@ -30,13 +30,13 @@ aliases:
 
 ## ROLES EN ESTE DOCUMENTO
 
-| ID           | Rol                                                          |
-| ------------ | ------------------------------------------------------------ |
-| **ROL-H-01** | 🦺 Supervisor (SUP)                                          |
-| **ROL-H-02** | 🧑‍💼 Manager de Área / Gerente de Departamento            |
-| **ROL-H-03** | 🧑‍✈️ Manager General (GM) — solo jerarquía extendida         |
-| **ROL-H-04** | ⚙️ Sistema                                                   |
-| **ROL-H-05** | 🛠️ Administrador *(en pausa)*                                |
+| ID           | Rol                                                   |
+| ------------ | ----------------------------------------------------- |
+| **ROL-H-01** | 🦺 Supervisor (SUP)                                   |
+| **ROL-H-02** | 🧑‍💼 Manager de Área / Gerente de Departamento       |
+| **ROL-H-03** | 🧑‍✈️ Manager General (GM) — solo jerarquía extendida |
+| **ROL-H-04** | ⚙️ Sistema                                            |
+| **ROL-H-05** | 🛠️ Administrador *(en pausa)*                        |
 
 ---
 

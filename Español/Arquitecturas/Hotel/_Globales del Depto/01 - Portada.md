@@ -25,13 +25,13 @@ aliases:
 
 ## ROLES DEFINIDOS EN ESTE DOCUMENTO
 
-| ID           | Rol · Descripción breve                                                                                                                                              |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **ROL-H-01** | 🦺 **Supervisor (SUP)** — Crea las requisiciones de personal, pone Stand-by, reporta colaborador (Rojo) y reporta accidentes laborales. Subordinado del Manager de Área. |
-| **ROL-H-02** | 🧑‍💼 **Manager de Área / Gerente de Departamento** — Crea, autoriza o rechaza requisiciones, gestiona Schedule y Timesheet, genera QR, reporta colaboradores y accidentes. |
+| ID           | Rol · Descripción breve                                                                                                                                                                                                                       |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ROL-H-01** | 🦺 **Supervisor (SUP)** — Crea las requisiciones de personal, pone Stand-by, reporta colaborador (Rojo) y reporta accidentes laborales. Subordinado del Manager de Área.                                                                      |
+| **ROL-H-02** | 🧑‍💼 **Manager de Área / Gerente de Departamento** — Crea, autoriza o rechaza requisiciones, gestiona Schedule y Timesheet, genera QR, reporta colaboradores y accidentes.                                                                   |
 | **ROL-H-03** | 🧑‍✈️ **Manager General (GM)** — Máxima autoridad del lado del hotel. **Siempre existe** (en simple opera también como Manager de Área; en extendida supervisa Managers de Área). Tiene operación + visibilidad global + reportes ejecutivos. |
-| **ROL-H-04** | ⚙️ **Sistema** — Automatización interna: numeración de requisición, cálculo de urgencia, asignación de Inspector, semáforos, journals, notificaciones.              |
-| **ROL-H-05** | 🛠️ **Administrador** — Gestión total del sistema: usuarios, catálogos, permisos. *(En pausa hasta que se estabilicen reglas de negocio.)*                            |
+| **ROL-H-04** | ⚙️ **Sistema** — Automatización interna: numeración de requisición, cálculo de urgencia, asignación de Inspector, semáforos, journals, notificaciones.                                                                                        |
+| **ROL-H-05** | 🛠️ **Administrador** — Gestión total del sistema: usuarios, catálogos, permisos. *(En pausa hasta que se estabilicen reglas de negocio.)*                                                                                                    |
 
 ---
 

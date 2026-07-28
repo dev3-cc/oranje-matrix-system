@@ -72,8 +72,8 @@ oranje-matrix-system/
 │   │   └── [Rol]/               # 12 archivos (00–11) + Casos de Uso/
 │
 └── .claude/
-    ├── agents/                  # 3 subagentes especializados (ver §8)
-    └── skills/                  # Skills de Obsidian (markdown, cli, bases, canvas)
+    ├── agents/                  # 3 subagentes especializados (ver §8.1)
+    └── skills/                  # 12 skills: 6 de vault + 6 de software (ver §8.2)
 ```
 
 Las carpetas conceptuales (`Hotel/`, `Reclutamiento/`, etc.) describen **qué hace** cada
@@ -171,7 +171,9 @@ Nunca modifiques la fuente de verdad sin autorización explícita del usuario.
 - Iterar = actualizar primero `07 - Reglas de Negocio`, luego propagar a Matriz de
   Permisos, archivos de rol y Casos de Uso.
 
-## 8. Subagentes especializados (`.claude/agents/`)
+## 8. Subagentes y skills (`.claude/`)
+
+### 8.1 Subagentes (`.claude/agents/`)
 
 Delega a estos agentes según la tarea — están afinados para este vault:
 
@@ -183,6 +185,43 @@ Delega a estos agentes según la tarea — están afinados para este vault:
 
 `cirujano` y `oraculo` **no modifican semáforos**: eso es del `semaforo-guardian`
 (excepción: añadir un enlace en `## Relacionado`).
+
+### 8.2 Skills (`.claude/skills/`)
+
+12 skills instaladas a nivel de proyecto: aplican a **todos** los colaboradores del
+repo, no solo a quien las instaló. Se cargan solas cuando la petición coincide con su
+`description`; también se invocan a mano con `/nombre-de-la-skill`.
+
+**Nativas del vault** — son las que de verdad se usan aquí:
+
+| Skill | Cuándo se activa |
+|---|---|
+| **obsidian-markdown** | Wikilinks, embeds, callouts, frontmatter, tags. La skill por defecto al escribir cualquier `.md`. |
+| **obsidian-cli** | Operar el vault desde terminal (leer, crear, buscar notas, propiedades). Requiere Obsidian abierto. |
+| **obsidian-bases** | Archivos `.base` — vistas tipo tabla/tarjetas, filtros y fórmulas sobre notas. |
+| **json-canvas** | Archivos `.canvas` — mapas mentales, diagramas de flujo, lienzos visuales. |
+| **file-organizer** | Reorganizar carpetas, detectar duplicados, reestructurar el vault. |
+| **defuddle** | Leer una URL externa limpia (usar en lugar de WebFetch, salvo si la URL termina en `.md`). |
+
+**De software** — para cuando `Arquitecturas/` pase de documentación a producto real:
+
+| Skill | Cuándo se activa |
+|---|---|
+| **senior-architect** | Diseño de sistema, decisiones de stack, diagramas de arquitectura, trade-offs, patrones de integración. La más alineada con `Arquitecturas/`. |
+| **ui-ux-pro-max** | Estilos, paletas, tipografía, accesibilidad, charts. Útil para los `00 - Arquitectura [Rol]` (wireframes) y los `12 - Mockup y Decisiones de UI`. |
+| **frontend-design** | Construir interfaces reales (React, HTML/CSS) a partir de los wireframes. |
+| **senior-fullstack** | Scaffolding de proyecto completo (React/Next + Node + Postgres). |
+| **senior-backend** | APIs, queries, auth, performance. |
+| **clean-code** | Estándares de código conciso, sin sobre-ingeniería. |
+
+> [!warning]
+> Las 6 skills de software esperan **código** (React, Node, Postgres, Go). Este vault
+> no tiene código, así que **no se van a activar solas** mientras el trabajo sea
+> documentación. Invócalas explícitamente con `/nombre` si las necesitas.
+
+> Las skills **no sustituyen** las reglas de este archivo. Ante conflicto entre una
+> skill genérica y el §2 (idioma, terminología, sin emojis) o el §7 (metodología de
+> Arquitecturas), **gana CLAUDE.md**.
 
 ## 9. Reglas de oro al trabajar aquí
 
@@ -241,6 +280,9 @@ entregar el resultado:
 | 2026-05-18 | Reestructurados los `07 - Feature Map` de Reclutamiento/Líder de Grupo y de los 3 roles de Hotel al formato PRIMARIAS/SECUNDARIAS del _GUIA. | Claude |
 | 2026-05-18 | Eliminado el módulo Blacklist del depto Hotel (RF-H-29, RI-H-07 y referencias en 26 archivos de Arquitecturas/Hotel); arquitectura alineada con la fuente de verdad. `Core/` y Reclutamiento/Inspección sin cambios. | Claude |
 | 2026-05-18 | Unificados los 20 Casos de Uso del depto Hotel para que toda línea `**Flujo:**` empiece con `Sidebar → [Módulo] → ...` (módulo del sidebar del rol). 16 archivos modificados; los 4 que ya lo cumplían se respetaron. | Claude |
+| 2026-07-28 | Nueva nota `Español/Arquitecturas/_Globales/Índice de Arquitecturas.md`: índice completo de los 229 archivos de `Arquitecturas/` (globales, 12 archivos por rol, 93 Casos de Uso) + sección de desviaciones frente al _GUIA. 239 wikilinks, 0 rotos, cobertura 229/229. | Claude |
+| 2026-07-28 | §8 reescrito como "Subagentes y skills": §8.1 agentes (sin cambios) + §8.2 nueva, con las 12 skills de `.claude/skills/` separadas en nativas del vault (6) y de software (6), y la regla de precedencia CLAUDE.md > skill. §3 actualizado. | Claude |
+| 2026-07-28 | Nueva nota global `Español/Arquitecturas/_Globales/Árbol de Reglas de Negocio.md`: árbol consolidado de RR por departamento (Ventas, Hotel, Reclutamiento), handoffs entre deptos con su regla, semáforos/catálogos compartidos y huecos detectados. Sin cambios en fuentes. | Claude |
 | 2026-05-21 | Vault: nuevo depto **Customer Service** (CS Manager + Agente + Flujo + Reglas); **Contabilidad** refactorizada (rol Contabilista eliminado → **Manager de Contabilidad** + **Contadora**, módulos Deducciones/Facturación/Vacaciones/Flujo de Nómina); nueva carpeta raíz **Simulaciones/** con 7 puntos de vista; nuevo **Core/Blueprint.md** (patrón replicable). CLAUDE.md sincronizado con el estado del vault (§1, §3, §4, §12). | Claude |
 
 <!--

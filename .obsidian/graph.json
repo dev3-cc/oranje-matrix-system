@@ -1,6 +1,6 @@
 {
   "collapse-filter": false,
-  "search": "entrevista",
+  "search": "",
   "showTags": false,
   "showAttachments": false,
   "hideUnresolved": false,
@@ -8,93 +8,58 @@
   "collapse-color-groups": false,
   "colorGroups": [
     {
-      "query": "path:Ventas  ",
+      "query": "file:Requisición",
       "color": {
         "a": 1,
-        "rgb": 6692382
+        "rgb": 16724751
       }
     },
     {
-      "query": "path:Core/Módulos/Semáforos  ",
+      "query": "file:Colaborador",
       "color": {
         "a": 1,
-        "rgb": 16514821
+        "rgb": 16749824
       }
     },
     {
-      "query": "path:Inspección",
+      "query": "file:Recluta",
       "color": {
         "a": 1,
-        "rgb": 1347327
+        "rgb": 11392604
       }
     },
     {
-      "query": "path:Colaborador",
+      "query": "file:Inspector",
       "color": {
         "a": 1,
-        "rgb": 8060794
+        "rgb": 11951318
       }
     },
     {
-      "query": "path:Hotel",
-      "color": {
-        "a": 1,
-        "rgb": 15509759
-      }
-    },
-    {
-      "query": "path:QA ",
-      "color": {
-        "a": 1,
-        "rgb": 6417919
-      }
-    },
-    {
-      "query": "path:Reclutamiento",
-      "color": {
-        "a": 1,
-        "rgb": 16497975
-      }
-    },
-    {
-      "query": "path:Core/Módulos/Requisicion  ",
-      "color": {
-        "a": 1,
-        "rgb": 16726794
-      }
-    },
-    {
-      "query": "file:Blacklist",
+      "query": "file:Black",
       "color": {
         "a": 1,
         "rgb": 0
       }
     },
     {
-      "query": "path:Contabilidad",
+      "query": "hotel",
       "color": {
         "a": 1,
-        "rgb": 14048348
-      }
-    },
-    {
-      "query": "path:\"Customer Service\"  ",
-      "color": {
-        "a": 1,
-        "rgb": 13555292
+        "rgb": 16580454
       }
     }
   ],
   "collapse-display": true,
   "showArrow": true,
-  "textFadeMultiplier": -1.8,
-  "nodeSizeMultiplier": 1.50841318449735,
-  "lineSizeMultiplier": 1.89048700977971,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1.23907986111111,
+  "lineSizeMultiplier": 2.13932725694444,
   "collapse-forces": true,
-  "centerStrength": 0,
+  "centerStrength": 0.605425347222222,
   "repelStrength": 20,
-  "linkStrength": 1,
-  "linkDistance": 250,
-  "scale": 0.4505081176757807,
+  "linkStrength": 0,
+  "linkDistance": 500,
+  "scale": 0.29462366748233626,
   "close": false
 }
