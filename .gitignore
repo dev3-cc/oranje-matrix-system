@@ -15,10 +15,10 @@ Thumbs.db
 *.swo
 *~
 
-# Obsidian - workspace es personal de cada usuario
-.obsidian/workspace.json
-.obsidian/workspace-mobile.json
-.obsidian/cache
+# Obsidian - config local de cada usuario, en cualquier nivel del vault.
+# Sin barra inicial el patrón aplica a .obsidian/ de la raíz, de Español/,
+# de Español/Arquitecturas/ y de cualquier subcarpeta futura.
+.obsidian/
 
 # Claude Code
 .claude/*
