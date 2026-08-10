@@ -90,7 +90,7 @@ Crea requisiciones, pone Stand-by, reporta colaborador y accidentes. No autoriza
 
 ### Manager de Área — ROL-H-02
 
-Autoriza o rechaza requisiciones, gestiona Schedule y Timesheet, genera QR. También llamado Gerente de Departamento.
+Autoriza o rechaza requisiciones, gestiona Schedule y Timesheet. También llamado Gerente de Departamento.
 
 [[Arquitecturas/Hotel/Manager de Área/00 - Arquitectura Manager de Área|00 Arquitectura]] · [[Arquitecturas/Hotel/Manager de Área/01 - Ficha de Rol|01 Ficha]] · [[Arquitecturas/Hotel/Manager de Área/02 - Ficha Detallada|02 Ficha Detallada]] · [[Arquitecturas/Hotel/Manager de Área/03 - PRD|03 PRD]] · [[Arquitecturas/Hotel/Manager de Área/04 - Permisos Detallados|04 Permisos]] · [[Arquitecturas/Hotel/Manager de Área/05 - Requerimientos|05 Requerimientos]] · [[Arquitecturas/Hotel/Manager de Área/06 - Resumen Rápido|06 Resumen]] · [[Arquitecturas/Hotel/Manager de Área/07 - Feature Map|07 Feature Map]] · [[Arquitecturas/Hotel/Manager de Área/08 - Acciones del Usuario|08 Acciones]] · [[Arquitecturas/Hotel/Manager de Área/09 - Campos del Formulario|09 Campos]] · [[Arquitecturas/Hotel/Manager de Área/10 - Validaciones|10 Validaciones]] · [[Arquitecturas/Hotel/Manager de Área/11 - Respuestas del Sistema|11 Respuestas]]
 
@@ -190,6 +190,7 @@ Solo existen 2 archivos. El Inspector ejecuta transiciones críticas del [[Semá
 | [[Arquitecturas/_Globales/Árbol de Reglas de Negocio\|Árbol de Reglas de Negocio]] | Todas las RR por depto + handoffs entre departamentos |
 | [[Arquitecturas/_Globales/Convenciones de Diseño\|Convenciones de Diseño]] | Convenciones visuales transversales |
 | [[Arquitecturas/_Globales/Estructura General App\|Estructura General App]] | Estructura de la aplicación |
+| [[Arquitecturas/_Globales/Plan de Implementación - Base de Datos\|Plan de Implementación - Base de Datos]] | Las 28 tareas para llegar a la primera migración, en 4 fases. Camino crítico: `catalogs` e `identity`, no Ventas |
 | [[Arquitecturas/_Globales/README\|README]] | Notas de la carpeta `_Globales` |
 | [[Arquitecturas/_Globales/Roles del Sistema\|Roles del Sistema]] | **Archivo vacío** |
 

@@ -1,0 +1,153 @@
+<mxfile host="app.diagrams.net" agent="oranje" version="24.0.0">
+  <diagram name="Arquitectura Oranje - GCP" id="oranje-gcp-1">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="ORANJE MATRIX SYSTEM — Arquitectura propuesta (Google Cloud)" style="text;html=1;align=center;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#202124;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1260" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cli_box" value="CLIENTES" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE8E6;strokeColor=#D93025;fontStyle=1;fontSize=13;verticalAlign=top;fontColor=#B31412;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="220" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="cli_web" value="Web App (React)&#10;Reclutamiento · Hotel · Ventas&#10;QA · CS · Contabilidad" style="sketch=0;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.gcp2.application_system;fillColor=#4284F3;strokeColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="120" y="130" width="58" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="cli_mob" value="Mobile (React Native)&#10;Colaborador · Inspector&#10;Offline + QR + GPS" style="sketch=0;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.gcp2.mobile_devices;fillColor=#4284F3;strokeColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="120" y="270" width="58" height="58" as="geometry" />
+        </mxCell>
+
+        <mxCell id="edge_box" value="EDGE Y SEGURIDAD" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF7E0;strokeColor=#F9AB00;fontStyle=1;fontSize=13;verticalAlign=top;fontColor=#B06000;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="80" width="220" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_lb" value="Cloud Load Balancing&#10;+ Cloud Armor (WAF)" style="sketch=0;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.gcp2.cloud_load_balancing;fillColor=#4284F3;strokeColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="380" y="130" width="58" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_auth" value="Firebase Auth (JWT)&#10;+ FCM Push&#10;+ Firestore offline" style="sketch=0;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.gcp2.firebase;fillColor=#F9AB00;strokeColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="380" y="270" width="58" height="58" as="geometry" />
+        </mxCell>
+
+        <mxCell id="run_box" value="CLOUD RUN — MONOLITO MODULAR (un solo desplegable)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F4EA;strokeColor=#137333;fontStyle=1;fontSize=13;verticalAlign=top;fontColor=#0D652D;arcSize=4;" vertex="1" parent="1">
+          <mxGeometry x="560" y="80" width="480" height="620" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m1" value="Identidad y Permisos&#10;Matriz de permisos como datos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#137333;fontSize=10;align=left;spacingLeft=8;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="580" y="130" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="m2" value="Comercial&#10;Onboarding · Contrato" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#137333;fontSize=10;align=left;spacingLeft=8;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="580" y="215" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="m3" value="Demanda&#10;Requisición · Posición · Slot" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#137333;fontSize=10;align=left;spacingLeft=8;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="580" y="300" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="m4" value="Cobertura (Self-Pick)&#10;Pool · Asignación · Blacklist" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#137333;fontSize=10;align=left;spacingLeft=8;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="580" y="385" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="m5" value="Operación&#10;Schedule · Timesheet · Ponche" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#137333;fontSize=10;align=left;spacingLeft=8;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="580" y="470" width="200" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m6" value="Liquidación   [NUEVO]&#10;Consolidado · Deducciones · Factura" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F9AB00;fontSize=10;align=left;spacingLeft=8;arcSize=8;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="130" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="m7" value="Supervisión   [NUEVO]&#10;Inspección · QA · Customer Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F9AB00;fontSize=10;align=left;spacingLeft=8;arcSize=8;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="215" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="m8" value="Journal   [NUEVO]&#10;Append-only con actor (RR-16)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F9AB00;fontSize=10;align=left;spacingLeft=8;arcSize=8;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="300" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="m9" value="Notificaciones   [NUEVO]&#10;Consumidor de eventos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F9AB00;fontSize=10;align=left;spacingLeft=8;arcSize=8;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="385" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="m10" value="Catálogos&#10;Posiciones · Zonas · Modalidades" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#137333;fontSize=10;align=left;spacingLeft=8;arcSize=8;" vertex="1" parent="1">
+          <mxGeometry x="810" y="470" width="200" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tx_note" value="El núcleo Demanda → Cobertura → Operación corre en UNA transacción.&#10;Asignar slot · recalcular cobertura · escribir journal · generar Schedule." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#1967D2;fontSize=10;fontColor=#174EA6;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="580" y="565" width="430" height="55" as="geometry" />
+        </mxCell>
+
+        <mxCell id="data_box" value="DATOS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F0FE;strokeColor=#1967D2;fontStyle=1;fontSize=13;verticalAlign=top;fontColor=#174EA6;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="80" width="230" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="db_sql" value="Cloud SQL — PostgreSQL&#10;Transaccional · locks por fila&#10;PITR activo" style="sketch=0;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.gcp2.cloud_sql;fillColor=#4284F3;strokeColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1166" y="120" width="58" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="db_redis" value="Memorystore (Redis)&#10;Caché y sesiones — opcional" style="sketch=0;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.gcp2.memorystore;fillColor=#4284F3;strokeColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1166" y="240" width="58" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="db_gcs" value="Cloud Storage&#10;Documentos · URLs firmadas" style="sketch=0;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.gcp2.cloud_storage;fillColor=#4284F3;strokeColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1166" y="350" width="58" height="58" as="geometry" />
+        </mxCell>
+
+        <mxCell id="async_box" value="ASÍNCRONO (fuera del núcleo)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FEF7E0;strokeColor=#F9AB00;fontStyle=1;fontSize=13;verticalAlign=top;fontColor=#B06000;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="490" width="230" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="as_pubsub" value="Pub/Sub&#10;Notificaciones · emails" style="sketch=0;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.gcp2.cloud_pubsub;fillColor=#4284F3;strokeColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1166" y="525" width="58" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="as_sched" value="Cloud Scheduler&#10;Recálculo de urgencia" style="sketch=0;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.gcp2.cloud_scheduler;fillColor=#4284F3;strokeColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1166" y="620" width="58" height="58" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ops_box" value="OBSERVABILIDAD Y SECRETOS — desde el día uno" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F3F4;strokeColor=#5F6368;fontStyle=1;fontSize=13;verticalAlign=top;fontColor=#3C4043;arcSize=6;" vertex="1" parent="1">
+          <mxGeometry x="560" y="730" width="480" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="ops_mon" value="Cloud Logging y Monitoring&#10;Alertas sobre cálculo de nómina" style="sketch=0;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.gcp2.stackdriver_monitoring;fillColor=#4284F3;strokeColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="650" y="775" width="58" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="ops_sec" value="Secret Manager&#10;+ cifrado de campo SSN / ITIN" style="sketch=0;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.gcp2.key_management_service;fillColor=#4284F3;strokeColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="880" y="775" width="58" height="58" as="geometry" />
+        </mxCell>
+
+        <mxCell id="bq_box" value="ANALÍTICA (fase posterior)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F1F3F4;strokeColor=#5F6368;fontStyle=1;fontSize=12;verticalAlign=top;fontColor=#3C4043;arcSize=6;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="730" width="230" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="bq" value="BigQuery&#10;KPIs de QA · dashboards" style="sketch=0;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;shape=mxgraph.gcp2.bigquery;fillColor=#4284F3;strokeColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1166" y="775" width="58" height="58" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5F6368;endArrow=block;" edge="1" parent="1" source="cli_web" target="edge_lb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5F6368;endArrow=block;" edge="1" parent="1" source="cli_mob" target="edge_auth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#137333;endArrow=block;fontSize=10;" edge="1" parent="1" source="edge_lb" target="run_box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="JWT" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#F9AB00;endArrow=block;fontSize=10;" edge="1" parent="1" source="edge_auth" target="run_box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="SQL · transacciones" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#1967D2;endArrow=block;fontSize=10;strokeWidth=2;" edge="1" parent="1" source="run_box" target="db_sql">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5F6368;endArrow=block;dashed=1;" edge="1" parent="1" source="run_box" target="db_gcs">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="publica eventos" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#F9AB00;endArrow=block;fontSize=10;dashed=1;" edge="1" parent="1" source="run_box" target="as_pubsub">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="cron" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#F9AB00;endArrow=block;fontSize=10;dashed=1;" edge="1" parent="1" source="as_sched" target="run_box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5F6368;endArrow=block;dashed=1;" edge="1" parent="1" source="run_box" target="ops_box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="export nocturno" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#9AA0A6;endArrow=block;dashed=1;fontSize=10;" edge="1" parent="1" source="db_sql" target="bq">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" value="push FCM" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#F9AB00;endArrow=block;dashed=1;fontSize=10;exitX=0;exitY=0.5;" edge="1" parent="1" source="as_pubsub" target="edge_auth">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend" value="Amarillo = módulos y piezas que la propuesta original no contemplaba&#10;Línea sólida = camino transaccional   ·   Línea punteada = asíncrono" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9AA0A6;fontSize=10;align=left;spacingLeft=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="440" width="480" height="55" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

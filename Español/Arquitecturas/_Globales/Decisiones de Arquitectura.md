@@ -1,0 +1,563 @@
+---
+tags:
+  - arquitectura
+  - globales
+  - decisiones
+aliases:
+  - Decisiones de Arquitectura
+  - ADR Oranje
+  - Arquitectura de Despliegue
+---
+
+# Decisiones de Arquitectura
+
+> [!info] Alcance
+> Decisiones de infraestructura, despliegue, stack y modelo, con su justificación. Acompaña al diagrama [[Arquitecturas/_Globales/Arquitectura GCP - Propuesta.drawio|Arquitectura GCP - Propuesta]] y al [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]].
+
+---
+
+## D-01 · Monolito modular en un solo desplegable
+
+**Decisión:** un repositorio, un servicio de Cloud Run, una base de datos. Los módulos son carpetas, no servicios.
+
+### Por qué
+
+Asignar un colaborador a un slot dispara cinco operaciones que deben ser atómicas:
+
+1. Ocupar el slot
+2. Recalcular la cobertura de la posición
+3. Recalcular el estado de la requisición
+4. Escribir el journal (RR-16)
+5. Generar la entrada en el [[Core/Módulos/Schedule|Schedule]]
+
+Con servicios separados eso son llamadas de red. Si la segunda falla, el slot queda ocupado sin asignación. Y dos reclutadores podrían ganar el mismo slot — exactamente lo que RR-15 prohíbe.
+
+En un solo proceso es **una transacción de Postgres**: o pasa todo, o no pasa nada.
+
+### Estructura
+
+```
+oranje-backend/
+├── src/
+│   ├── modules/
+│   │   ├── identity/        Roles y matriz de permisos
+│   │   ├── commercial/        Onboarding · Contrato
+│   │   ├── demand/          Requisición · Posición · Slot
+│   │   ├── coverage/        Self-Pick · Asignación · Blacklist
+│   │   ├── operations/        Schedule · Timesheet · Ponche
+│   │   ├── settlement/      Consolidado · Deducciones · Factura
+│   │   ├── supervision/      Inspección · QA · Customer Service
+│   │   ├── journal/          Append-only
+│   │   ├── notifications/   Consumidor de eventos
+│   │   └── catalogs/        Posiciones · Zonas · Modalidades
+│   └── main.ts
+└── Dockerfile
+```
+
+### Fronteras reales
+
+Los módulos no son decorativos:
+
+| Nivel | Cómo se separa |
+|---|---|
+| Código | Un módulo llama a otro por su interfaz pública, nunca a sus tablas |
+| Base de datos | Un esquema de Postgres por módulo (`demand.requisition`, `settlement.invoice`) |
+| Equipo | Cada módulo puede tener dueño distinto |
+
+### Si algún día hay que partirlo
+
+Candidatos: **Notificaciones** y **Supervisión**. Ninguno participa en la transacción del núcleo; ambos son consumidores de eventos.
+
+> [!warning] **Demanda, Cobertura y Operación no se separan nunca.** Están unidos por la transacción, y esa unión es una regla de negocio, no un detalle de implementación.
+
+### Escala que lo justifica
+
+5,000 colaboradores y ~100 usuarios concurrentes. A ese volumen los microservicios solo agregan latencia, complejidad y modos de falla.
+
+### Un esquema por módulo: reafirmado el 2026-08-07
+
+Se evaluó la alternativa **plana** —todas las tablas en `public`, sin prefijo— y se descartó. El argumento en contra que hay que conocer, porque es real: **con un solo backend y un solo usuario de conexión, los esquemas no hacen cumplir nada.** El aislamiento de "un módulo no lee las tablas de otro" se logra con `GRANT` por rol de Postgres, y eso exige un usuario de conexión por módulo, que este monolito no tiene. Sin eso, el esquema es documentación ejecutable, no una barrera.
+
+Se mantiene porque el prefijo dice de quién es cada tabla sin abrir nada, y porque **la decisión es reversible en los dos sentidos** con `ALTER TABLE ... SET SCHEMA`: una migración mecánica, sin tocar datos.
+
+Lo que sí dejó de ser un riesgo: **`multiSchema` de Prisma es GA desde la versión 6.13.0** — ya no es *preview feature* y no lleva flag. Era la única dependencia técnica frágil de esta decisión.
+
+---
+
+## D-02 · Concurrencia del Self-Pick en Postgres, sin Redis
+
+**Decisión:** el bloqueo de RR-15 se resuelve con `SELECT ... FOR UPDATE SKIP LOCKED` sobre la fila del slot.
+
+**Por qué:** da exactamente la semántica de la regla —gana el primero, el segundo ve *"posición ya cubierta"*, nadie espera— dentro de la misma transacción que actualiza la cobertura. Un lock en Redis sería una pieza móvil externa a la transacción: si el proceso muere entre el lock y el commit, el estado queda inconsistente.
+
+Memorystore queda como caché de sesiones, opcional. Detalle en [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] §3.
+
+---
+
+## D-03 · Pub/Sub fuera del núcleo transaccional
+
+**Decisión:** la mensajería asíncrona solo cubre notificaciones, emails, recálculo de urgencia e indicadores de QA. Nunca la asignación.
+
+**Por qué:** meter el núcleo en un bus lo vuelve de consistencia eventual, y entonces "gana el primero" deja de cumplirse.
+
+Volumen real: decenas o cientos de eventos por hora. No requiere streaming ni Kafka.
+
+---
+
+## D-04 · Sin API Gateway
+
+**Decisión:** Cloud Load Balancing enruta directo a Cloud Run.
+
+**Por qué:** con un solo backend, un API Gateway agrega un salto y un costo sin aportar ruteo, cuotas ni versionado que hagan falta. El Load Balancer sí se justifica por **Cloud Armor** (WAF), que con SSN e ITIN de por medio no es opcional.
+
+---
+
+## D-05 · Firebase para la app móvil
+
+**Decisión:** Firebase Auth (JWT), FCM para push y Firestore para sincronización offline en la app del [[Colaborador/Colaborador|Colaborador]] y del [[Inspector]].
+
+**Por qué:** el colaborador **poncha desde su teléfono, dentro de la propiedad, con GPS y foto**, en lugares donde muchas veces no hay señal; el Inspector marca GPS en zona. La sincronización offline es un requisito operativo, no una comodidad. Firestore la resuelve de fábrica.
+
+La autoridad de identidad es Firebase Auth; los **permisos** viven en Postgres (`identity.role_permission`), no en el token.
+
+> [!warning] Firestore es buzón, no fuente de verdad. Guarda las marcas que el dispositivo no pudo enviar; en cuanto hay red, viajan al backend y **Postgres decide**. Ningún cálculo de nómina, cobertura ni semáforo lee de Firestore.
+
+**Las fotos no pasan por Firestore.** Un documento de Firestore tope 1 MB. La imagen se guarda en el almacenamiento local del dispositivo y sube a **Cloud Storage con URL firmada** cuando hay señal; en Firestore solo viaja la marca con su referencia.
+
+---
+
+## D-06 · Un proyecto de GCP por ambiente
+
+**Decisión:** `oranje-prod`, `oranje-staging`, `oranje-dev` como proyectos separados.
+
+**Por qué:** aislamiento duro. Un experimento no puede tocar la base de datos de nómina.
+
+---
+
+## D-07 · Observabilidad y secretos desde el día uno
+
+**Decisión:** Cloud Logging y Monitoring con alertas sobre el cálculo de nómina, Secret Manager, y cifrado de campo para SSN e ITIN.
+
+**Por qué:** un error de cálculo de nómina **no lanza excepción**. Paga mal y nadie se entera hasta que reclama el colaborador. Postergar la observabilidad a una fase posterior no es viable en un sistema que mueve dinero y datos fiscales.
+
+---
+
+## D-08 · El ponche se valida en el servidor
+
+**Decisión:** el backend evalúa la geocerca, guarda las dos horas (dispositivo y servidor) y exige que la foto venga de la cámara. La app **nunca** decide si el ponche es válido.
+
+### Por qué
+
+El ponche produce nómina y factura. Todo lo que el cliente afirme sobre él es, en la práctica, un campo editable:
+
+| Amenaza | Mitigación |
+|---|---|
+| GPS falso por aplicación | La app manda coordenadas crudas; `ST_DWithin` corre en Postgres. Si la app enviara `dentro_de_geocerca`, el control no existe |
+| Reloj del dispositivo alterado | Se guardan `capturado_at` (dispositivo) y `sincronizado_at` (servidor). La diferencia anómala se marca para revisión |
+| Foto tomada de la galería | Captura solo desde cámara; sin selector de archivos |
+
+Con captura offline no se puede usar la hora del servidor como verdad —el ponche ocurre a las 6:00 y sincroniza a las 14:00—, pero tampoco confiar ciegamente en el teléfono. Por eso se guardan las dos y se revisan las diferencias.
+
+### El calendario del Supervisor es el punto de validación
+
+No es una vista de consulta: es donde se aprueban las marcas limpias y se resuelven las anómalas antes de que el [[Timesheet]] alimente el Consolidado. Es el control humano que cierra lo que la geocerca no puede probar sola.
+
+### Consecuencia operativa del bloqueo
+
+Se decidió **bloquear** el ponche fuera de la geocerca. Eso deja abierto qué pasa cuando el GPS falla dentro de la propiedad (sótanos, cocinas, estructura metálica): sin regla de excepción, un colaborador que trabajó no cobra. Ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] §5.
+
+---
+
+## D-09 · La aprobación del hotel es el corte entre operación y dinero
+
+**Decisión:** el ponche tiene estado. Solo los ponches **aprobados por el [[Hotel/Manager de Área|Manager de Área]] —el de su departamento— o por el [[Hotel/Manager General|Manager General]] —cualquier departamento—** alimentan el [[Timesheet]], el Consolidado y la factura. El [[Hotel/Supervisor|Supervisor]] revisa y resuelve anómalos, pero **no aprueba**: son dos pasos con responsables distintos.
+
+### Por qué
+
+Sin ese corte, cualquier marca capturada en un teléfono entra directo al cálculo de nómina. Con GPS y foto la evidencia es fuerte, pero no es prueba: el GPS falla en sótanos y la foto no dice si la persona trabajó el turno completo. La aprobación humana es lo que convierte una captura en un dato pagable.
+
+### Consecuencias técnicas
+
+| Consecuencia | Detalle |
+|---|---|
+| Máquina de estados del ponche | `pendiente → revisado → aprobado` \| `rechazado`. El cálculo de horas filtra por `aprobado` |
+| Dos acciones, dos permisos | `revisar` (Supervisor) y `aprobar` (Manager de Área · Manager General) son acciones distintas en `identity.role_permission`, no una sola con varios titulares |
+| El Consolidado depende de una acción humana | Si nadie aprueba, la semana no se puede cerrar. Necesita alerta de ponches pendientes antes del corte semanal |
+| Journal | La revisión, la aprobación y el rechazo se asientan con actor y motivo (RR-16) |
+| Alcance del permiso | Aprobar se acota **al departamento**, no al hotel ni a la requisición. El Manager de Área alcanza `hotel_id + department_id`; el Manager General, solo `hotel_id` |
+
+> [!note] Cómo se implementa el alcance (resuelto el 2026-08-07)
+> Esta decisión decía *"el permiso lleva `hotel_id + departamento_id`"*, lo que se leía como columnas de alcance en la tabla de permisos. **El efecto se conserva y el mecanismo cambia:** el alcance vive en `identity.user` (`hotel_id` + `department_id` nulable), y la tabla de permisos queda como la Matriz pura por rol.
+>
+> El motivo: con el alcance en el permiso hay que insertar una fila por hotel, por departamento y por acción, y mantenerla cada vez que alguien cambia de puesto. Con el alcance en la persona, cambiar a alguien de departamento es un `UPDATE` de una columna. `department_id IS NULL` es lo que distingue al Manager General.
+>
+> Ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] §9 para el diseño completo y la consulta de autorización.
+
+### Si no aprueba a tiempo
+
+**Las horas quedan en espera.** No se pagan ni se facturan y no hay aprobación automática: el estado `pendiente` simplemente persiste.
+
+| Consecuencia | Detalle |
+|---|---|
+| El estado no caduca | Ningún job cambia `pendiente → aprobado` por vencimiento de plazo. Un cron que "cierre" la semana aprobando lo pendiente contradiría esta decisión |
+| El cierre semanal es parcial | El Consolidado se genera con lo aprobado; lo pendiente queda fuera y sigue vivo |
+| El respaldo es humano, no automático | El [[Hotel/Manager General|Manager General]] puede aprobar lo que un Manager de Área dejó pendiente, pero **nadie le transfiere la jornada**: tiene que verla. Por eso la alerta de pendientes antes del corte no es una comodidad — es lo que convierte ese respaldo en algo real |
+
+> [!warning] Pendiente con Contabilidad
+> Falta definir qué pasa con las horas aprobadas **después** del cierre semanal: si reabren el [[Contabilidad/Consolidado Semanal del Colaborador|Consolidado]] de su semana o entran en el siguiente. No es cosmético: el umbral de overtime de D-10 es semanal, así que mover horas de semana cambia lo que se paga.
+
+---
+
+## D-10 · El umbral de overtime se evalúa por requisición
+
+**Decisión:** las 40 horas brutas semanales se cuentan **por colaborador y por requisición**, no por hotel. Lo que exceda cuenta como overtime dentro de esa misma requisición.
+
+### Por qué importa en el modelo
+
+`consolidado_detalle` estaba diseñado con **una fila por hotel**. Si el umbral es por requisición y un colaborador puede participar en más de una requisición del mismo hotel en una semana, la fila por hotel ya no alcanza: el detalle se rompe **por requisición**, y de ahí sale tanto el pago como la factura.
+
+El vínculo existe en el modelo sin agregar tablas: `asignacion → slot → posicion → requisicion`.
+
+> [!warning] Consecuencia a validar con Contabilidad: con el umbral por requisición, un colaborador que trabaja 40 horas en dos requisiciones distintas de la misma semana acumula 80 horas **sin generar overtime**. Antes, con el umbral por hotel, sí lo generaba si ambas eran del mismo hotel.
+
+---
+
+## D-11 · El dominio del código va en inglés
+
+**Decisión:** entidades, tablas, columnas, modelos, endpoints **y los 10 esquemas de Postgres** se nombran en **inglés**, sin excepciones. Todo lo que lee el usuario sigue en español.
+
+### Alcance exacto
+
+| Qué | Idioma |
+|---|---|
+| Tabla, columna, modelo Prisma, DTO, endpoint | **Inglés** |
+| Esquema Postgres | **Español** — los 10 módulos de D-01 |
+| `code` de un estado de semáforo | **Inglés** (`ORANGE`, `LIGHT_BLUE`) |
+| `name` y `description` de catálogos, mensajes de error, textos de UI | **Español** |
+| Términos que ya son ingleses en el vault (Schedule, Timesheet, Blacklist, Self-Pick, Onboarding) | Sin cambio |
+
+### Por qué
+
+El repositorio de código vigente ya está en inglés (`Employee`, `StaffingRequest`), y con el dominio en español habría que migrarlo o convivir a medias. La frontera queda en un solo lugar: **el identificador va en inglés, el texto que se muestra va en español.**
+
+Los esquemas no se traducen porque los fija D-01 y lo repite [[Estándares de Base de Datos]] §2 (*"Esquema: nombre del módulo de D-01"*). Si algún día se traducen, cuesta el prefijo y nada más.
+
+### Costo aceptado
+
+El vault seguirá en español, así que buscar `Requisición` en el código no encontrará nada y buscar `StaffingRequest` en el vault tampoco. **El glosario canónico de [[Estructura de Proyecto y Nomenclatura]] §8 deja de ser documentación y pasa a ser obligatorio:** es lo único que evita que Propuesta se escriba `Proposal`, `Offer` y `Quote` en tres archivos distintos.
+
+### Consecuencias documentales
+
+**Los tres documentos afectados ya están alineados** (2026-08-06):
+
+| Documento | Qué cambió |
+|---|---|
+| [[Estructura de Proyecto y Nomenclatura]] §8 | Enunciado invertido, ejemplos de código al revés, y el glosario de 20 filas reescrito con el identificador en inglés y la tabla Postgres en inglés. Nueva sección *El costo, y quién lo paga*: agregar un concepto obliga a agregar su fila en el mismo PR |
+| [[Estándares de Base de Datos]] §2 y §15.3 | Toda la nomenclatura y sus ejemplos en inglés (`is_`/`has_` en vez de `es_`/`tiene_`, `created_at`, `ux_slot_active_assignment`), más un callout explicando por qué `demand.requisition` mezcla los dos idiomas a propósito. La pendiente 3 queda cerrada |
+| [[Estándares de Desarrollo]] §4 | Rutas, campos JSON, códigos de error y ramas de Git en inglés, con una tabla nueva que fija la frontera: **identificadores en inglés, textos que lee una persona en español** (descripciones de test, `summary` de OpenAPI, asunto del commit) |
+
+> [!warning]
+> **El Colaborador se llama `Worker` en el código.** Decidido el 2026-08-06; con esto el idioma queda cerrado por completo.
+>
+> `Employee` está descartado: el [[Colaborador/Colaborador|Colaborador]] no es empleado del hotel —el vínculo es siempre vía `assignment`, con fechas— así que ese nombre mete en la entidad central una relación laboral que el negocio niega.
+>
+> Se evaluó y se descartó dejarlo en español como excepción: `colaborador` viviría dentro de `colaborador_id`, `getColaboradorById`, `availableColaboradores`, en la palabra más frecuente del sistema. Es exactamente el "medio identificador en cada idioma" que [[Estructura de Proyecto y Nomenclatura]] §8 rechaza. Y el 2026-08-07 desapareció el único precedente que quedaba: los esquemas también pasaron a inglés.
+>
+> **En el vault, en la UI y en las juntas sigue siendo Colaborador.** `Worker` solo existe en el código; el glosario canónico es el puente y por eso es obligatorio.
+
+---
+
+## D-12 · Redux Toolkit con RTK Query, Tailwind con NativeWind
+
+**Decisión:** un solo store de Redux Toolkit por cliente. La caché del servidor vive en **RTK Query**, no en slices. Los estilos son **Tailwind**, con un preset compartido en `packages/ui`, y **NativeWind** en el móvil para escribir las mismas clases.
+
+### Por qué
+
+**Un solo `createApi`, endpoints inyectados por feature.** Si cada feature crea el suyo, se pierde la invalidación cruzada por tags —autorizar una requisición deja de refrescar el Schedule— y aparecen tantas cachés como features.
+
+**La respuesta del servidor no se copia a un slice.** Un `requisiciones: []` dentro de un slice es la respuesta de ayer. Los slices guardan lo que el servidor no sabe: qué filtro está abierto, qué rol tiene activo el usuario.
+
+**El preset de Tailwind se comparte; los componentes no.** Los tokens del sistema Oranje se definen una vez y sirven a web y móvil. Un `<button>` no existe en React Native, así que `packages/ui/src/components` es solo web.
+
+### Qué se descarta
+
+| Alternativa | Por qué no |
+|---|---|
+| TanStack Query + Zustand | Dos sistemas de estado conviviendo, con la regla frágil de no duplicar datos del servidor en el store |
+| CSS plano del sistema Oranje | `oranje-seed.css` migra al preset; los tokens (`--o-500`, `--sb`, `--st-*`) no se renombran |
+| Componentes compartidos web/móvil | Se escriben dos veces con la misma API antes que forzar uno solo |
+
+Detalle de carpetas y nomenclatura en [[Estructura de Proyecto y Nomenclatura]] §1, §4, §6 y §7.5.
+
+> [!important] Enmienda del 2026-08-10 · Tailwind 4 parte el preset en dos emisiones
+> Esta decisión dice *"un preset compartido en `packages/ui`"*, y eso se escribió pensando en **Tailwind 3**, donde el preset es un objeto JS que se importa desde los dos `tailwind.config`. **Tailwind 4 eliminó la configuración en JS**: el tema se declara en CSS con `@theme`. Y **NativeWind estable (4.2.6) sigue exigiendo Tailwind 3** — el soporte de v4 está en `5.0.0-preview.4`.
+>
+> No se puede tener las dos cosas hoy, así que:
+> - **`apps/web` va en Tailwind 4**, con `@tailwindcss/vite`. Es lo que la CLI de shadcn genera por defecto; arrancar la web en v3 es nacer con deuda.
+> - **`apps/mobile` se quedará en Tailwind 3 + NativeWind 4** hasta que NativeWind 5 sea estable. Cuando lo sea, el móvil sube y la asimetría desaparece.
+> - **`tokens.ts` sigue siendo la única definición**, que es lo que esta decisión realmente protege. Lo que cambia es su salida: en vez de un `tailwind-preset.ts` único, emite un `tokens.css` con `@theme` para el web y un objeto de tema para el config v3 del móvil. **Dos emisiones, una fuente.**
+>
+> Lo que se pierde: el preset deja de ser literalmente el mismo archivo en los dos lados. Lo que se conserva: que un color de semáforo se defina una sola vez. El riesgo real —que web y móvil diverjan— lo cubre `tokens.ts`, no el formato del preset.
+
+---
+
+## D-13 · El ciclo comercial es una entidad, y el semáforo de onboarding vive en él
+
+**Decisión:** `prospect` modela un **ciclo comercial** de un hotel, y ahí vive el estado del [[Core/Módulos/Semáforos/Semáforo Onboarding|Semáforo Onboarding]]. `hotel` guarda solo lo permanente del edificio más `activated_at`. Un hotel no puede tener dos ciclos abiertos al mismo tiempo. *"¿Es cliente?"* se resuelve con una vista, no con una columna.
+
+### Por qué
+
+Un hotel se prospecta más de una vez. Rechazado en un año, retomado dos después con otra necesidad, otro contacto y otro [[Business Developer|BD]]. Con el estado en `hotel`, el segundo intento **sobrescribe la historia del primero**: no queda cuánto tardó, quién lo trabajó ni por qué se cayó.
+
+El dueño comercial es del ciclo, no del edificio. Así la tasa de conversión de cada BD queda limpia cuando un prospecto se reasigna (RF-V-24), y `closed_at − opened_at` es el tiempo de conversión del embudo (RF-V-26) sin cálculo aparte.
+
+### La restricción que lo sostiene
+
+```sql
+CREATE UNIQUE INDEX ux_prospect_hotel_open
+  ON commercial.prospect (hotel_id) WHERE closed_at IS NULL;
+```
+
+Un índice único **parcial**: permite el histórico de ciclos cerrados y garantiza uno solo abierto. Sin él, dos BD trabajan el mismo hotel sin saberlo.
+
+### Por qué no tablas separadas de prospecto y cliente
+
+| Razón | Detalle |
+|---|---|
+| Negro es un **cliente** y Rojo un **prospecto** | Reactivar un Negro a Azul claro obligaría a mudar la fila de la tabla de clientes a la de prospectos, y a devolverla si vuelve a cerrar |
+| Las FK del resto del sistema apuntan a `hotel` | `requisicion`, `contrato`, `factura` y `usuario`. Si los clientes vivieran en otra tabla, o se rompen al reactivar o esa tabla no aporta nada |
+| El invariante deja de ser declarable | "Un hotel en Naranja tiene fila de cliente" no se puede expresar con una FK: exige triggers, que no se ven en el código de la aplicación |
+
+`commercial.vw_client` filtra por los estados Naranja y Negro; `vw_prospect`, por los otros siete. Es un join, así que no hay nada que se pueda desincronizar.
+
+> [!warning]
+> Naranja y Negro son estados de un hotel **que ya es cliente**, no de una negociación. Con los 9 estados en `prospect`, el ciclo queda abierto durante Naranja y Negro y solo cierra al archivarse. Funciona, pero la versión conceptualmente limpia —que Naranja y Negro pasen a ser estados del hotel y el ciclo se quede con los siete comerciales— **parte el Semáforo Onboarding en dos dimensiones**, o sea modifica la fuente de verdad. Requiere autorización explícita y pasar por el subagente `semaforo-guardian`.
+
+---
+
+## Correcciones aplicadas a la propuesta original
+
+La propuesta externa que se evaluó tenía la infraestructura bien encaminada y el dominio incompleto.
+
+| Corrección | Detalle |
+|---|---|
+| **+4 módulos** | Liquidación, Supervisión, Journal y Notificaciones. Los originales eran 6; el negocio necesita 10 |
+| **−Redis Lock** | Sustituido por locks de fila de Postgres (D-02) |
+| **Pub/Sub al borde** | Sacado del camino de la asignación (D-03) |
+| **−API Gateway** | Redundante con un solo backend (D-04) |
+| **+Modelo de datos** | La propuesta no incluía ninguno. Ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] |
+| **+Seguridad** | Cifrado de campo, retención documental y auditoría de acceso a PII |
+
+---
+
+## D-14 · Cada semáforo guarda su historia, no solo su estado actual
+
+**Decisión:** toda entidad con semáforo lleva **dos cosas**: una columna con el estado actual y una **tabla de historia** con una fila por cada cambio. La columna es un atajo de rendimiento; la tabla es la verdad. Aplica a los **7 semáforos**, no solo al de Onboarding.
+
+```sql
+commercial.prospect_state_history
+  id · prospect_id · from_state_id · to_state_id
+  reason_id · user_id · occurred_at
+
+ck_state_history_no_self
+  CHECK (from_state_id IS DISTINCT FROM to_state_id)
+ix_state_history_prospect (prospect_id, occurred_at DESC)
+```
+
+El servicio de transición escribe las dos en la misma transacción: `UPDATE` del estado actual + `INSERT` en la historia.
+
+### Por qué
+
+Una columna de estado contesta *"¿en qué color está?"* y nada más. El negocio pregunta otras tres cosas que esa columna no puede contestar:
+
+| Pregunta | Quién la hace |
+|---|---|
+| ¿Cuánto tiempo estuvo en cada estado? | Los KPIs de todos los departamentos: tiempo de conversión, tiempo de cobertura, tiempo en Blanco |
+| ¿Por qué pasó a este estado? | `requires_reason` aplica a **cualquier** transición, no solo al cierre. Sin historia, el motivo de un rechazo no tiene dónde guardarse |
+| ¿Quién lo movió y cuándo? | Trazabilidad de RR-16 a nivel de negocio, no de auditoría |
+
+### Por qué el journal no sustituye esta tabla
+
+Los eventos de cambio de estado sí se asientan en `journal.journal`, y aun así hace falta la tabla. No es duplicación: son dos cosas con forma distinta.
+
+| `journal.journal` | La tabla de historia |
+|---|---|
+| Append-only, particionado por mes, retención de 24 meses (Estándares de BD §9) | Vive tanto como su entidad |
+| `payload` en `jsonb` — no consultable por diseño | Columnas tipadas con FK a los estados |
+| Paginación por cursor; es auditoría del sistema | Se consulta con `GROUP BY` y ventanas; es dato de negocio |
+
+Calcular "tiempo promedio en Amarillo" recorriendo `jsonb` de una tabla particionada con retención es la clase de consulta que funciona en la demo y se cae en producción.
+
+### Consecuencia
+
+`prospect.onboarding_state_id` queda registrado como **desnormalización deliberada**: es la última fila de la historia, y existe porque el pipeline se consulta en cada carga de pantalla y no va a resolver el estado actual con una subconsulta ordenada por fecha en cada fila.
+
+Los otros 6 semáforos necesitan su tabla equivalente. Hoy solo existe la de `prospect`; ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] §4.
+
+---
+
+## D-15 · La primera migración es `catalogs` + `identity` + `commercial`, y se empieza por Ventas
+
+**Decisión:** el primer módulo que se construye es **Ventas** (`commercial`). Pero la primera migración **no es de Ventas sola**: los tres esquemas van juntos, porque las FK cruzan.
+
+### Por qué Ventas primero
+
+| Razón | Detalle |
+|---|---|
+| Es casi un solo módulo | Ventas vive en `commercial` y solo **lee** de `catalogs` e `identity`. Ningún otro departamento tiene una frontera tan limpia |
+| No toca dinero | No hay nómina, factura ni cálculo de horas. Un error se corrige sin devolver un pago |
+| No tiene concurrencia | Nada equivalente al Self-Pick (D-02). Sin locks de fila, sin `SKIP LOCKED` |
+| Es la puerta del resto | Sin un hotel en Naranja no hay requisición, y sin requisición no hay nada. Construirlo primero es el orden natural del negocio |
+| Ejercita el patrón que se repite 7 veces | El servicio de transición del semáforo. Sale bien aquí y los otros 6 se copian |
+
+### Por qué los tres esquemas juntos
+
+`commercial.prospect` tiene FK a `identity.user` y a `catalogs.status_light_state`. Migrar Ventas sola falla en la primera FK.
+
+**Orden dentro de la migración:** `catalogs` → `identity` → `commercial`.
+
+### Lo que tiene que existir antes de correr `prisma migrate` la primera vez
+
+| # | Qué | Por qué no es opcional |
+|---|---|---|
+| 1 | Monorepo, NestJS, Prisma y la instancia de Cloud SQL | No hay dónde migrar |
+| 2 | El **seed** del semáforo: 9 estados y 12 transiciones con su rol y su `requires_reason` | Las tablas vacías no tienen reglas. El seed está en `Ventas/Semáforo Onboarding y Base de Datos.drawio`, página 3 |
+| 3 | `journal.journal` **particionado por mes** | Estándares de BD §9: retrofitearlo exige reescribir la tabla con la aplicación detenida |
+| 4 | Extensiones `postgis`, `pgcrypto`, `btree_gist` en `public` | La geocerca, los uuid y las restricciones de exclusión dependen de ellas |
+| 5 | Resolver el módulo del expediente del Colaborador | D-01 no le asigna uno. Provisional en `coverage/`; la alternativa es un módulo `personal/` y serían 11. Ver [[Estructura de Proyecto y Nomenclatura]] §3 |
+
+### El modelo vigente de Ventas
+
+**7 tablas** en `commercial`: `hotel`, `hotel_contact`, `prospect`, `prospect_state_history`, `contact_attempt`, `proposal`, `user_zone`. Ventas no crea ningún catálogo.
+
+La fuente es `Español/Arquitecturas/Ventas/Ventas - Modelo de Datos v2.drawio` — página 1 el ER, página 2 la normalización con las 5 desnormalizaciones deliberadas, página 3 las 9 restricciones en SQL. Los otros diagramas de esa carpeta son borradores anteriores.
+
+> [!warning] Lo que el modelo de Ventas todavía no puede afirmar
+> **ROSA no tiene fila que lo respalde.** El estado sí se trackea —`prospect_state_history` guarda cuándo entró, quién lo movió y por qué— pero los términos negociados no tienen dónde guardarse. `terms_and_conditions` se modela cuando se diseñe el Contrato, porque sus campos son los de `commercial.contract` + `contract_rate`: es su borrador, y modelar el hijo antes del padre es adivinar.
+
+---
+
+## D-16 · La librería de componentes se copia al repositorio: shadcn/ui en el web, react-native-reusables en el móvil
+
+**Decisión:** ninguna librería de componentes entra como dependencia de runtime. Se **copia el código**: **shadcn/ui** (sobre Radix) en `apps/web` y **react-native-reusables** (el mismo enfoque portado a NativeWind, sobre rn-primitives) en `apps/mobile`. Los tokens Oranje siguen siendo la única fuente de tema (D-12): las variables que shadcn espera se **derivan** de ellos, no las sustituyen.
+
+### Por qué
+
+**Es la única familia que cumple D-12 sin pelearse con ella.** D-12 decidió que un componente que existe en los dos lados se escribe dos veces con la misma API. Con librerías que se copian eso deja de ser un sacrificio y pasa a ser el modo natural: `<Button variant="primary">` tiene la misma firma en web y móvil, y cada plataforma su implementación.
+
+**El tema no se duplica.** shadcn se tematiza con variables CSS, así que el mapeo es una línea (`--primary: var(--o-500)`). Una librería con tema propio obliga a mantener dos definiciones del naranja Oranje sincronizadas a mano.
+
+**Los semáforos exigen variantes que ninguna librería trae.** Los 12 estados del [[Semáforo del Colaborador]] con sus `--st-*` no caben en un `variant="primary"` ajeno. Sobre código propio, agregar la variante es editar un `cva`.
+
+**La accesibilidad se hereda.** Radix y rn-primitives resuelven foco, teclado y `aria` en Dialog, Select y Dropdown — que es justo lo que sale mal cuando esos componentes se escriben a mano.
+
+**El código vive en el repo**, así que pasa por review y por el Storybook que [[Estándares de Desarrollo]] §8 exige para `packages/ui`. Un wrapper de un tercero no se puede documentar así.
+
+### Dónde vive cada cosa
+
+| Qué | Dónde | Quién lo consume |
+|---|---|---|
+| Primitivas de shadcn/ui | `packages/ui/src/components/ui/` | `apps/web` |
+| Composiciones Oranje (`SemaforoBadge`, `KpiCard`, `FlowStepper`) | `packages/ui/src/components/` | `apps/web` |
+| Componentes atados a estado, ruta o permiso | `apps/web/src/shared/components/` | solo esa app |
+| Primitivas de react-native-reusables y sus composiciones | `apps/mobile/src/shared/ui/` | solo `apps/mobile` |
+
+> [!important]
+> **Esto corrige una duplicación que ya existía.** [[Estructura de Proyecto y Nomenclatura]] listaba `Button, Modal, Table, StatusChip` en dos lugares a la vez —§4 en `apps/web/src/shared/components/` y §6 en `packages/ui/src/components/`— sin decir cuál manda. La CLI de shadcn escribe en **una** ruta configurada en `components.json`, así que la ambigüedad tenía que cerrarse: **lo reutilizable vive en `packages/ui`**, y `shared/components/` de la app queda para lo que depende de su store o su router.
+
+### Qué hay que ajustar al copiar
+
+| Lo que trae la librería | Lo que manda el vault | Qué se hace |
+|---|---|---|
+| Variables `--background`, `--primary`, `--ring`, `--radius` | Tokens Oranje de [[Convenciones de Diseño]] | Se declaran **derivadas** en `tokens.css`; ningún token Oranje se renombra ni se redefine |
+| Iconos de `lucide-react` | **Material Icons** (Round y Outlined) | Se cambia el import al copiar. El código es nuestro, es una edición mecánica |
+| Tipografía por defecto | **Montserrat** | Ya viene del preset compartido |
+| Archivos en `kebab-case` (`button.tsx`) | §7.1: componentes React en `PascalCase.tsx` | **Excepción acotada a `components/ui/`**: se conservan los nombres de shadcn para que `shadcn diff` siga sirviendo al actualizar. Fuera de esa carpeta rige §7.1 |
+| Nada equivalente a `--st-*` | Un color = un significado por semáforo | Los colores de semáforo **no** se mapean a variables de shadcn: son su propia escala, consumida por `SemaforoBadge` |
+
+### Lo que ninguna de las dos cubre
+
+Del catálogo de [[Convenciones de Diseño]] quedan sin equivalente el **KPI rico**, los **accesos rápidos**, el **stepper de flujo** y el **chip de semáforo**: se escriben como composiciones sobre las primitivas. Y las tablas de datos —requisiciones, timesheet, consolidado— se componen con **TanStack Table**, porque shadcn aporta el markup, no el ordenamiento, la paginación ni el filtrado.
+
+### Qué se descarta
+
+| Alternativa | Por qué no |
+|---|---|
+| **DaisyUI** | Trae su propio sistema de tema (`--p`, `--b1`) que habría que mantener sincronizado con los tokens Oranje, y **no existe en React Native**: NativeWind no interpreta sus clases semánticas, así que el móvil necesitaría otra librería y se pierde el "mismas clases en los dos lados" de D-12 |
+| Flowbite React / Preline UI | El mismo tema propio, y el catálogo apunta más a sitios de marketing que a pantallas de operación con tablas y formularios |
+| gluestack-ui v2 | Sí es universal sobre NativeWind, pero sus componentes son compartidos web/móvil: contradice D-12 de frente |
+| Radix, Base UI o React Aria a secas | Cero estilos. Son la base de shadcn, no un sustituto: usarlas solas es escribir treinta componentes antes de la primera pantalla |
+| Tailwind Plus (Catalyst) | Pago, solo React y sin camino a React Native |
+
+> [!warning]
+> **El riesgo que se asume está en el móvil.** react-native-reusables es un proyecto **comunitario** y su catálogo va detrás del de shadcn. Antes de la primera pantalla de `apps/mobile` hay que verificar que existan los componentes que el ponche necesita; lo que falte se escribe a mano sobre rn-primitives. Si faltara demasiado, la salida es **gluestack-ui v2** — y eso reabre D-12, no es un cambio de dependencia.
+
+> [!note]
+> **El Storybook obligatorio no alcanza al móvil.** [[Estándares de Desarrollo]] §8 lo exige para `packages/ui`, y los componentes del móvil viven en `apps/mobile/src/shared/ui/`. Quedan fuera a propósito: montar Storybook de React Native es una decisión aparte que hoy no se justifica.
+
+---
+
+## D-17 · Las tres librerías que el frontend necesitaba y ningún documento nombraba
+
+**Decisión:** **React Router 8** en *data mode*, **Recharts** para gráficas y **`@vis.gl/react-google-maps`** para el mapa. Ninguna estaba elegida: [[Estructura de Proyecto y Nomenclatura]] §4 dibujaba `app/router.tsx` sin decir con qué, y el maquetado de Ventas pedía un embudo y un mapa sin librería asignada.
+
+### Router — React Router 8, paquete `react-router`, *data mode*
+
+Dos precisiones que no son cosméticas:
+
+- **El paquete es `react-router`, no `react-router-dom`.** Desde la v7 —la que fusionó Remix— está unificado y `-dom` quedó como alias. Instalar el viejo es arrastrar un nombre muerto.
+- **Va en *data mode* (`createBrowserRouter`), no en *framework mode*.** El framework mode trae SSR y rutas por archivo; **D-04 dice que `apps/web` es un artefacto estático detrás del Load Balancer**, sin servidor que lo renderice. Elegir framework mode contradice D-04 de frente.
+
+**TanStack Router descartado:** su ventaja es el type-safety de rutas, y se paga con un plugin de build y un árbol de rutas generado. El pipeline ya carga suficiente.
+
+### Gráficas — Recharts
+
+El dashboard de Ventas necesita un **embudo de conversión**, y ahí se decide:
+
+| Alternativa | Embudo | Por qué no gana |
+|---|---|---|
+| **Recharts** | `<FunnelChart>` nativo | — |
+| Chart.js + `react-chartjs-2` | **No tiene**; requiere `chartjs-chart-funnel`, plugin comunitario | Anima muy bien, pero obliga a un plugin de terceros justo para la gráfica que sí se necesita |
+| Apache ECharts | `series.type: 'funnel'` | Las mejores transiciones, y ~3× el peso. Un dashboard interno no lo justifica |
+
+Recharts además es **componentes de React**, así que no hay que envolver una API imperativa para que conviva con el render declarativo del resto.
+
+**Sí anima**, que era el requisito: animación de entrada y de cambio de datos, configurable por serie.
+
+> [!warning]
+> **La paleta de series sigue abierta.** Recharts no trae colores propios que respeten el sistema, y los del Portfolio (#945BFF, #00BEA5, #E12BFF) son del template de referente, no de Oranje — ver pendiente 5 de [[Convenciones de Diseño]]. Hasta que exista esa escala, una gráfica de más de dos series no tiene con qué pintarse sin inventar color.
+
+### Mapa — `@vis.gl/react-google-maps` sobre Google Maps
+
+Es la librería **oficial de Google para React** (sustituyó a `@react-google-maps/api`). Google Maps era la elección del usuario; lo que hay que asentar son sus tres consecuencias:
+
+1. **La API key es pública.** Va dentro del bundle estático, no hay dónde esconderla. Se protege con **restricción por referrer HTTP** en la consola de GCP y limitando la key a Maps JavaScript API. Es la **excepción explícita a D-07**: no todo secreto del frontend cabe en Secret Manager, porque este no es un secreto — es un identificador con control de origen.
+2. **Cloud Armor y la CSP tienen que dejar pasar `maps.googleapis.com`.** Hoy la web no llama a ningún host externo; este es el primero.
+3. **Maps JavaScript API cobra por carga de mapa.** *Mi Territorio* del BD abre el mapa en cada sesión. El costo escala con usuarios activos, no con datos.
+
+### Qué queda fuera a propósito
+
+La **tipografía** no es una librería: Montserrat se sirve como fuente variable desde el bundle (`@fontsource-variable/montserrat`), por la misma razón que el mapa se documenta — evitar peticiones a hosts externos que después hay que abrir en la CSP.
+
+---
+
+## Decisiones pendientes
+
+1. **RR-05 — exclusividad absoluta o cobertura temporal.** [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] dice que un colaborador no puede estar activo en dos hoteles simultáneamente; el repositorio de código vigente permite que un permanente cubra solicitudes temporales. Cambia la restricción de exclusión del modelo.
+2. **Nube definitiva.** GCP es defendible por Cloud Run y Firebase. La decisión debe basarse en qué domina el equipo, no en capacidades de mensajería —equivalentes en ambas nubes.
+3. **Número de marcas del ponche.** El diseño elegido captura tres (`CLOCK_IN`, `LUNCH`, `CLOCK_OUT`); [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] define seis. Cambia el cálculo de horas pagables. Ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] §5.
+4. **Excepción al ponche bloqueado.** Falta la regla del ponche manual cuando el GPS falla dentro de la propiedad.
+5. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
+
+> [!note]
+> **Cerradas en esta ronda:** el idioma del esquema (D-11) y el nombre inglés del Colaborador, que es **`Worker`** desde el 2026-08-06.
+
+---
+
+## Relacionado
+
+- [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]]
+- [[Arquitecturas/_Globales/Árbol de Reglas de Negocio|Árbol de Reglas de Negocio]]
+- [[Arquitecturas/_Globales/Índice de Arquitecturas|Índice de Arquitecturas]]
+- [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] — fuente de verdad
+- [[Arquitecturas/_GUIA - Plantilla de Arquitectura de Departamento|_GUIA - Plantilla de Arquitectura de Departamento]]

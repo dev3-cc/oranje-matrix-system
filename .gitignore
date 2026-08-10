@@ -25,3 +25,9 @@ Thumbs.db
 !.claude/agents/
 !.claude/skills/
 .claude/settings.local.json
+
+# draw.io: archivos temporales y de respaldo que crea al editar
+.$*.dtmp
+.$*.bkp
+*.drawio.bkp
+*.drawio.dtmp
