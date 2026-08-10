@@ -16,10 +16,10 @@ Agrupación de los RFs definidos en [[03 - Tabla de Requerimientos]] según el m
 
 Vista de entrada del rol. Concentra KPIs personales (del BD) o consolidados del territorio (del BDC) y próximos seguimientos. No tiene RFs propios — los KPIs vienen de otros módulos.
 
-| ID  | Requerimiento                              | Rol(es) | Prioridad |
-| --- | ------------------------------------------ | ------- | --------- |
-| —   | KPIs personales (BD: mi territorio)        | BD      | 🔴 Alta   |
-| —   | KPIs del equipo y embudo de conversión (BDC) | BDC   | 🔴 Alta   |
+| ID  | Requerimiento                                | Rol(es) | Prioridad |
+| --- | -------------------------------------------- | ------- | --------- |
+| —   | KPIs personales (BD: mi territorio)          | BD      | 🔴 Alta   |
+| —   | KPIs del equipo y embudo de conversión (BDC) | BDC     | 🔴 Alta   |
 
 ---
 
@@ -148,12 +148,12 @@ Automatizaciones internas que el usuario no ve directamente pero ocurren detrás
 
 ## ⚙️ No Funcionales (Transversal)
 
-| ID       | Requerimiento                | Prioridad |
-| -------- | ---------------------------- | --------- |
-| RNF-V-01 | Tiempo de respuesta < 2s     | 🔴 Alta   |
-| RNF-V-02 | Disponibilidad 99.5%         | 🔴 Alta   |
-| RNF-V-03 | Trazabilidad de acciones     | 🔴 Alta   |
-| RNF-V-04 | Mobile prioritario para BD   | 🔴 Alta   |
+| ID       | Requerimiento              | Prioridad |
+| -------- | -------------------------- | --------- |
+| RNF-V-01 | Tiempo de respuesta < 2s   | 🔴 Alta   |
+| RNF-V-02 | Disponibilidad 99.5%       | 🔴 Alta   |
+| RNF-V-03 | Trazabilidad de acciones   | 🔴 Alta   |
+| RNF-V-04 | Mobile prioritario para BD | 🔴 Alta   |
 
 ---
 

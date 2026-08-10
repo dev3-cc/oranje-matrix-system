@@ -12,18 +12,18 @@ aliases:
 
 ## Símbolos / Colores
 
-| Símbolo / Color   | Significado                                     | Aplica A                              |
-| ----------------- | ----------------------------------------------- | ------------------------------------- |
-| ✅ **CRUD**        | Acceso completo: Crear, Ver, Editar, Eliminar   | Administrador                         |
-| ➕ **Crear**       | Solo puede crear registros nuevos               | BD / BDC                              |
-| 👁️ **Ver**       | Solo lectura / consulta                         | Todos los roles                       |
-| 📝 **C · E**      | Crear y Editar (sin eliminar)                   | BD / BDC                              |
-| ✓ **Aprobar**     | Puede aprobar la acción (validar T&C, conversión) | BDC                                 |
-| ✗ **Rechazar**    | Puede rechazar la acción                        | BDC                                   |
-| 🔍 **Investigar** | Puede revisar y resolver casos / estancamientos | BDC                                   |
-| ⚙️ **Auto**       | Acción ejecutada automáticamente por el sistema | Sistema (backend)                     |
-| —                 | Sin permiso – acceso denegado                   | Según contexto                        |
-| ⏸️                | En pausa (Admin)                                | Administrador                         |
+| Símbolo / Color   | Significado                                       | Aplica A          |
+| ----------------- | ------------------------------------------------- | ----------------- |
+| ✅ **CRUD**        | Acceso completo: Crear, Ver, Editar, Eliminar     | Administrador     |
+| ➕ **Crear**       | Solo puede crear registros nuevos                 | BD / BDC          |
+| 👁️ **Ver**       | Solo lectura / consulta                           | Todos los roles   |
+| 📝 **C · E**      | Crear y Editar (sin eliminar)                     | BD / BDC          |
+| ✓ **Aprobar**     | Puede aprobar la acción (validar T&C, conversión) | BDC               |
+| ✗ **Rechazar**    | Puede rechazar la acción                          | BDC               |
+| 🔍 **Investigar** | Puede revisar y resolver casos / estancamientos   | BDC               |
+| ⚙️ **Auto**       | Acción ejecutada automáticamente por el sistema   | Sistema (backend) |
+| —                 | Sin permiso – acceso denegado                     | Según contexto    |
+| ⏸️                | En pausa (Admin)                                  | Administrador     |
 
 ---
 

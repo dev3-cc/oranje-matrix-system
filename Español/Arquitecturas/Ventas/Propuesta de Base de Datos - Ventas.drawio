@@ -1,0 +1,344 @@
+<mxfile host="app.diagrams.net" compressed="false" pages="4">
+  <diagram id="ventas-minimo" name="0 - Mínimo esencial (3 tablas)">
+    <mxGraphModel dx="1445" dy="837" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="m-titulo" value="&lt;b&gt;Lo esencial de Ventas — 3 tablas&lt;/b&gt;&lt;br&gt;Y ninguna es nueva: las tres ya están definidas en Modelo de Datos. Lo mínimo para operar el pipeline y producir el dinero (pay rate y bill rate) no exige inventar nada." style="text;html=1;align=left;verticalAlign=top;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="760" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="m-hotel" value="&lt;b&gt;commercial.hotel&lt;/b&gt;&lt;br&gt;&lt;i&gt;el prospecto y el cliente son esta misma fila&lt;/i&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; bigserial&lt;br&gt;name text NN&lt;br&gt;email citext · phone varchar(20)&lt;br&gt;contact_name text&lt;br&gt;zone_id → catalogs.zone NN&lt;br&gt;assigned_bd_id → identity.user NN&lt;br&gt;&lt;b&gt;onboarding_state_id&lt;/b&gt; → status_light_state NN&lt;br&gt;proposal_file_path text&lt;br&gt;proposal_sent_at timestamptz&lt;br&gt;created_at · updated_at timestamptz NN&lt;br&gt;&lt;br&gt;&lt;i&gt;Aquí vive el semáforo. Cambiar de estado es un&lt;br&gt;UPDATE de una columna, no mover una fila.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="350" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="m-contract" value="&lt;b&gt;commercial.contract&lt;/b&gt;&lt;br&gt;&lt;i&gt;el T&amp;amp;C es este mismo registro sin firmar&lt;/i&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; bigserial&lt;br&gt;hotel_id → hotel NN&lt;br&gt;validity daterange NN&lt;br&gt;week_start · week_end smallint NN&lt;br&gt;holidays jsonb NN&lt;br&gt;calendar jsonb NN&lt;br&gt;overtime_threshold numeric(5,2) NN&lt;br&gt;invoice_split_by_month boolean NN&lt;br&gt;validated_by → identity.user &lt;i&gt;(BDC — RR-V-10)&lt;/i&gt;&lt;br&gt;validated_at timestamptz&lt;br&gt;signed_at timestamptz &lt;i&gt;(cierre en PINK — RR-V-15)&lt;/i&gt;&lt;br&gt;&lt;br&gt;&lt;i&gt;Sin firmar = borrador negociándose.&lt;br&gt;Firmado = contrato. Un solo registro, dos etapas.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="440" y="100" width="350" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="m-rate" value="&lt;b&gt;commercial.contract_rate&lt;/b&gt;&lt;br&gt;&lt;i&gt;la única que no puede ser columna&lt;/i&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; bigserial&lt;br&gt;contract_id → contract NN&lt;br&gt;position_id → catalogs.position NN&lt;br&gt;pay_rate numeric(10,2) NN&lt;br&gt;bill_rate numeric(10,2) NN&lt;br&gt;overtime_rate numeric(10,2) NN&lt;br&gt;unique (contract_id, position_id)&lt;br&gt;&lt;br&gt;&lt;i&gt;Son N filas, una por posición: un Chef y un&lt;br&gt;Housekeeper no cuestan lo mismo. De estas tres&lt;br&gt;columnas sale toda la nómina y toda la factura.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="440" y="420" width="350" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="m-compartidas" value="&lt;b&gt;No las crea Ventas — ya existen&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;catalogs.status_light&lt;/b&gt; · &lt;b&gt;status_light_state&lt;/b&gt; · &lt;b&gt;status_light_transition&lt;/b&gt;&lt;br&gt;Tres tablas para los &lt;b&gt;7 semáforos&lt;/b&gt; del sistema, no para el de onboarding. Los 9 colores son 9 filas.&lt;br&gt;&lt;br&gt;&lt;b&gt;catalogs.zone&lt;/b&gt; · &lt;b&gt;catalogs.position&lt;/b&gt;&lt;br&gt;Catálogos del vault.&lt;br&gt;&lt;br&gt;&lt;b&gt;identity.user&lt;/b&gt; · &lt;b&gt;role&lt;/b&gt; · &lt;b&gt;permission&lt;/b&gt;&lt;br&gt;El Usuario del Hotel es una fila con hotel_id.&lt;br&gt;&lt;br&gt;&lt;b&gt;journal.entry&lt;/b&gt;&lt;br&gt;Append-only. Cubre RF-V-28 sin tabla propia." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="420" width="350" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="m-pierdes" value="&lt;b&gt;Qué pierdes con este mínimo&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;1. El historial de contactos.&lt;/b&gt; Sin &lt;i&gt;interaction&lt;/i&gt;, las visitas en frío y los intentos de contacto (RF-V-03, RF-V-06) no tienen dónde vivir, y el reporte de estancamiento del BDC no tiene de dónde salir. Mitigación: asentarlos como filas del journal.&lt;br&gt;&lt;br&gt;&lt;b&gt;2. Las versiones de la propuesta.&lt;/b&gt; Aquí la propuesta son dos columnas en hotel: el archivo y la fecha de envío. Sirve para RF-V-04 y RF-V-05, pero al reactivar desde RED o BROWN la propuesta anterior se sobrescribe. Si el negocio necesita comparar la primera con la tercera, hace falta la tabla.&lt;br&gt;&lt;br&gt;&lt;b&gt;3. El T&amp;amp;C de un hotel que nunca cerró.&lt;/b&gt; Con el borrador dentro de contract, un prospecto rechazado deja un contrato sin firmar. Es aceptable si el EXCLUDE de solapamiento se aplica solo a los firmados:&lt;br&gt;&lt;font face=&quot;Courier New&quot;&gt;EXCLUDE ... WHERE (signed_at IS NOT NULL)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57C00;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="850" y="100" width="400" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="m-crece" value="&lt;b&gt;Por dónde crece cuando haga falta&lt;/b&gt;&lt;br&gt;&lt;br&gt;Las tres tablas que corté no se pierden: están en la página 1 con sus columnas. El orden en que las agregaría, si el negocio las pide:&lt;br&gt;&lt;br&gt;&lt;b&gt;1º interaction&lt;/b&gt; — en cuanto el BDC pida el reporte de Café y Negro.&lt;br&gt;&lt;b&gt;2º terms_and_conditions&lt;/b&gt; — en cuanto un T&amp;amp;C rechazado ensucie la tabla de contratos.&lt;br&gt;&lt;b&gt;3º proposal&lt;/b&gt; — en cuanto alguien necesite la propuesta anterior.&lt;br&gt;&lt;br&gt;&lt;i&gt;Las tres son aditivas: ninguna obliga a cambiar hotel ni contract. Eso es lo que hace seguro empezar con el mínimo.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#0288D1;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="850" y="580" width="400" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="m-e1" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=1;exitY=0.3;entryX=0;entryY=0.3;" edge="1" parent="1" source="m-hotel" target="m-contract">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="m-e2" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="m-contract" target="m-rate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="ventas-er" name="1 - Esquema commercial (ER)">
+    <mxGraphModel dx="2699" dy="13526" grid="1" gridSize="13" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="12000" pageHeight="12000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="titulo" parent="1" style="text;html=1;align=left;verticalAlign=top;fontSize=13;" value="&lt;b&gt;Propuesta de base de datos — Ventas / Onboarding&lt;/b&gt;&lt;br&gt;Nomenclatura de Estructura de Proyecto y Nomenclatura §7 con &lt;b&gt;dominio en inglés&lt;/b&gt;: tabla snake_case singular calificada por esquema, columnas snake_case, enums UPPER_SNAKE_CASE, sin acentos ni eñes en identificadores." vertex="1">
+          <mxGeometry height="60" width="960" x="40" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="leyenda" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#666666;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;Leyenda&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#388E3C&quot;&gt;■&lt;/font&gt; Ya definida en Modelo de Datos (se traduce, no se inventa)&lt;br&gt;&lt;font color=&quot;#F57C00&quot;&gt;■&lt;/font&gt; Nueva — propuesta de este diagrama&lt;br&gt;&lt;font color=&quot;#9E9E9E&quot;&gt;■&lt;/font&gt; Otro esquema o catálogo compartido&lt;br&gt;&lt;br&gt;PK en &lt;b&gt;negritas&lt;/b&gt; · FK con →&lt;br&gt;NN = NOT NULL&lt;br&gt;&lt;br&gt;&lt;b&gt;El conteo real:&lt;/b&gt; Ventas crea &lt;b&gt;6 tablas&lt;/b&gt; en commercial — 3 ya decididas (hotel, contract, contract_rate) y 3 nuevas (interaction, proposal, terms_and_conditions). Las 6 grises no se crean aquí: son catálogos compartidos por los 7 departamentos." vertex="1">
+          <mxGeometry height="290" width="320" x="1080" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="t-light" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;catalogs.status_light&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; smallserial&lt;br&gt;code varchar(40) NN unique&lt;br&gt;name text NN&lt;br&gt;&lt;br&gt;&lt;i&gt;7 filas. Una es ONBOARDING.&lt;/i&gt;" vertex="1">
+          <mxGeometry height="130" width="240" x="40" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="t-state" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;catalogs.status_light_state&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; serial&lt;br&gt;status_light_id → status_light NN&lt;br&gt;code varchar(40) NN&lt;br&gt;color varchar(20) NN&lt;br&gt;name text NN&lt;br&gt;description text&lt;br&gt;unique (status_light_id, code)&lt;br&gt;unique (id, status_light_id)&lt;br&gt;&lt;br&gt;&lt;i&gt;Los 9 estados del onboarding son filas.&lt;br&gt;code en inglés; name en español (UI).&lt;/i&gt;" vertex="1">
+          <mxGeometry height="200" width="240" x="40" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="t-trans" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;catalogs.status_light_transition&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; serial&lt;br&gt;from_state_id → status_light_state NN&lt;br&gt;to_state_id → status_light_state NN&lt;br&gt;authorized_role_id → identity.role NN&lt;br&gt;requires_reason boolean NN default false&lt;br&gt;requires_evidence boolean NN default false&lt;br&gt;unique (from_state_id, to_state_id, authorized_role_id)&lt;br&gt;&lt;br&gt;&lt;i&gt;12 filas para onboarding. &quot;La conversión es&lt;br&gt;exclusiva del BDC&quot; (RR-V-01) es una fila.&lt;/i&gt;" vertex="1">
+          <mxGeometry height="220" width="240" x="40" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="t-zone" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;catalogs.zone&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; serial · name text NN&lt;br&gt;&lt;br&gt;&lt;i&gt;Agrupa hoteles para asignar Inspector.&lt;br&gt;No es la geocerca.&lt;/i&gt;" vertex="1">
+          <mxGeometry height="110" width="240" x="40" y="710" as="geometry" />
+        </mxCell>
+        <mxCell id="t-position" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;catalogs.position&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; serial · name text NN&lt;br&gt;&lt;br&gt;&lt;i&gt;Catálogo de Posiciones. Las tarifas&lt;br&gt;del contrato cuelgan de aquí.&lt;/i&gt;" vertex="1">
+          <mxGeometry height="110" width="240" x="40" y="840" as="geometry" />
+        </mxCell>
+        <mxCell id="t-user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;identity.user&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; bigserial&lt;br&gt;email citext NN unique&lt;br&gt;role_id → identity.role NN&lt;br&gt;hotel_id → commercial.hotel&lt;br&gt;&lt;br&gt;&lt;i&gt;El Usuario del Hotel (RF-V-11) es una fila&lt;br&gt;con hotel_id, creada antes de convertir&lt;br&gt;(RR-V-02). Los permisos son filas de&lt;br&gt;identity.permission, no columnas.&lt;/i&gt;" vertex="1">
+          <mxGeometry height="170" width="240" x="40" y="970" as="geometry" />
+        </mxCell>
+        <mxCell id="t-hotel" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;commercial.hotel&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; bigserial&lt;br&gt;name text NN&lt;br&gt;email citext · phone varchar(20)&lt;br&gt;contact_name text · contact_role text&lt;br&gt;business_need text&lt;br&gt;zone_id → catalogs.zone NN&lt;br&gt;assigned_bd_id → identity.user NN&lt;br&gt;&lt;b&gt;onboarding_state_id&lt;/b&gt; → status_light_state NN&lt;br&gt;status_light_id smallint NN &lt;i&gt;(fijo: ONBOARDING)&lt;/i&gt;&lt;br&gt;geofence geography(Point,4326)&lt;br&gt;geofence_radius_m integer&lt;br&gt;created_at · updated_at timestamptz NN&lt;br&gt;&lt;br&gt;&lt;i&gt;Sin columna is_prospect: prospecto y cliente&lt;br&gt;son la misma fila en distinto estado.&lt;/i&gt;" vertex="1">
+          <mxGeometry height="300" width="330" x="340" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="t-interaction" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;commercial.interaction&lt;/b&gt; &lt;font color=&quot;#B85C00&quot;&gt;NUEVA&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; bigserial&lt;br&gt;hotel_id → hotel NN&lt;br&gt;type interaction_type NN&lt;br&gt;&lt;i&gt;enum: COLD_VISIT | CALL | EMAIL&lt;/i&gt;&lt;br&gt;outcome text · notes text&lt;br&gt;lat numeric(9,6) · lng numeric(9,6)&lt;br&gt;user_id → identity.user NN&lt;br&gt;occurred_at timestamptz NN&lt;br&gt;&lt;br&gt;&lt;i&gt;RF-V-03 visita en frío · RF-V-06 intentos&lt;br&gt;de contacto · RF-V-23 pines de Mi Territorio&lt;/i&gt;" vertex="1">
+          <mxGeometry height="220" width="330" x="340" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="t-descartadas" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9E9E9E;dashed=1;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;Descartadas — no llegan a la primera migración&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;s&gt;commercial.proposal_template&lt;/s&gt;&lt;br&gt;Una plantilla no tiene ciclo de vida propio: es configuración. Va como seed o archivo. RF-V-04 la menciona, no la exige.&lt;br&gt;&lt;br&gt;&lt;s&gt;commercial.bd_zone&lt;/s&gt;&lt;br&gt;Solo se justifica si un BD cubre varias zonas. Si es uno a uno, es &lt;b&gt;identity.user.zone_id&lt;/b&gt;, una columna. El vault dice &quot;zonas asignadas&quot; en plural pero no lo confirma: se resuelve cuando haga falta, no antes.&lt;br&gt;&lt;br&gt;&lt;i&gt;Criterio aplicado: una tabla se justifica si la cosa ocurre muchas veces por hotel, o si tiene su propia vida (se crea, se valida, se envía, con autor y fecha). Todo lo demás es columna.&lt;/i&gt;" vertex="1">
+          <mxGeometry height="330" width="330" x="340" y="790" as="geometry" />
+        </mxCell>
+        <mxCell id="t-views" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#5E35B1;strokeWidth=2;dashed=1;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;commercial.prospect&lt;/b&gt; y &lt;b&gt;commercial.client&lt;/b&gt;&lt;br&gt;&lt;i&gt;VISTAS, no tablas&lt;/i&gt;&lt;br&gt;&lt;br&gt;&lt;font face=&quot;Courier New&quot;&gt;CREATE VIEW commercial.client AS&lt;br&gt;SELECT h.* FROM commercial.hotel h&lt;br&gt;JOIN catalogs.status_light_state s&lt;br&gt;&amp;nbsp;&amp;nbsp;ON s.id = h.onboarding_state_id&lt;br&gt;WHERE s.code IN (&#39;ORANGE&#39;,&#39;BLACK&#39;);&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;font face=&quot;Courier New&quot;&gt;-- prospect: los otros 7 códigos&lt;/font&gt;&lt;br&gt;&lt;br&gt;Se consultan como tablas y no duplican nada. Mapean uno a uno con los módulos del sidebar: Pipeline lee &lt;b&gt;prospect&lt;/b&gt; (RF-V-22), Clientes Activos lee &lt;b&gt;client&lt;/b&gt; (RF-V-29).&lt;br&gt;&lt;br&gt;&lt;i&gt;BLACK cuenta como cliente porque RF-V-29 incluye la gestión del cliente pausado. Con tablas separadas, reactivar un BLACK a LIGHT_BLUE obligaría a mudar la fila de client a prospect — y a devolverla si vuelve a cerrar.&lt;/i&gt;" vertex="1">
+          <mxGeometry height="380" width="300" x="730" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="t-proposal" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;commercial.proposal&lt;/b&gt; &lt;font color=&quot;#B85C00&quot;&gt;NUEVA&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; bigserial&lt;br&gt;hotel_id → hotel NN&lt;br&gt;version smallint NN&lt;br&gt;file_path text &lt;i&gt;(Cloud Storage)&lt;/i&gt;&lt;br&gt;services text · prices jsonb · conditions text&lt;br&gt;created_by → identity.user NN&lt;br&gt;created_at timestamptz NN&lt;br&gt;sent_by → identity.user&lt;br&gt;sent_at timestamptz&lt;br&gt;unique (hotel_id, version)&lt;br&gt;&lt;br&gt;&lt;i&gt;RF-V-04 · RF-V-05 · RR-V-09 (solo en GREEN)&lt;/i&gt;" vertex="1">
+          <mxGeometry height="250" width="300" x="730" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="t-tyc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;commercial.terms_and_conditions&lt;/b&gt; &lt;font color=&quot;#B85C00&quot;&gt;NUEVA&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; bigserial&lt;br&gt;hotel_id → hotel NN&lt;br&gt;pay_rate numeric(10,2) NN&lt;br&gt;bill_rate numeric(10,2) NN&lt;br&gt;overtime_rate numeric(10,2) NN&lt;br&gt;holidays jsonb NN&lt;br&gt;calendar jsonb NN&lt;br&gt;created_by → identity.user NN&lt;br&gt;created_at timestamptz NN&lt;br&gt;validated_by → identity.user &lt;i&gt;(BDC)&lt;/i&gt;&lt;br&gt;validated_at timestamptz&lt;br&gt;&lt;br&gt;&lt;i&gt;RF-V-08 crear · RF-V-10 validar&lt;br&gt;RR-V-10: los 5 campos son obligatorios&lt;br&gt;Prerrequisito para entrar a PINK.&lt;/i&gt;" vertex="1">
+          <mxGeometry height="290" width="300" x="730" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="t-contract" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;commercial.contract&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; bigserial&lt;br&gt;hotel_id → hotel NN&lt;br&gt;terms_and_conditions_id → t_and_c unique&lt;br&gt;validity daterange NN&lt;br&gt;week_start · week_end smallint NN&lt;br&gt;holidays jsonb&lt;br&gt;overtime_threshold numeric(5,2) NN&lt;br&gt;&lt;i&gt;40 h por colaborador y por requisición (D-10)&lt;/i&gt;&lt;br&gt;invoice_split_by_month boolean NN&lt;br&gt;&lt;br&gt;&lt;i&gt;RR-V-15: resulta del cierre exitoso en PINK.&lt;/i&gt;" vertex="1">
+          <mxGeometry height="230" width="320" x="1080" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="t-rate" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;commercial.contract_rate&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; bigserial&lt;br&gt;contract_id → contract NN&lt;br&gt;position_id → catalogs.position NN&lt;br&gt;pay_rate numeric(10,2) NN&lt;br&gt;bill_rate numeric(10,2) NN&lt;br&gt;overtime_rate numeric(10,2) NN&lt;br&gt;unique (contract_id, position_id)&lt;br&gt;&lt;br&gt;&lt;i&gt;Tarifa por posición: un Chef y un&lt;br&gt;Housekeeper no cuestan lo mismo.&lt;br&gt;pay_rate nunca sale en la factura;&lt;br&gt;bill_rate nunca en el recibo.&lt;/i&gt;" vertex="1">
+          <mxGeometry height="230" width="320" x="1080" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="t-journal" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" value="&lt;b&gt;journal.entry&lt;/b&gt; (append-only)&lt;br&gt;&lt;br&gt;&lt;b&gt;id&lt;/b&gt; bigserial&lt;br&gt;entity_type text NN · entity_id bigint NN&lt;br&gt;event_type text NN &lt;i&gt;(STATUS_CHANGED)&lt;/i&gt;&lt;br&gt;actor_user_id → identity.user NN&lt;br&gt;actor_role text NN&lt;br&gt;payload jsonb NN · occurred_at timestamptz NN&lt;br&gt;&lt;br&gt;&lt;i&gt;RF-V-28 y RR-V-11 no necesitan tabla nueva.&lt;br&gt;Modelo de Datos la escribe como journal;&lt;br&gt;aquí es journal.entry para no repetir&lt;br&gt;el nombre del esquema.&lt;/i&gt;" vertex="1">
+          <mxGeometry height="200" width="320" x="1080" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="r1" edge="1" parent="1" source="t-light" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=1;exitY=0.5;entryX=1;entryY=0.15;" target="t-state">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2" edge="1" parent="1" source="t-hotel" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERone;startArrow=ERmany;fontSize=10;exitX=0;exitY=0.4;entryX=1;entryY=0.4;" target="t-state" value="onboarding_state_id">
+          <mxGeometry relative="1" x="1" y="40" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r3" edge="1" parent="1" source="t-zone" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=1;exitY=0.4;entryX=0;entryY=0.75;" target="t-hotel">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r4" edge="1" parent="1" source="t-hotel" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="t-interaction">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r5" edge="1" parent="1" source="t-hotel" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=1;exitY=0.25;entryX=0;entryY=0.3;" target="t-proposal">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r6" edge="1" parent="1" source="t-hotel" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=1;exitY=0.8;entryX=0;entryY=0.2;" target="t-tyc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r8" edge="1" parent="1" source="t-tyc" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeWidth=3;strokeColor=#C2185B;fontSize=10;dashed=1;exitX=1;exitY=0.3;entryX=0;entryY=0.8;" target="t-contract" value="RR-V-15&lt;br&gt;el cierre en PINK lo convierte">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r9" edge="1" parent="1" source="t-contract" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="t-rate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r10" edge="1" parent="1" source="t-position" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=1;exitY=0.5;entryX=0;entryY=0.6;" target="t-rate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r13" edge="1" parent="1" source="t-user" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERone;startArrow=ERmany;fontSize=10;exitX=1;exitY=0.6;entryX=0;entryY=0.95;" target="t-hotel" value="hotel_id&lt;br&gt;(Usuario del Hotel)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r14" edge="1" parent="1" source="t-trans" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="t-state">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-1" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="&lt;pre&gt;&lt;font face=&quot;Helvetica&quot;&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;SEMAFORO&lt;/span&gt;&lt;/font&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="240" width="195" x="2314" y="156" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-2" parent="AFFGkru8kYR9kzl3Do_p-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;GRIS&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-3" parent="AFFGkru8kYR9kzl3Do_p-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;AZUL CLARO&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-9" parent="AFFGkru8kYR9kzl3Do_p-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;MARILLO &lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-62" parent="AFFGkru8kYR9kzl3Do_p-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;VERDE&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-8" parent="AFFGkru8kYR9kzl3Do_p-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;ROSA&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-4" parent="AFFGkru8kYR9kzl3Do_p-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;NARANJA&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-16" parent="AFFGkru8kYR9kzl3Do_p-1" style="text;strokeColor=#82b366;fillColor=#d5e8d4;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;FK_SUB_ESTADOS&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-5" parent="1" style="text;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;GRIS (BD)&#xa;  ↓&#xa;AZUL CLARO (BD)&#xa;  ↓&#xa;VERDE (BD) — Propuesta Personalizada&#xa;  ↓&#xa;AMARILLO (BD + BDC apoyo) — Documento T&amp;amp;C&#xa;  ↓&#xa;ROSA (BD + BDC) — Negociación&#xa;  ↓ (BDC aprueba)&#xa;NARANJA — Trigger Automático → Hotel cliente activo&#xa;&#xa;Ramas alternas:&#xa;  • ROJO (BD) — Rechazo → reactivar a Azul Claro&#xa;  • CAFÉ (BDC) — Estancamiento → desbloquear a Azul Claro&#xa;  • NEGRO (BDC) — Cliente pausado → reactivar a Azul Claro&#xa;&#xa;&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="210" width="338" x="1196" y="-299" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-18" edge="1" parent="1" source="AFFGkru8kYR9kzl3Do_p-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="AFFGkru8kYR9kzl3Do_p-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-10" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="SUB_ESTADOS" vertex="1">
+          <mxGeometry height="120" width="195" x="2587" y="195" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-11" parent="AFFGkru8kYR9kzl3Do_p-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;ROJO&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-12" parent="AFFGkru8kYR9kzl3Do_p-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;CAFE&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-13" parent="AFFGkru8kYR9kzl3Do_p-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;NEGRO&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-19" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#bac8d3;strokeColor=#23445d;" value="HOTEL&amp;nbsp;" vertex="1">
+          <mxGeometry height="180" width="195" x="2431" y="-206" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-20" parent="AFFGkru8kYR9kzl3Do_p-19" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;CORDENADAS&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-55" parent="AFFGkru8kYR9kzl3Do_p-19" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;IMAGEN_HOTEL&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-36" parent="AFFGkru8kYR9kzl3Do_p-19" style="text;strokeColor=#23445d;fillColor=#bac8d3;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;FK_CONTACTOS&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-58" parent="AFFGkru8kYR9kzl3Do_p-19" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;TELEFONO_GENERAL&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-23" parent="AFFGkru8kYR9kzl3Do_p-19" style="text;strokeColor=#b85450;fillColor=#f8cecc;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre style=&quot;text-align: center;&quot;&gt;FK_&lt;font face=&quot;Helvetica&quot;&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;SEMAFORO&lt;/span&gt;&lt;/font&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-26" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;p&gt;El BD recopila datos: nombre, email, teléfono, contacto, necesidad. Pasa a Azul Claro.&lt;/p&gt;" vertex="1">
+          <mxGeometry height="78" width="221" x="1400" y="-26" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-27" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#bac8d3;strokeColor=#23445d;" value="CONTACTOS HOTEL" vertex="1">
+          <mxGeometry height="210" width="195" x="2028" y="-39" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-28" parent="AFFGkru8kYR9kzl3Do_p-27" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;NOMBRE&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-29" parent="AFFGkru8kYR9kzl3Do_p-27" style="text;strokeColor=#A50040;fillColor=#d80073;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontColor=#ffffff;" value="&lt;pre&gt;FK_ROL&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-49" parent="AFFGkru8kYR9kzl3Do_p-27" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;TELEFONO&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-30" parent="AFFGkru8kYR9kzl3Do_p-27" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;NUMERO&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-54" parent="AFFGkru8kYR9kzl3Do_p-27" style="text;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;MAIL&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-31" parent="AFFGkru8kYR9kzl3Do_p-27" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;CORREO&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-37" edge="1" parent="1" source="AFFGkru8kYR9kzl3Do_p-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.133;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="AFFGkru8kYR9kzl3Do_p-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2652" y="-40.97" />
+              <mxPoint x="2652" y="65.03" />
+              <mxPoint x="2294" y="65.03" />
+              <mxPoint x="2294" y="183.93" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-38" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d80073;strokeColor=#A50040;fontColor=#ffffff;" value="ROLES" vertex="1">
+          <mxGeometry height="90" width="195" x="1833" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-39" parent="AFFGkru8kYR9kzl3Do_p-38" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;ROL&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-40" parent="AFFGkru8kYR9kzl3Do_p-38" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;DEPARTAMENTO&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-43" edge="1" parent="1" source="AFFGkru8kYR9kzl3Do_p-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.015;entryY=0.72;entryDx=0;entryDy=0;entryPerimeter=0;" target="AFFGkru8kYR9kzl3Do_p-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-44" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="PROSPECTO" vertex="1">
+          <mxGeometry height="120" width="195" x="2119" y="-364" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-45" parent="AFFGkru8kYR9kzl3Do_p-44" style="text;strokeColor=#23445d;fillColor=#bac8d3;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;HOTEL&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-48" parent="AFFGkru8kYR9kzl3Do_p-44" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;DESCRIPCION_NECESIDAD&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-64" parent="AFFGkru8kYR9kzl3Do_p-44" style="text;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;gradientColor=#ffd966;strokeColor=#d6b656;" value="&lt;pre&gt;&lt;code&gt;FK_INTENTOS&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="195" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-57" edge="1" parent="1" source="AFFGkru8kYR9kzl3Do_p-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.014;entryY=0.048;entryDx=0;entryDy=0;entryPerimeter=0;" target="AFFGkru8kYR9kzl3Do_p-27">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2405.03" y="-90.97" />
+              <mxPoint x="2405.03" y="-70.97" />
+              <mxPoint x="2379.03" y="-70.97" />
+              <mxPoint x="2379.03" y="-26" />
+              <mxPoint x="2225.72" y="-26" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-63" edge="1" parent="1" source="AFFGkru8kYR9kzl3Do_p-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0.008;entryY=0.121;entryDx=0;entryDy=0;entryPerimeter=0;" target="AFFGkru8kYR9kzl3Do_p-19">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2379.03" y="-334" />
+              <mxPoint x="2379.03" y="-184.21" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-65" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;gradientColor=#ffd966;strokeColor=#d6b656;" value="INTENTOS" vertex="1">
+          <mxGeometry height="180" width="208" x="1742" y="-284" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-66" parent="AFFGkru8kYR9kzl3Do_p-65" style="text;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;NUMERO DE INTENTOS&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="208" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-67" parent="AFFGkru8kYR9kzl3Do_p-65" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;RESULTADO DE INTENTO&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="208" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-74" parent="AFFGkru8kYR9kzl3Do_p-65" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;RESPONSBLE_PERSONAL_ORANJE&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="208" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-70" parent="AFFGkru8kYR9kzl3Do_p-65" style="text;strokeColor=#23445d;fillColor=#bac8d3;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;&lt;code&gt;FK_CONTACTOS_HOTEL&lt;/code&gt;&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="208" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-71" parent="AFFGkru8kYR9kzl3Do_p-65" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" value="&lt;pre&gt;FECHA_VISITA&lt;/pre&gt;" vertex="1">
+          <mxGeometry height="30" width="208" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-73" edge="1" parent="1" source="AFFGkru8kYR9kzl3Do_p-70" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.124;entryDx=0;entryDy=0;entryPerimeter=0;" target="AFFGkru8kYR9kzl3Do_p-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="AFFGkru8kYR9kzl3Do_p-75" edge="1" parent="1" source="AFFGkru8kYR9kzl3Do_p-64" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.008;entryY=0.102;entryDx=0;entryDy=0;entryPerimeter=0;" target="AFFGkru8kYR9kzl3Do_p-65">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="ventas-invariantes" name="2 - Restricciones e índices">
+    <mxGraphModel dx="1500" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p2-titulo" value="&lt;b&gt;Lo que la base de datos hace cumplir por sí sola&lt;/b&gt;&lt;br&gt;Todo lo que se pueda garantizar con una restricción no se delega al servicio: una regla en el código se olvida en el segundo endpoint que la toca." style="text;html=1;align=left;verticalAlign=top;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="900" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-estado" value="&lt;b&gt;1. Un hotel no puede tomar el estado de otro semáforo&lt;/b&gt;&lt;br&gt;&lt;br&gt;Sin esto, un UPDATE mal escrito deja al hotel en un estado del Semáforo del Colaborador y ninguna consulta se queja.&lt;br&gt;&lt;br&gt;&lt;font face=&quot;Courier New&quot;&gt;-- en catalogs.status_light_state&lt;br&gt;UNIQUE (id, status_light_id)&lt;br&gt;&lt;br&gt;-- en commercial.hotel&lt;br&gt;status_light_id smallint NOT NULL&lt;br&gt;&amp;nbsp;&amp;nbsp;CHECK (status_light_id = 5), -- ONBOARDING&lt;br&gt;FOREIGN KEY (onboarding_state_id, status_light_id)&lt;br&gt;&amp;nbsp;&amp;nbsp;REFERENCES catalogs.status_light_state (id, status_light_id)&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;i&gt;La columna redundante es a propósito: es lo que convierte&lt;br&gt;&quot;un color = un significado por semáforo&quot; en una restricción.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="500" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-contrato" value="&lt;b&gt;2. Un hotel no puede tener dos contratos vigentes a la vez&lt;/b&gt;&lt;br&gt;&lt;br&gt;Si se solapan, el cálculo de nómina tiene dos pay rates válidos para la misma semana y elige el que devuelva el ORDER BY.&lt;br&gt;&lt;br&gt;&lt;font face=&quot;Courier New&quot;&gt;CREATE EXTENSION IF NOT EXISTS btree_gist;&lt;br&gt;&lt;br&gt;ALTER TABLE commercial.contract&lt;br&gt;&amp;nbsp;&amp;nbsp;ADD CONSTRAINT contract_no_overlap&lt;br&gt;&amp;nbsp;&amp;nbsp;EXCLUDE USING gist (&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;hotel_id WITH =,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;validity WITH &amp;amp;&amp;amp;&lt;br&gt;&amp;nbsp;&amp;nbsp;);&lt;br&gt;&lt;br&gt;-- una tarifa por posición&lt;br&gt;UNIQUE (contract_id, position_id)&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="580" y="90" width="500" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-parejas" value="&lt;b&gt;3. Campos que solo tienen sentido en pareja&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font face=&quot;Courier New&quot;&gt;-- terms_and_conditions: validado implica quién y cuándo&lt;br&gt;CHECK ((validated_by IS NULL) = (validated_at IS NULL))&lt;br&gt;&lt;br&gt;-- proposal: enviada implica quién la envió&lt;br&gt;CHECK ((sent_by IS NULL) = (sent_at IS NULL))&lt;br&gt;&lt;br&gt;-- proposal: la versión empieza en 1&lt;br&gt;CHECK (version &amp;gt;= 1)&lt;br&gt;&lt;br&gt;-- tarifas y umbral no negativos&lt;br&gt;CHECK (pay_rate &amp;gt;= 0 AND bill_rate &amp;gt;= 0)&lt;br&gt;CHECK (overtime_threshold &amp;gt; 0)&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;i&gt;RR-V-10 (los 5 campos del T&amp;amp;C) se cumple con NOT NULL&lt;br&gt;en pay_rate, bill_rate, overtime_rate, holidays y calendar.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="440" width="500" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-indices" value="&lt;b&gt;4. Índices que las pantallas de Ventas necesitan&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font face=&quot;Courier New&quot;&gt;-- Pipeline agrupado por estado (RF-V-22)&lt;br&gt;CREATE INDEX ON commercial.hotel (onboarding_state_id);&lt;br&gt;&lt;br&gt;-- &quot;mis prospectos&quot; del BD&lt;br&gt;CREATE INDEX ON commercial.hotel (assigned_bd_id,&lt;br&gt;&amp;nbsp;&amp;nbsp;onboarding_state_id);&lt;br&gt;&lt;br&gt;-- Mi Territorio: pines por zona (RF-V-23)&lt;br&gt;CREATE INDEX ON commercial.hotel USING gist (geofence);&lt;br&gt;&lt;br&gt;-- última interacción del hotel (RF-V-06)&lt;br&gt;CREATE INDEX ON commercial.interaction&lt;br&gt;&amp;nbsp;&amp;nbsp;(hotel_id, occurred_at DESC);&lt;br&gt;&lt;br&gt;-- journal por entidad&lt;br&gt;CREATE INDEX ON journal.entry (entity_type, entity_id,&lt;br&gt;&amp;nbsp;&amp;nbsp;occurred_at DESC);&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#0288D1;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="580" y="440" width="500" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-noalcanza" value="&lt;b&gt;Lo que la base de datos NO puede garantizar&lt;/b&gt;&lt;br&gt;&lt;br&gt;Estas tres reglas cruzan tablas o dependen del estado actual, así que viven en el servicio de transición del módulo commercial —dentro de la transacción— y no en un CHECK:&lt;br&gt;&lt;br&gt;&lt;b&gt;RR-V-09&lt;/b&gt; · la propuesta se elabora solo en GREEN. Un CHECK no puede leer hotel.onboarding_state_id desde proposal sin duplicar el estado.&lt;br&gt;&lt;br&gt;&lt;b&gt;RR-V-02&lt;/b&gt; · debe existir Usuario del Hotel antes de pasar a ORANGE. Es una consulta a identity.user en el momento de la transición.&lt;br&gt;&lt;br&gt;&lt;b&gt;RR-V-10&lt;/b&gt; · el T&amp;amp;C debe estar validado por el BDC antes de entrar a PINK. El NOT NULL garantiza que los 5 campos existan, no que alguien los haya aprobado.&lt;br&gt;&lt;br&gt;&lt;i&gt;Las tres se asientan en journal.entry con actor y rol, que es lo que las hace auditables después.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57C00;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="90" width="380" height="450" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-journal" value="&lt;b&gt;El journal se protege quitando el permiso&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font face=&quot;Courier New&quot;&gt;REVOKE UPDATE, DELETE&lt;br&gt;&amp;nbsp;&amp;nbsp;ON journal.entry FROM app_user;&lt;/font&gt;&lt;br&gt;&lt;br&gt;RR-16 exige inmutabilidad. Se garantiza con el permiso, no con la disciplina del equipo." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="570" width="380" height="200" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="ventas-nomenclatura" name="3 - Nomenclatura y glosario ES → EN">
+    <mxGraphModel dx="1500" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p3-titulo" value="&lt;b&gt;Del vault al código: un término, una escritura&lt;/b&gt;&lt;br&gt;El vault seguirá en español. Con el dominio en inglés, este glosario es obligatorio: es lo único que evita que Propuesta se escriba Proposal, Offer y Quote en tres archivos distintos." style="text;html=1;align=left;verticalAlign=top;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="900" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p3-glosario" value="&lt;b&gt;Glosario canónico del onboarding&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;Vault (español) · Prisma · tabla Postgres · endpoint&lt;/b&gt;&lt;br&gt;&lt;br&gt;Hotel · &lt;b&gt;Hotel&lt;/b&gt; · commercial.hotel · /hotels&lt;br&gt;Propuesta Personalizada · &lt;b&gt;Proposal&lt;/b&gt; · commercial.proposal · /proposals&lt;br&gt;Documento de Términos y Condiciones · &lt;b&gt;TermsAndConditions&lt;/b&gt; · commercial.terms_and_conditions · /terms-and-conditions&lt;br&gt;Contrato · &lt;b&gt;Contract&lt;/b&gt; · commercial.contract · /contracts&lt;br&gt;Tarifa por posición · &lt;b&gt;ContractRate&lt;/b&gt; · commercial.contract_rate · /contracts/:id/rates&lt;br&gt;Visita en frío / intento de contacto · &lt;b&gt;Interaction&lt;/b&gt; · commercial.interaction · /interactions&lt;br&gt;Territorio del BD · columna &lt;b&gt;zoneId&lt;/b&gt; en User · identity.user.zone_id&lt;br&gt;Usuario del Hotel · &lt;b&gt;User&lt;/b&gt; (con hotel_id) · identity.user · /users&lt;br&gt;Zona · &lt;b&gt;Zone&lt;/b&gt; · catalogs.zone · /zones&lt;br&gt;Posición · &lt;b&gt;Position&lt;/b&gt; · catalogs.position · /positions&lt;br&gt;Semáforo · &lt;b&gt;StatusLight&lt;/b&gt; · catalogs.status_light · /status-lights&lt;br&gt;Estado del semáforo · &lt;b&gt;StatusLightState&lt;/b&gt; · catalogs.status_light_state&lt;br&gt;Transición · &lt;b&gt;StatusLightTransition&lt;/b&gt; · catalogs.status_light_transition&lt;br&gt;Bitácora · &lt;b&gt;JournalEntry&lt;/b&gt; · journal.entry&lt;br&gt;&lt;br&gt;&lt;i&gt;BD y BDC no se traducen: son los nombres de rol del negocio.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#666666;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="700" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="p3-estados" value="&lt;b&gt;Los 9 estados: code en inglés, name en español&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;code · color · name (texto de UI)&lt;/b&gt;&lt;br&gt;&lt;br&gt;GRAY · Gris · Hotel identificado&lt;br&gt;LIGHT_BLUE · Azul claro · Contacto y recopilación de datos&lt;br&gt;GREEN · Verde · Propuesta enviada&lt;br&gt;YELLOW · Amarillo · En seguimiento tras propuesta&lt;br&gt;PINK · Rosa · Negociación de términos&lt;br&gt;ORANGE · Naranja · Acuerdo firmado, hotel cliente activo&lt;br&gt;RED · Rojo · Rechazo o no interés&lt;br&gt;BROWN · Café · Renegociación / desbloqueo&lt;br&gt;BLACK · Negro · Cliente pausado o inactivo&lt;br&gt;&lt;br&gt;&lt;i&gt;El code es identificador, así que va en inglés y sin acentos.&lt;br&gt;El name es lo que ve el usuario, y la UI es en español&lt;br&gt;(Estándares de Desarrollo: los mensajes al usuario en español).&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#666666;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="780" y="90" width="520" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="p3-prisma" value="&lt;b&gt;Cómo se ve en Prisma&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font face=&quot;Courier New&quot;&gt;model TermsAndConditions {&lt;br&gt;&amp;nbsp;&amp;nbsp;id&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;BigInt&amp;nbsp;&amp;nbsp; @id @default(autoincrement())&lt;br&gt;&amp;nbsp;&amp;nbsp;hotelId&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;BigInt&amp;nbsp;&amp;nbsp; @map(&quot;hotel_id&quot;)&lt;br&gt;&amp;nbsp;&amp;nbsp;payRate&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Decimal&amp;nbsp; @map(&quot;pay_rate&quot;) @db.Decimal(10, 2)&lt;br&gt;&amp;nbsp;&amp;nbsp;billRate&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Decimal&amp;nbsp; @map(&quot;bill_rate&quot;) @db.Decimal(10, 2)&lt;br&gt;&amp;nbsp;&amp;nbsp;validatedBy&amp;nbsp;&amp;nbsp;BigInt?&amp;nbsp; @map(&quot;validated_by&quot;)&lt;br&gt;&amp;nbsp;&amp;nbsp;validatedAt&amp;nbsp;&amp;nbsp;DateTime? @map(&quot;validated_at&quot;) @db.Timestamptz&lt;br&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;hotel&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Hotel&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;@relation(fields: [hotelId], references: [id])&lt;br&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;@@map(&quot;terms_and_conditions&quot;)&lt;br&gt;&amp;nbsp;&amp;nbsp;@@schema(&quot;commercial&quot;)&lt;br&gt;}&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;i&gt;Modelo PascalCase singular · campos camelCase en TS ·&lt;br&gt;snake_case en Postgres vía @map y @@map · esquema vía @@schema.&lt;br&gt;Las tres reglas de la §7.1 en un solo bloque.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="540" width="700" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="p3-decisiones" value="&lt;b&gt;Tres decisiones que tomé y hay que confirmar&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;1. Traduje los esquemas.&lt;/b&gt; Aquí son commercial, catalogs, identity, journal. &lt;b&gt;D-01 nombra los 10 módulos en español&lt;/b&gt; (comercial, demanda, cobertura…) y la §3 de Estructura de Proyecto dice explícitamente que no se traducen. Con el dominio en inglés, dejarlos en español produce commercial… perdón, comercial.proposal: el diccionario mental que la §8 quería evitar. Si el ADR gana, cambia solo el prefijo, no las tablas.&lt;br&gt;&lt;br&gt;&lt;b&gt;2. Semáforo → StatusLight.&lt;/b&gt; Es el término más difícil de traducir del vault. Alternativas descartadas: Semaphore (significa otra cosa en programación), TrafficLight (literal pero raro en un modelo de datos), Status (se confunde con el estado en sí). Hay que fijarlo antes de la primera migración, porque aparece en 7 máquinas de estado y en toda la UI.&lt;br&gt;&lt;br&gt;&lt;b&gt;3. Requisición → StaffingRequest.&lt;/b&gt; No aparece en este diagrama pero sí en el módulo demand, y el repositorio vigente ya usa ese nombre. Vale la pena adoptarlo en lugar de inventar Requisition.&lt;br&gt;&lt;br&gt;&lt;i&gt;Pendiente aparte: Roles del Sistema.md está vacío y los IDs de rol de Reclutamiento (ROL-01) no siguen el formato de Ventas (ROL-V-01). status_light_transition.authorized_role_id necesita ese catálogo cerrado.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57C00;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="780" y="450" width="520" height="420" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

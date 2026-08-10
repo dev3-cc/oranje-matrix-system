@@ -1,0 +1,237 @@
+<mxfile host="app.diagrams.net" version="24.0.0" type="device" compressed="false">
+  <diagram id="onboarding-estados" name="1 - Semáforo Onboarding">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="1654" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="p1-titulo" value="&lt;b&gt;Semáforo Onboarding — máquina de estados&lt;/b&gt;&lt;br&gt;9 estados. Fuente: Core/Módulos/Semáforos/Semáforo Onboarding.md y Ventas/Onboarding-Hotel/Flujo de Onboarding.md" style="text;html=1;align=left;verticalAlign=top;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="620" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1-gris" value="&lt;b&gt;Gris&lt;/b&gt;&lt;br&gt;Hotel identificado&lt;br&gt;&lt;i&gt;BD&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEEEEE;strokeColor=#9E9E9E;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="380" y="80" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-azul" value="&lt;b&gt;Azul claro&lt;/b&gt;&lt;br&gt;Contacto y recopilación de datos&lt;br&gt;&lt;i&gt;BD&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B3E5FC;strokeColor=#0288D1;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="380" y="210" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-verde" value="&lt;b&gt;Verde&lt;/b&gt;&lt;br&gt;Propuesta enviada&lt;br&gt;&lt;i&gt;BD&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="380" y="340" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-amarillo" value="&lt;b&gt;Amarillo&lt;/b&gt;&lt;br&gt;En seguimiento tras propuesta&lt;br&gt;&lt;i&gt;BD (apoyo BDC)&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="380" y="470" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-rosa" value="&lt;b&gt;Rosa&lt;/b&gt;&lt;br&gt;Negociación de términos&lt;br&gt;&lt;i&gt;BD + BDC&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="380" y="600" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-naranja" value="&lt;b&gt;Naranja&lt;/b&gt;&lt;br&gt;Acuerdo firmado, hotel cliente activo&lt;br&gt;&lt;i&gt;BDC (referente) · operación: Reclutamiento e Inspección&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#F57C00;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="380" y="770" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-negro" value="&lt;b&gt;Negro&lt;/b&gt;&lt;br&gt;Cliente pausado o inactivo&lt;br&gt;&lt;i&gt;BDC&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CFD8DC;strokeColor=#37474F;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="380" y="940" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-rojo" value="&lt;b&gt;Rojo&lt;/b&gt;&lt;br&gt;Rechazo o no interés&lt;br&gt;&lt;i&gt;BD&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#D32F2F;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="90" y="340" width="190" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-cafe" value="&lt;b&gt;Café&lt;/b&gt;&lt;br&gt;Renegociación / desbloqueo&lt;br&gt;&lt;i&gt;BDC&lt;/i&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;puente, no terminal&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D7CCC8;strokeColor=#6D4C41;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="690" y="470" width="190" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1-fin-rojo" value="Fin&lt;br&gt;no viable" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#D32F2F;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="470" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-fin-negro" value="Fin&lt;br&gt;cliente inactivo" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#37474F;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="945" width="140" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1-e1" value="inicia contacto&lt;br&gt;RF-V-01 → RF-V-02" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;strokeWidth=2;fontSize=10;" edge="1" parent="1" source="p1-gris" target="p1-azul">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-e2" value="envía Propuesta Personalizada&lt;br&gt;RF-V-04 · RF-V-05" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;strokeWidth=2;fontSize=10;" edge="1" parent="1" source="p1-azul" target="p1-verde">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-e3" value="el hotel responde con interés&lt;br&gt;RF-V-07" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;strokeWidth=2;fontSize=10;" edge="1" parent="1" source="p1-verde" target="p1-amarillo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-e4" value="no hay interés&lt;br&gt;RF-V-15 · RR-V-06" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;strokeWidth=2;fontSize=10;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p1-verde" target="p1-rojo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-e5" value="negociación estancada&lt;br&gt;RF-V-17" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;strokeWidth=2;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="p1-verde" target="p1-cafe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-e6" value="T&amp;amp;C creado y validado&lt;br&gt;RF-V-08 · RF-V-10 · RR-V-10" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;strokeWidth=2;fontSize=10;" edge="1" parent="1" source="p1-amarillo" target="p1-rosa">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-e7" value="no se cierra el acuerdo&lt;br&gt;RF-V-17" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;strokeWidth=2;fontSize=10;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="p1-rosa" target="p1-cafe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-e8" value="&lt;b&gt;BDC aprueba la conversión&lt;/b&gt;&lt;br&gt;RF-V-11 · RF-V-12 · RR-V-01 · RR-V-02" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;strokeWidth=3;fontSize=10;" edge="1" parent="1" source="p1-rosa" target="p1-naranja">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-e9" value="el hotel deja de operar&lt;br&gt;RF-V-20 · RR-V-05" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;strokeWidth=2;fontSize=10;" edge="1" parent="1" source="p1-naranja" target="p1-negro">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-e10" value="reactivar&lt;br&gt;RF-V-16" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;strokeWidth=2;fontSize=10;dashed=1;strokeColor=#0288D1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p1-rojo" target="p1-azul">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-e11" value="desbloqueo del BDC&lt;br&gt;RF-V-18 · RF-V-19 · RR-V-04" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;strokeWidth=2;fontSize=10;dashed=1;strokeColor=#0288D1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="p1-cafe" target="p1-azul">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-e12" value="reactivar&lt;br&gt;RF-V-21" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;strokeWidth=2;fontSize=10;dashed=1;strokeColor=#0288D1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="p1-negro" target="p1-azul">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="40" y="975" />
+              <mxPoint x="40" y="300" />
+              <mxPoint x="430" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="p1-e13" value="archivar" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;fontSize=10;dashed=1;" edge="1" parent="1" source="p1-rojo" target="p1-fin-rojo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-e14" value="archivar" style="edgeStyle=orthogonalEdgeStyle;html=1;rounded=0;fontSize=10;dashed=1;" edge="1" parent="1" source="p1-negro" target="p1-fin-negro">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p1-nota-amarillo" value="&lt;b&gt;Amarillo era el estado que faltaba.&lt;/b&gt;&lt;br&gt;&lt;br&gt;Aquí el BD o el BDC crean el &lt;b&gt;Documento de Términos y Condiciones&lt;/b&gt; con sus 5 campos obligatorios (RR-V-10):&lt;br&gt;pay rate · bill rate · overtime · holidays · calendar.&lt;br&gt;&lt;br&gt;Sin este paso no hay tarifas, y sin tarifas no hay nómina ni factura." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#FBC02D;align=left;verticalAlign=top;spacing=8;fontSize=11;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="570" width="230" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-nota-rosa" value="&lt;b&gt;Al aprobar la conversión (en Rosa, no en Naranja):&lt;/b&gt;&lt;br&gt;1. Se crea el &lt;b&gt;Usuario del Hotel&lt;/b&gt; — precondición obligatoria (RR-V-02).&lt;br&gt;2. Se dispara el &lt;b&gt;Trigger Automático&lt;/b&gt; (RR-V-03): email de bienvenida al hotel, notificación al BD asignado, y el hotel sale de la lista de prospectos.&lt;br&gt;3. Del cierre exitoso resulta el &lt;b&gt;Contrato&lt;/b&gt; (RR-V-15)." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C2185B;align=left;verticalAlign=top;spacing=8;fontSize=11;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="690" y="600" width="300" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-nota-naranja" value="&lt;b&gt;RR-V-08 · Naranja es el único status que habilita al hotel para generar requisiciones.&lt;/b&gt;&lt;br&gt;&lt;br&gt;De aquí cuelga todo el resto del sistema: requisición, cobertura, Schedule, Timesheet, nómina.&lt;br&gt;&lt;br&gt;Post-Naranja el hotel pasa a Reclutamiento e Inspección; BD y BDC quedan solo como referentes comerciales (RR-V-12)." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="690" y="790" width="300" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-nota-reentrada" value="&lt;b&gt;RR-V-07 · Azul claro es el único punto de reentrada.&lt;/b&gt;&lt;br&gt;Rojo, Negro y Café siempre reactivan hacia Azul claro (líneas punteadas azules), nunca hacia Verde ni hacia Rosa: reactivar obliga a rehacer contacto y propuesta." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#0288D1;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="690" y="150" width="300" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="p1-nota-forma" value="&lt;b&gt;Los 9 son estados, no decisiones.&lt;/b&gt;&lt;br&gt;Rojo, Rosa, Café y Negro tienen responsable y acciones propias, así que son cajas, no rombos. La decisión es la flecha que sale de cada uno." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="80" width="230" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="onboarding-tablas" name="2 - Tablas (qué existe y qué falta)">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="p2-titulo" value="&lt;b&gt;Base de datos del onboarding — esquema comercial&lt;/b&gt;&lt;br&gt;Verde: ya definido en Arquitecturas/_Globales/Modelo de Datos. Naranja: falta, hay que diseñarlo para Ventas. Gris: catálogo o esquema de otro módulo." style="text;html=1;align=left;verticalAlign=top;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="700" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2-semaforo" value="&lt;b&gt;catalogs.status_light&lt;/b&gt;&lt;br&gt;&lt;br&gt;id&lt;br&gt;code&lt;br&gt;name&lt;br&gt;&lt;br&gt;&lt;i&gt;7 filas. Una es Onboarding.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="200" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-estado" value="&lt;b&gt;catalogs.status_light_state&lt;/b&gt;&lt;br&gt;&lt;br&gt;id&lt;br&gt;status_light_id → status_light&lt;br&gt;code · color · name&lt;br&gt;description&lt;br&gt;&lt;br&gt;&lt;i&gt;Los 9 estados del Onboarding son&lt;br&gt;filas aquí, no un enum en el código.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="290" y="90" width="260" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-transicion" value="&lt;b&gt;catalogs.status_light_transition&lt;/b&gt;&lt;br&gt;&lt;br&gt;from_state_id → status_light_state&lt;br&gt;to_state_id → status_light_state&lt;br&gt;authorized_role_id → identity.role&lt;br&gt;requires_reason&lt;br&gt;requires_evidence&lt;br&gt;&lt;br&gt;&lt;i&gt;&quot;La conversión es exclusiva del BDC&quot;&lt;br&gt;(RR-V-01) es una fila, no un if.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="600" y="90" width="290" height="170" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2-zona" value="&lt;b&gt;catalogs.zone&lt;/b&gt;&lt;br&gt;&lt;br&gt;id · name&lt;br&gt;&lt;br&gt;&lt;i&gt;Agrupa hoteles para asignar&lt;br&gt;Inspector. No es la geofence.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="200" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2-hotel" value="&lt;b&gt;commercial.hotel&lt;/b&gt;&lt;br&gt;&lt;br&gt;id · name&lt;br&gt;email · phone&lt;br&gt;contact_name · contact_job_title&lt;br&gt;need_description&lt;br&gt;zone_id → catalogs.zone&lt;br&gt;owner_user_id → identity.user&lt;br&gt;&lt;b&gt;status_light_state_id&lt;/b&gt; → status_light_state&lt;br&gt;geofence (PostGIS) · radius_m&lt;br&gt;&lt;br&gt;&lt;i&gt;No hay columna is_prospect:&lt;br&gt;prospecto y cliente son el mismo&lt;br&gt;registro en distinto estado.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="290" y="300" width="280" height="250" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2-usuario" value="&lt;b&gt;identity.user&lt;/b&gt; · &lt;b&gt;role&lt;/b&gt; · &lt;b&gt;role_permission&lt;/b&gt;&lt;br&gt;&lt;br&gt;user: id · email · role_id · hotel_id&lt;br&gt;role_permission: role_id · module · action&lt;br&gt;&lt;br&gt;&lt;i&gt;El Usuario del Hotel (RF-V-11) es una&lt;br&gt;fila de user con hotel_id, creada&lt;br&gt;antes de aprobar la conversión (RR-V-02).&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="640" y="300" width="290" height="160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2-interaccion" value="&lt;b&gt;commercial.contact_attempt&lt;/b&gt; &lt;font color=&quot;#B85C00&quot;&gt;NUEVA&lt;/font&gt;&lt;br&gt;&lt;br&gt;id · hotel_id&lt;br&gt;type: COLD_VISIT | CALL | EMAIL&lt;br&gt;outcome · notes&lt;br&gt;lat · lng (pin del mapa)&lt;br&gt;user_id · occurred_at&lt;br&gt;&lt;br&gt;&lt;i&gt;RF-V-03 visita en frío&lt;br&gt;RF-V-06 intentos de contacto&lt;br&gt;RF-V-23 Mi Territorio&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="470" width="220" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2-propuesta" value="&lt;b&gt;commercial.proposal&lt;/b&gt; &lt;font color=&quot;#B85C00&quot;&gt;NUEVA&lt;/font&gt;&lt;br&gt;&lt;br&gt;id · hotel_id · version&lt;br&gt;file_path (Cloud Storage)&lt;br&gt;services · rates · conditions&lt;br&gt;created_by · created_at&lt;br&gt;sent_by_user_id · sent_at&lt;br&gt;&lt;br&gt;&lt;i&gt;RF-V-04 elaborar · RF-V-05 enviar&lt;br&gt;RR-V-09 solo en Verde&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="710" width="220" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2-tyc" value="&lt;b&gt;commercial.terms_and_conditions&lt;/b&gt; &lt;font color=&quot;#B85C00&quot;&gt;NUEVA&lt;/font&gt;&lt;br&gt;&lt;br&gt;id · hotel_id&lt;br&gt;pay_rate · bill_rate · overtime&lt;br&gt;holidays · calendar&lt;br&gt;created_by · created_at&lt;br&gt;approved_by_user_id → BDC · approved_at&lt;br&gt;&lt;br&gt;&lt;i&gt;RF-V-08 crear · RF-V-10 validar&lt;br&gt;RR-V-10 los 5 campos son obligatorios&lt;br&gt;Prerrequisito para entrar a Rosa.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="620" width="260" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2-contrato" value="&lt;b&gt;commercial.contract&lt;/b&gt;&lt;br&gt;&lt;br&gt;id · hotel_id · validity&lt;br&gt;week_start · week_end&lt;br&gt;holidays&lt;br&gt;overtime_threshold (40 h por colaborador&lt;br&gt;y por requisición — D-10)&lt;br&gt;invoice_split_by_month&lt;br&gt;&lt;br&gt;&lt;i&gt;RR-V-15: resulta del cierre en Rosa.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="640" y="530" width="290" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-tarifa" value="&lt;b&gt;commercial.contract_rate&lt;/b&gt;&lt;br&gt;&lt;br&gt;contract_id&lt;br&gt;catalog_position_id&lt;br&gt;pay_rate · bill_rate · overtime_rate&lt;br&gt;&lt;br&gt;&lt;i&gt;Las tarifas van por posición: un Chef&lt;br&gt;y un Housekeeper no cuestan lo mismo.&lt;br&gt;pay_rate nunca aparece en la factura;&lt;br&gt;bill_rate nunca en el recibo.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;strokeWidth=2;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="640" y="760" width="290" height="170" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2-journal" value="&lt;b&gt;journal&lt;/b&gt; (append-only)&lt;br&gt;&lt;br&gt;entity_type · entity_id&lt;br&gt;event_type: STATUS_CHANGED&lt;br&gt;actor_user_id · actor_role&lt;br&gt;payload (JSONB) · occurred_at&lt;br&gt;&lt;br&gt;&lt;i&gt;RF-V-28 y RR-V-11 (trazabilidad de&lt;br&gt;cambios de status) no necesitan tabla&lt;br&gt;nueva: son filas de journal.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#9E9E9E;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="990" y="90" width="280" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2-r1" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=1;exitY=0.3;entryX=0;entryY=0.3;" edge="1" parent="1" source="p2-semaforo" target="p2-estado">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-r2" value="status_light_state_id" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERone;startArrow=ERmany;fontSize=10;" edge="1" parent="1" source="p2-hotel" target="p2-estado">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-r3" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;" edge="1" parent="1" source="p2-zona" target="p2-hotel">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-r4" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=0;exitY=0.5;entryX=1;entryY=0.3;" edge="1" parent="1" source="p2-hotel" target="p2-interaccion">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-r5" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=0;exitY=0.9;entryX=1;entryY=0.2;" edge="1" parent="1" source="p2-hotel" target="p2-propuesta">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-r6" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="p2-hotel" target="p2-tyc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-r7" value="RR-V-15&lt;br&gt;el cierre en Rosa lo convierte" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeWidth=3;strokeColor=#C2185B;fontSize=10;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="p2-tyc" target="p2-contrato">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-r8" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERmany;startArrow=ERone;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="p2-contrato" target="p2-tarifa">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="p2-r9" value="hotel_id (Usuario del Hotel)" style="edgeStyle=entityRelationEdgeStyle;html=1;endArrow=ERone;startArrow=ERmany;fontSize=10;exitX=0;exitY=0.5;entryX=1;entryY=0.2;" edge="1" parent="1" source="p2-usuario" target="p2-hotel">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2-nota-tyc" value="&lt;b&gt;Por qué T&amp;amp;C y contrato son dos tablas y no una&lt;/b&gt;&lt;br&gt;&lt;br&gt;El Documento de T&amp;amp;C es el borrador comercial: se negocia, cambia y puede quedar en nada si el hotel se va a Rojo. El contrato es el resultado del cierre (RR-V-15): se firma y deja de moverse.&lt;br&gt;&lt;br&gt;Guardarlos juntos obliga a editar un contrato que ya está firmado para reflejar una negociación que no cerró." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C2185B;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="990" y="300" width="280" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p2-nota-huecos" value="&lt;b&gt;Huecos a resolver antes de la primera migración&lt;/b&gt;&lt;br&gt;&lt;br&gt;1. &lt;b&gt;El Modelo de Datos no tiene el pipeline comercial.&lt;/b&gt; Cubre hotel, contrato y tarifas, pero no interacción, propuesta ni T&amp;amp;C. Las tres naranjas de este diagrama son propuesta, no vault.&lt;br&gt;&lt;br&gt;2. &lt;b&gt;¿Cuándo se vuelve Verde?&lt;/b&gt; El Semáforo dice que se pasa a Verde &quot;al enviar la propuesta&quot;, pero las acciones de Verde incluyen elaborarla y enviarla, y RR-V-09 la restringe a Verde. Para la BD la pregunta es concreta: ¿puede existir propuesta.enviada_at antes del cambio de estado, o el estado cambia primero?&lt;br&gt;&lt;br&gt;3. &lt;b&gt;Roles del Sistema.md está vacío&lt;/b&gt; y los IDs de rol de Reclutamiento (ROL-01) no siguen el formato de Ventas (ROL-V-01). status_light_transition.authorized_role_id necesita ese catálogo cerrado." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57C00;align=left;verticalAlign=top;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="990" y="530" width="280" height="400" as="geometry" />
+        </mxCell><mxCell id="p2-aviso" value="&lt;b&gt;⚠ Esta página quedó atrás. Manda «Ventas - Modelo de Datos v2».&lt;/b&gt;&lt;br&gt;&lt;br&gt;Sirve como registro del razonamiento, no como el modelo vigente. Lo que v2 cambió:&lt;br&gt;&lt;br&gt;&lt;b&gt;1. El semáforo salió de hotel.&lt;/b&gt; Aquí &lt;font face=&quot;Courier New&quot;&gt;hotel&lt;/font&gt; lleva &lt;font face=&quot;Courier New&quot;&gt;status_light_state_id&lt;/font&gt; y &lt;font face=&quot;Courier New&quot;&gt;owner_user_id&lt;/font&gt;. En v2 el ciclo comercial es su propia entidad, &lt;font face=&quot;Courier New&quot;&gt;commercial.prospect&lt;/font&gt;, y ahí vive el semáforo. La nota de abajo —&quot;prospecto y cliente son el mismo registro en distinto estado&quot;— ya no aplica: son el mismo hotel con varios ciclos en el tiempo, uno solo abierto a la vez.&lt;br&gt;&lt;br&gt;&lt;b&gt;2. Los contactos son tabla.&lt;/b&gt; &lt;font face=&quot;Courier New&quot;&gt;contact_name&lt;/font&gt; y &lt;font face=&quot;Courier New&quot;&gt;contact_job_title&lt;/font&gt; se volvieron &lt;font face=&quot;Courier New&quot;&gt;commercial.hotel_contact&lt;/font&gt;, porque un hotel tiene al de Compras y al de Ama de Llaves a la vez.&lt;br&gt;&lt;br&gt;&lt;b&gt;3. contact_attempt no lleva catálogo.&lt;/b&gt; &lt;font face=&quot;Courier New&quot;&gt;type&lt;/font&gt; y &lt;font face=&quot;Courier New&quot;&gt;outcome&lt;/font&gt; son texto con &lt;font face=&quot;Courier New&quot;&gt;CHECK&lt;/font&gt;, no FK — v2, restricción 9.&lt;br&gt;&lt;br&gt;&lt;b&gt;4. terms_and_conditions está aplazada.&lt;/b&gt; Sus campos son los de &lt;font face=&quot;Courier New&quot;&gt;contract&lt;/font&gt; + &lt;font face=&quot;Courier New&quot;&gt;contract_rate&lt;/font&gt;: es su borrador. Se modela cuando se diseñe el Contrato.&lt;br&gt;&lt;br&gt;&lt;b&gt;Lo que sigue vigente de esta página:&lt;/b&gt; la nota de por qué T&amp;C y contrato son dos tablas, el uso del journal, y los huecos." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#C62828;strokeWidth=2;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1"><mxGeometry x="1320" y="90" width="380" height="700" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="onboarding-filas" name="3 - Estados y transiciones como filas">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="p3-titulo" value="&lt;b&gt;El semáforo como datos, no como código&lt;/b&gt;&lt;br&gt;Esto es el seed del módulo comercial: 9 filas de estado y 12 de transición. Añadir un estado no debe requerir un despliegue." style="text;html=1;align=left;verticalAlign=top;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="700" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p3-estados" value="&lt;b&gt;catalogs.status_light_state&lt;/b&gt; — filas del semáforo Onboarding&lt;br&gt;&lt;br&gt;&lt;b&gt;code · color · name&lt;/b&gt;&lt;br&gt;&lt;br&gt;GRAY · Gris · Hotel identificado&lt;br&gt;LIGHT_BLUE · Azul claro · Contacto y recopilación de datos&lt;br&gt;GREEN · Verde · Propuesta enviada&lt;br&gt;YELLOW · Amarillo · En seguimiento tras propuesta&lt;br&gt;PINK · Rosa · Negociación de términos&lt;br&gt;ORANGE · Naranja · Acuerdo firmado, hotel cliente activo&lt;br&gt;RED · Rojo · Rechazo o no interés&lt;br&gt;BROWN · Café · Renegociación / desbloqueo&lt;br&gt;BLACK · Negro · Cliente pausado o inactivo&lt;br&gt;&lt;br&gt;&lt;i&gt;code sin acentos ni eñes (§8 de Estructura de Proyecto y&lt;br&gt;Nomenclatura); el acento vive en name, que es texto de UI.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#666666;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="480" height="330" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p3-transiciones" value="&lt;b&gt;catalogs.status_light_transition&lt;/b&gt; — las 12 transiciones válidas&lt;br&gt;&lt;br&gt;&lt;b&gt;from_state → to_state · rol autorizado · exige motivo · RF/RR&lt;/b&gt;&lt;br&gt;&lt;br&gt;GRAY → LIGHT_BLUE · BD · no · RF-V-01, RF-V-02&lt;br&gt;LIGHT_BLUE → GREEN · BD · no · RF-V-04, RF-V-05, RR-V-09&lt;br&gt;GREEN → YELLOW · BD · no · RF-V-07&lt;br&gt;GREEN → RED · BD · &lt;b&gt;sí&lt;/b&gt; · RF-V-15, RR-V-06&lt;br&gt;GREEN → BROWN · BD o BDC · &lt;b&gt;sí&lt;/b&gt; · RF-V-17&lt;br&gt;YELLOW → PINK · BD · no · RF-V-08, RF-V-10, RR-V-10&lt;br&gt;PINK → ORANGE · &lt;b&gt;BDC únicamente&lt;/b&gt; · no · RF-V-12, RR-V-01, RR-V-02&lt;br&gt;PINK → BROWN · BDC · &lt;b&gt;sí&lt;/b&gt; · RF-V-17&lt;br&gt;ORANGE → BLACK · &lt;b&gt;BDC únicamente&lt;/b&gt; · &lt;b&gt;sí&lt;/b&gt; · RF-V-20, RR-V-05&lt;br&gt;RED → LIGHT_BLUE · BD · no · RF-V-16, RR-V-07&lt;br&gt;BROWN → LIGHT_BLUE · &lt;b&gt;BDC únicamente&lt;/b&gt; · &lt;b&gt;sí&lt;/b&gt; · RF-V-18, RF-V-19, RR-V-04&lt;br&gt;BLACK → LIGHT_BLUE · BDC · &lt;b&gt;sí&lt;/b&gt; · RF-V-21, RR-V-07&lt;br&gt;&lt;br&gt;&lt;i&gt;Cualquier par que no esté en esta lista es un 409, no un estado&lt;br&gt;alcanzable. No existe GREEN → ORANGE, ni BROWN → GREEN.&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#666666;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="560" y="90" width="620" height="400" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p3-nota-propuesta" value="&lt;b&gt;Qué de esta página es vault y qué es propuesta&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;b&gt;Del vault:&lt;/b&gt; los 9 estados con su color y nombre, las 12 transiciones y el rol responsable de cada una. Salen del Semáforo Onboarding, del Flujo de Onboarding y de las RR-V.&lt;br&gt;&lt;br&gt;&lt;b&gt;Propuesta de este diagrama:&lt;/b&gt; la columna &lt;b&gt;motivo&lt;/b&gt;. La columna requires_reason existe en el Modelo de Datos §4, pero el vault no dice qué transiciones la exigen. Aquí se propone exigirla en los tres rechazos y en los tres desbloqueos: son las que hay que poder explicar seis meses después, en el reporte de Café y de Negro del BDC (RF-V-26).&lt;br&gt;&lt;br&gt;A validar antes del seed." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57C00;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="450" width="480" height="290" as="geometry" />
+        </mxCell>
+
+        <mxCell id="p3-nota-guard" value="&lt;b&gt;Cómo se usa en el backend&lt;/b&gt;&lt;br&gt;&lt;br&gt;Un solo servicio de transición en el módulo &lt;b&gt;comercial&lt;/b&gt; hace, en una transacción:&lt;br&gt;&lt;br&gt;1. Lee la fila (from_state_id, to_state_id) de status_light_transition. Si no existe → 409.&lt;br&gt;2. Verifica que el rol del usuario sea authorized_role_id. Si no → 403.&lt;br&gt;3. Si requires_reason y no viene motivo → 422.&lt;br&gt;4. Actualiza prospect.onboarding_state_id.&lt;br&gt;5. Escribe la fila en journal con actor, rol y payload (RF-V-28).&lt;br&gt;&lt;br&gt;Trece RF de Ventas (del RF-V-07 al RF-V-21) son ese mismo servicio con distintos parámetros. Escribirlos como trece endpoints con su propio if es el error que este diseño evita." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;align=left;verticalAlign=top;spacing=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="560" y="520" width="620" height="290" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
