@@ -27,7 +27,7 @@ Son las que traducen las reglas más difíciles. Si alguna falta, el negocio no 
 | -------------------| ---------------------------| -----------------------------------------------------------------|
 | **Posición**      | RR-H-03, RR-H-05, RR-H-08 | La urgencia y la cobertura no se pueden calcular por posición   |
 | **Slot**          | RR-15                     | No hay unidad de bloqueo; dos reclutadores ganan el mismo lugar |
-| **Asignación**    | RR-05, Consolidado        | El colaborador no puede trabajar en varios hoteles por semana   |
+| **Asignación**    | RR-05, Consolidado        | El colaborador no puede estar en 2 hoteles **en las mismas horas** |
 | **Contrato**      | RR-V-10, Consolidado      | No hay pay rate ni bill rate: no hay nómina ni factura          |
 | **Participación** | RR-15, RR-16              | No existe el Self-Pick colaborativo                             |
 
@@ -129,17 +129,18 @@ COMMIT;
 
 `assignment` — `slot_id`, `worker_id`, `type` (`fixed` | `temporary`), `validity` (rango de fechas), `assigned_by`, `status`.
 
-**RR-05 se hace cumplir con una restricción de exclusión**, no con lógica de aplicación:
+**RR-05 no se hace cumplir aquí.** Se precisó el 2026-08-12: el colaborador **sí puede** estar en dos hoteles el mismo día, siempre que los turnos no se solapen. Y `validity` es un `daterange`, así que solo ve **días**: Hotel A de 6am a 2pm y Hotel B de 3pm a 11pm el mismo día se ven como el mismo día, y una restricción de exclusión sobre `validity` los rechazaría — bloqueando el caso legal.
+
+La restricción de exclusión por **horas** vive en `operations`, sobre el turno del día, donde hay un `tstzrange` con fecha y hora reales:
 
 ```sql
-ALTER TABLE assignment ADD CONSTRAINT no_double_assignment
-  EXCLUDE USING gist (
-    worker_id WITH =,
-    validity       WITH &&
-  ) WHERE (status = 'active');
+EXCLUDE USING gist (worker_id WITH =, shift_range WITH &&)
 ```
 
-Postgres rechaza a nivel de motor que un colaborador tenga dos asignaciones activas solapadas en el tiempo. Y como `validity` es un rango, sigue permitiendo que trabaje en varios hoteles **en semanas distintas** — que es justo lo que el Consolidado necesita.
+Con timestamps reales sale gratis lo que con horas sueltas es un dolor: el **turno nocturno** (10pm-6am cruza medianoche y un rango de solo-hora no lo puede representar) y los **días alternados** (lunes/miércoles en un hotel, martes/jueves en otro: simplemente no hay renglón el martes).
+
+> [!warning] Consecuencia asumida
+> Hasta que exista `operations`, el solape de horas solo lo evita la aplicación. Lo que la base **sí** impide desde hoy es que dos colaboradores tomen el mismo slot: `ux_slot_active_assignment`, un único parcial sobre `slot_id WHERE status='ACTIVE'`.
 
 ### Participación — el Self-Pick
 
@@ -363,7 +364,7 @@ puede(user, accion, fila) =
 | # | Regla | Mecanismo |
 |---|---|---|
 | 1 | Un slot, una asignación activa | `UNIQUE (slot_id) WHERE status='active'` |
-| 2 | Sin doble asignación simultánea (RR-05) | `EXCLUDE USING gist` sobre `validity` |
+| 2 | Sin solape de **horas** (RR-05) | `EXCLUDE USING gist` sobre el `tstzrange` del turno — vive en `operations`, no en `assignment` |
 | 3 | Gana el primero en el slot (RR-15) | `FOR UPDATE SKIP LOCKED` |
 | 4 | Journal inmutable (RR-16) | `REVOKE UPDATE, DELETE` |
 | 5 | Blacklist con evidencia (RR-03) | `NOT NULL` en `reason` y `evidence_path` |
@@ -384,7 +385,7 @@ puede(user, accion, fila) =
 
 Preguntas que hay que responder **antes** de escribir el esquema, porque cambian tablas:
 
-1. **RR-05 — ¿exclusividad absoluta o cobertura temporal?** [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] dice que un colaborador no puede estar activo en dos hoteles simultáneamente. El `GEMINI.md` del repositorio de código dice que un permanente sí puede cubrir solicitudes temporales marcadas como `COVER`. Si vale la segunda, la restricción de exclusión necesita excluir las asignaciones de tipo `temporary`.
+1. ~~**RR-05 — ¿exclusividad absoluta o cobertura temporal?**~~ **RESUELTO el 2026-08-12:** el colaborador **sí puede** estar en dos hoteles el mismo día, si las horas no se solapan. Ni exclusividad absoluta ni el `COVER` del `GEMINI.md`: el criterio son las **horas**, no el hotel ni el tipo de asignación. La restricción se mudó a `operations` porque un `daterange` no puede expresarlo. Ver el apartado *Asignación* de la sección 3.
 2. **¿Tres marcas de ponche o seis?** El sección 5 documenta el conflicto completo. Con tres se pierden lunch real, breaks y el Indicador de Lunch Extendido, y cambia lo que se paga y lo que se factura. Exige modificar [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] y [[Timesheet]].
 3. **Válvula de escape del ponche bloqueado.** Si el GPS falla dentro de la propiedad, hoy el colaborador no puede ponchar y no cobra. Falta la regla del ponche manual del [[Hotel/Supervisor|Supervisor]] y quién lo autoriza.
 4. **PostGIS en Cloud SQL.** La geocerca lo asume. Hay que habilitar la extensión y decidir si el perímetro es punto + radio o polígono por hotel.

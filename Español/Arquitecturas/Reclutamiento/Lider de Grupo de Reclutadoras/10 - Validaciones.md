@@ -18,7 +18,7 @@ aliases:
 | Documento de identidad ya existe                        | Bloquea creación                                            |
 | Candidato en Blacklist                                  | Bloquea asignación con alerta visible                       |
 | Asignar colaborador no validado                         | Bloquea asignación                                          |
-| Asignar colaborador ya activo en otro hotel             | Bloquea (regla RR-05 de exclusividad)                       |
+| Asignar colaborador cuyo turno se **solapa** con otro ya asignado | Bloquea (regla RR-05). Si los turnos no se solapan, el mismo día en dos hoteles **sí se permite** |
 | Marcar requisición cubierta sin 100%                    | Bloquea acción                                              |
 | Tomar requisición ya tomada                             | No bloquea; pregunta "Esta requisición ya la trabajan N reclutadores. ¿Unirte como participante?" (RR-15) |
 | Asignar un colaborador a una posición que otro reclutador ya cubrió | Bloquea solo ese slot; muestra "Posición ya cubierta" (gana la primera asignación; AC-23) |

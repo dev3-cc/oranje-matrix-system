@@ -198,7 +198,7 @@ RECLUTAMIENTO
     │
     ├── Asignación — bloqueos duros
     │   ├── RR-02  Consulta obligatoria de Blacklist antes de asignar
-    │   ├── RR-05  Exclusividad: un colaborador no puede estar activo en 2 hoteles
+    │   ├── RR-05  Exclusividad por HORAS: no en 2 hoteles en las mismas horas
     │   └── RR-04  Cobertura 100% para poder cerrar como Cubierta
     │
     ├── Blacklist

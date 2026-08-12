@@ -680,6 +680,46 @@ Por eso `ux_position_requisition_line` es **parcial**: sin el `WHERE deleted_at 
 > [!warning] Contradicción del vault, pendiente del semaforo-guardian
 > El [[Core/Módulos/Semáforos/Semáforo de Requisición|Semáforo de Requisición]] describe Morado como *"Requisición eliminada **físicamente**"*. Debería decir "eliminada" a secas: como está, contradice a la sección 4 de [[Estándares de Base de Datos]] y a sí mismo. Corregirlo toca la fuente de verdad, así que va por el subagente `semaforo-guardian`.
 
+### Enmienda del 2026-08-12 · el semáforo se fija por `code`, no por uuid
+
+**La FK compuesta no fijaba el semáforo.** El patrón que esta decisión estableció —`(state_id, status_light_id) → status_light_state(id, status_light_id)`— garantiza que el estado y el semáforo declarado coincidan **entre sí**, pero no que sean los del semáforo correcto. Un `worker` que declarara `status_light_id = ONBOARDING` podía tomar NARANJA del Onboarding, porque **ese par existe**. Se descubrió probándolo: un insert que pasó cuando debía fallar.
+
+Faltaba un CHECK contra el semáforo, y ahí está lo no obvio: **no puede ser contra el uuid.** El `id` es uuid v7 generado por el seed, así que cambia en cada ambiente — un CHECK con el literal sería válido en dev y falso en staging. El **`code` sí es estable**: `'WORKER'` es `'WORKER'` en todas partes, y ya era `UNIQUE` en `status_light`.
+
+`catalogs.status_light_state` gana `status_light_code` (desnormalizado, FK con `ON UPDATE CASCADE`) y un único `(id, status_light_code)`. Las **seis referencias** pasan de guardar el uuid a guardar el code, cada una con FK compuesta y CHECK:
+
+| Tabla | Fijada a |
+|---|---|
+| `personal.worker` · `personal.worker_state_history` | `WORKER` |
+| `commercial.prospect` · `commercial.prospect_state_history` | `ONBOARDING` |
+| `demand.requisition` · `demand.requisition_state_history` | `REQUISITION` |
+| `demand.position` | `POSITION_COVERAGE` **y** `URGENCY` |
+
+**Las dos tablas de historia estaban peor:** sus FK eran **simples** contra `status_light_state(id)`, así que ni siquiera impedían pares mal formados — podían registrar una transición entre estados de dos semáforos distintos.
+
+`catalogs.status_light_transition` **no** se fija, y es correcto: cada fila pertenece a su propio semáforo. Lo que necesitaba —que el origen y el destino sean del mismo— ya lo da la columna compartida.
+
+Los 8 CHECK quedaron **validados por Postgres** contra los datos existentes, con 0 estados de `code` huérfano y 0 donde el uuid y el code no coincidan.
+
+### Enmienda del 2026-08-12 · dos límites de Prisma que cambiaron el diseño
+
+**1. Las columnas `GENERATED` no se pueden usar.** `personal.worker` iba a llevar `has_tax_id` (la retención del 16%) e `is_profile_complete` como `GENERATED ALWAYS AS ... STORED`. En Postgres funcionaban perfecto; el problema es que **Prisma no sabe representarlas** y su diff queda en un bucle imposible:
+
+| En el datamodel | Prisma propone | Resultado |
+|---|---|---|
+| Sin declararlas | `DROP COLUMN` | pérdida de datos |
+| Declaradas | `DROP DEFAULT` | Postgres: *"column is a generated column"* |
+| Con `@default` | `SET DEFAULT` | el mismo error |
+
+Los tres rompen la siguiente migración. **Se resolvió con una vista:** `personal.vw_worker` expone las dos derivadas más la **edad calculada** (que es la razón por la que no se guarda `edad`, ver la desviación de `birth_date`). La vista consigue lo que buscábamos —la derivación vive en la base y no se puede desincronizar— y Prisma la ignora.
+
+**2. Los índices parciales no se pueden declarar.** `ux_slot_active_assignment` tiene que ser parcial (`WHERE status = 'ACTIVE'`) porque un único simple sobre `slot_id` prohibiría reusar el slot al cerrar la asignación. Prisma no lo sabe expresar, así que el índice **no está en el datamodel**. Se verificó que el diff no lo propone para `DROP`, pero lo que de verdad lo protege es el test de la Fase 4 que intenta dos asignaciones activas sobre el mismo slot y espera el error del motor: si alguien borra el índice, ese test truena. Es la misma trampa que se comió el índice espacial de la geocerca el 2026-08-08.
+
+> [!note] Dos cosas que la migración enseñó
+> **`prisma migrate deploy` NO envuelve el archivo en una transacción.** El primer intento del cambio a `code` se aplicó a medias y hubo que reescribir la migración entera como idempotente (`IF EXISTS` / `IF NOT EXISTS`, y cada constraint borrada antes de crearse).
+>
+> **Una vista definida con `SELECT *` ata la tabla a su lista de columnas.** `personal.vw_worker` bloqueaba el `DROP COLUMN`: *"cannot drop column status_light_id because view personal.vw_worker depends on it"*. La vista se cae al inicio de la migración y se recrea al final.
+
 ---
 
 ## Decisiones pendientes

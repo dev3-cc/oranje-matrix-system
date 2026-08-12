@@ -87,7 +87,7 @@ Un concepto, un tipo. Estas equivalencias no se eligen por tabla.
 | Duración | `integer` en **minutos** | 37.5 h son 2250 minutos exactos. Con horas decimales el error se acumula por jornada |
 | Fecha y hora | `timestamptz` | **Nunca `timestamp`** — ver sección 11 |
 | Fecha sin hora | `date` | Jornada, semana de nómina |
-| Rango de vigencia | `daterange` | Lo exige la restricción de exclusión de RR-05 |
+| Rango de vigencia en días | `daterange` | La vigencia de una asignación. **No sirve para RR-05**: solo ve días, y la regla es por horas |
 | Coordenada / perímetro | `geography(Point,4326)` | PostGIS. La geocerca del hotel (D-08) |
 | Estructura variable | `jsonb` | Solo para el `payload` del journal. No para datos consultables |
 | Estado de semáforo | FK a `catalogs.status_light_state` | Ver sección 5 |
@@ -214,7 +214,7 @@ La pregunta operativa es **quién agrega el valor**. Si es el negocio sin pedir 
 | `NOT NULL` | Por defecto. Nullable es la excepción y se justifica |
 | `CHECK` | Toda regla expresable sobre la propia fila |
 | `UNIQUE` parcial | Unicidad condicionada por estado (sección 4) |
-| `EXCLUDE USING gist` | Solapamiento temporal — RR-05 |
+| `EXCLUDE USING gist` | Solapamiento de **horas** — RR-05, sobre un `tstzrange` del turno en `operations` |
 | Trigger | Último recurso, solo cuando la regla necesita ver otras filas |
 
 Los triggers son el mecanismo más difícil de depurar del esquema: no aparecen en el código de la aplicación y se ejecutan sin que nadie los llame. Se usan para reglas que ningún `CHECK` puede expresar, y cada uno lleva un comentario con el ID de la regla que implementa.
