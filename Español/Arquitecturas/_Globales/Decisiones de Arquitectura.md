@@ -90,7 +90,7 @@ Lo que sí dejó de ser un riesgo: **`multiSchema` de Prisma es GA desde la vers
 
 **Por qué:** da exactamente la semántica de la regla —gana el primero, el segundo ve *"posición ya cubierta"*, nadie espera— dentro de la misma transacción que actualiza la cobertura. Un lock en Redis sería una pieza móvil externa a la transacción: si el proceso muere entre el lock y el commit, el estado queda inconsistente.
 
-Memorystore queda como caché de sesiones, opcional. Detalle en [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] §3.
+Memorystore queda como caché de sesiones, opcional. Detalle en [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] sección 3.
 
 ---
 
@@ -164,7 +164,7 @@ No es una vista de consulta: es donde se aprueban las marcas limpias y se resuel
 
 ### Consecuencia operativa del bloqueo
 
-Se decidió **bloquear** el ponche fuera de la geocerca. Eso deja abierto qué pasa cuando el GPS falla dentro de la propiedad (sótanos, cocinas, estructura metálica): sin regla de excepción, un colaborador que trabajó no cobra. Ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] §5.
+Se decidió **bloquear** el ponche fuera de la geocerca. Eso deja abierto qué pasa cuando el GPS falla dentro de la propiedad (sótanos, cocinas, estructura metálica): sin regla de excepción, un colaborador que trabajó no cobra. Ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] sección 5.
 
 ---
 
@@ -191,7 +191,7 @@ Sin ese corte, cualquier marca capturada en un teléfono entra directo al cálcu
 >
 > El motivo: con el alcance en el permiso hay que insertar una fila por hotel, por departamento y por acción, y mantenerla cada vez que alguien cambia de puesto. Con el alcance en la persona, cambiar a alguien de departamento es un `UPDATE` de una columna. `department_id IS NULL` es lo que distingue al Manager General.
 >
-> Ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] §9 para el diseño completo y la consulta de autorización.
+> Ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] sección 9 para el diseño completo y la consulta de autorización.
 
 ### Si no aprueba a tiempo
 
@@ -240,11 +240,11 @@ El vínculo existe en el modelo sin agregar tablas: `asignacion → slot → pos
 
 El repositorio de código vigente ya está en inglés (`Employee`, `StaffingRequest`), y con el dominio en español habría que migrarlo o convivir a medias. La frontera queda en un solo lugar: **el identificador va en inglés, el texto que se muestra va en español.**
 
-Los esquemas no se traducen porque los fija D-01 y lo repite [[Estándares de Base de Datos]] §2 (*"Esquema: nombre del módulo de D-01"*). Si algún día se traducen, cuesta el prefijo y nada más.
+Los esquemas no se traducen porque los fija D-01 y lo repite [[Estándares de Base de Datos]] sección 2 (*"Esquema: nombre del módulo de D-01"*). Si algún día se traducen, cuesta el prefijo y nada más.
 
 ### Costo aceptado
 
-El vault seguirá en español, así que buscar `Requisición` en el código no encontrará nada y buscar `StaffingRequest` en el vault tampoco. **El glosario canónico de [[Estructura de Proyecto y Nomenclatura]] §8 deja de ser documentación y pasa a ser obligatorio:** es lo único que evita que Propuesta se escriba `Proposal`, `Offer` y `Quote` en tres archivos distintos.
+El vault seguirá en español, así que buscar `Requisición` en el código no encontrará nada y buscar `StaffingRequest` en el vault tampoco. **El glosario canónico de [[Estructura de Proyecto y Nomenclatura]] sección 8 deja de ser documentación y pasa a ser obligatorio:** es lo único que evita que Propuesta se escriba `Proposal`, `Offer` y `Quote` en tres archivos distintos.
 
 ### Consecuencias documentales
 
@@ -252,16 +252,16 @@ El vault seguirá en español, así que buscar `Requisición` en el código no e
 
 | Documento | Qué cambió |
 |---|---|
-| [[Estructura de Proyecto y Nomenclatura]] §8 | Enunciado invertido, ejemplos de código al revés, y el glosario de 20 filas reescrito con el identificador en inglés y la tabla Postgres en inglés. Nueva sección *El costo, y quién lo paga*: agregar un concepto obliga a agregar su fila en el mismo PR |
-| [[Estándares de Base de Datos]] §2 y §15.3 | Toda la nomenclatura y sus ejemplos en inglés (`is_`/`has_` en vez de `es_`/`tiene_`, `created_at`, `ux_slot_active_assignment`), más un callout explicando por qué `demand.requisition` mezcla los dos idiomas a propósito. La pendiente 3 queda cerrada |
-| [[Estándares de Desarrollo]] §4 | Rutas, campos JSON, códigos de error y ramas de Git en inglés, con una tabla nueva que fija la frontera: **identificadores en inglés, textos que lee una persona en español** (descripciones de test, `summary` de OpenAPI, asunto del commit) |
+| [[Estructura de Proyecto y Nomenclatura]] sección 8 | Enunciado invertido, ejemplos de código al revés, y el glosario de 20 filas reescrito con el identificador en inglés y la tabla Postgres en inglés. Nueva sección *El costo, y quién lo paga*: agregar un concepto obliga a agregar su fila en el mismo PR |
+| [[Estándares de Base de Datos]] sección 2 y sección 15.3 | Toda la nomenclatura y sus ejemplos en inglés (`is_`/`has_` en vez de `es_`/`tiene_`, `created_at`, `ux_slot_active_assignment`), más un callout explicando por qué `demand.requisition` mezcla los dos idiomas a propósito. La pendiente 3 queda cerrada |
+| [[Estándares de Desarrollo]] sección 4 | Rutas, campos JSON, códigos de error y ramas de Git en inglés, con una tabla nueva que fija la frontera: **identificadores en inglés, textos que lee una persona en español** (descripciones de test, `summary` de OpenAPI, asunto del commit) |
 
 > [!warning]
 > **El Colaborador se llama `Worker` en el código.** Decidido el 2026-08-06; con esto el idioma queda cerrado por completo.
 >
 > `Employee` está descartado: el [[Colaborador/Colaborador|Colaborador]] no es empleado del hotel —el vínculo es siempre vía `assignment`, con fechas— así que ese nombre mete en la entidad central una relación laboral que el negocio niega.
 >
-> Se evaluó y se descartó dejarlo en español como excepción: `colaborador` viviría dentro de `colaborador_id`, `getColaboradorById`, `availableColaboradores`, en la palabra más frecuente del sistema. Es exactamente el "medio identificador en cada idioma" que [[Estructura de Proyecto y Nomenclatura]] §8 rechaza. Y el 2026-08-07 desapareció el único precedente que quedaba: los esquemas también pasaron a inglés.
+> Se evaluó y se descartó dejarlo en español como excepción: `colaborador` viviría dentro de `colaborador_id`, `getColaboradorById`, `availableColaboradores`, en la palabra más frecuente del sistema. Es exactamente el "medio identificador en cada idioma" que [[Estructura de Proyecto y Nomenclatura]] sección 8 rechaza. Y el 2026-08-07 desapareció el único precedente que quedaba: los esquemas también pasaron a inglés.
 >
 > **En el vault, en la UI y en las juntas sigue siendo Colaborador.** `Worker` solo existe en el código; el glosario canónico es el puente y por eso es obligatorio.
 
@@ -287,7 +287,7 @@ El vault seguirá en español, así que buscar `Requisición` en el código no e
 | CSS plano del sistema Oranje | `oranje-seed.css` migra al preset; los tokens (`--o-500`, `--sb`, `--st-*`) no se renombran |
 | Componentes compartidos web/móvil | Se escriben dos veces con la misma API antes que forzar uno solo |
 
-Detalle de carpetas y nomenclatura en [[Estructura de Proyecto y Nomenclatura]] §1, §4, §6 y §7.5.
+Detalle de carpetas y nomenclatura en [[Estructura de Proyecto y Nomenclatura]] sección 1, sección 4, sección 6 y sección 7.5.
 
 > [!important] Enmienda del 2026-08-10 · Tailwind 4 parte el preset en dos emisiones
 > Esta decisión dice *"un preset compartido en `packages/ui`"*, y eso se escribió pensando en **Tailwind 3**, donde el preset es un objeto JS que se importa desde los dos `tailwind.config`. **Tailwind 4 eliminó la configuración en JS**: el tema se declara en CSS con `@theme`. Y **NativeWind estable (4.2.6) sigue exigiendo Tailwind 3** — el soporte de v4 está en `5.0.0-preview.4`.
@@ -382,7 +382,7 @@ Los eventos de cambio de estado sí se asientan en `journal.journal`, y aun así
 
 | `journal.journal` | La tabla de historia |
 |---|---|
-| Append-only, particionado por mes, retención de 24 meses (Estándares de BD §9) | Vive tanto como su entidad |
+| Append-only, particionado por mes, retención de 24 meses (Estándares de BD sección 9) | Vive tanto como su entidad |
 | `payload` en `jsonb` — no consultable por diseño | Columnas tipadas con FK a los estados |
 | Paginación por cursor; es auditoría del sistema | Se consulta con `GROUP BY` y ventanas; es dato de negocio |
 
@@ -392,7 +392,7 @@ Calcular "tiempo promedio en Amarillo" recorriendo `jsonb` de una tabla particio
 
 `prospect.onboarding_state_id` queda registrado como **desnormalización deliberada**: es la última fila de la historia, y existe porque el pipeline se consulta en cada carga de pantalla y no va a resolver el estado actual con una subconsulta ordenada por fecha en cada fila.
 
-Los otros 6 semáforos necesitan su tabla equivalente. Hoy solo existe la de `prospect`; ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] §4.
+Los otros 6 semáforos necesitan su tabla equivalente. Hoy solo existe la de `prospect`; ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] sección 4.
 
 ---
 
@@ -422,9 +422,9 @@ Los otros 6 semáforos necesitan su tabla equivalente. Hoy solo existe la de `pr
 |---|---|---|
 | 1 | Monorepo, NestJS, Prisma y la instancia de Cloud SQL | No hay dónde migrar |
 | 2 | El **seed** del semáforo: 9 estados y 12 transiciones con su rol y su `requires_reason` | Las tablas vacías no tienen reglas. El seed está en `Ventas/Semáforo Onboarding y Base de Datos.drawio`, página 3 |
-| 3 | `journal.journal` **particionado por mes** | Estándares de BD §9: retrofitearlo exige reescribir la tabla con la aplicación detenida |
+| 3 | `journal.journal` **particionado por mes** | Estándares de BD sección 9: retrofitearlo exige reescribir la tabla con la aplicación detenida |
 | 4 | Extensiones `postgis`, `pgcrypto`, `btree_gist` en `public` | La geocerca, los uuid y las restricciones de exclusión dependen de ellas |
-| 5 | Resolver el módulo del expediente del Colaborador | D-01 no le asigna uno. Provisional en `coverage/`; la alternativa es un módulo `personal/` y serían 11. Ver [[Estructura de Proyecto y Nomenclatura]] §3 |
+| 5 | Resolver el módulo del expediente del Colaborador | D-01 no le asigna uno. Provisional en `coverage/`; la alternativa es un módulo `personal/` y serían 11. Ver [[Estructura de Proyecto y Nomenclatura]] sección 3 |
 
 ### El modelo vigente de Ventas
 
@@ -451,7 +451,7 @@ La fuente es `Español/Arquitecturas/Ventas/Ventas - Modelo de Datos v2.drawio` 
 
 **La accesibilidad se hereda.** Radix y rn-primitives resuelven foco, teclado y `aria` en Dialog, Select y Dropdown — que es justo lo que sale mal cuando esos componentes se escriben a mano.
 
-**El código vive en el repo**, así que pasa por review y por el Storybook que [[Estándares de Desarrollo]] §8 exige para `packages/ui`. Un wrapper de un tercero no se puede documentar así.
+**El código vive en el repo**, así que pasa por review y por el Storybook que [[Estándares de Desarrollo]] sección 8 exige para `packages/ui`. Un wrapper de un tercero no se puede documentar así.
 
 ### Dónde vive cada cosa
 
@@ -463,7 +463,7 @@ La fuente es `Español/Arquitecturas/Ventas/Ventas - Modelo de Datos v2.drawio` 
 | Primitivas de react-native-reusables y sus composiciones | `apps/mobile/src/shared/ui/` | solo `apps/mobile` |
 
 > [!important]
-> **Esto corrige una duplicación que ya existía.** [[Estructura de Proyecto y Nomenclatura]] listaba `Button, Modal, Table, StatusChip` en dos lugares a la vez —§4 en `apps/web/src/shared/components/` y §6 en `packages/ui/src/components/`— sin decir cuál manda. La CLI de shadcn escribe en **una** ruta configurada en `components.json`, así que la ambigüedad tenía que cerrarse: **lo reutilizable vive en `packages/ui`**, y `shared/components/` de la app queda para lo que depende de su store o su router.
+> **Esto corrige una duplicación que ya existía.** [[Estructura de Proyecto y Nomenclatura]] listaba `Button, Modal, Table, StatusChip` en dos lugares a la vez —sección 4 en `apps/web/src/shared/components/` y sección 6 en `packages/ui/src/components/`— sin decir cuál manda. La CLI de shadcn escribe en **una** ruta configurada en `components.json`, así que la ambigüedad tenía que cerrarse: **lo reutilizable vive en `packages/ui`**, y `shared/components/` de la app queda para lo que depende de su store o su router.
 
 ### Qué hay que ajustar al copiar
 
@@ -472,7 +472,7 @@ La fuente es `Español/Arquitecturas/Ventas/Ventas - Modelo de Datos v2.drawio` 
 | Variables `--background`, `--primary`, `--ring`, `--radius` | Tokens Oranje de [[Convenciones de Diseño]] | Se declaran **derivadas** en `tokens.css`; ningún token Oranje se renombra ni se redefine |
 | Iconos de `lucide-react` | **Material Icons** (Round y Outlined) | Se cambia el import al copiar. El código es nuestro, es una edición mecánica |
 | Tipografía por defecto | **Montserrat** | Ya viene del preset compartido |
-| Archivos en `kebab-case` (`button.tsx`) | §7.1: componentes React en `PascalCase.tsx` | **Excepción acotada a `components/ui/`**: se conservan los nombres de shadcn para que `shadcn diff` siga sirviendo al actualizar. Fuera de esa carpeta rige §7.1 |
+| Archivos en `kebab-case` (`button.tsx`) | Sección 7.1: componentes React en `PascalCase.tsx` | **Excepción acotada a `components/ui/`**: se conservan los nombres de shadcn para que `shadcn diff` siga sirviendo al actualizar. Fuera de esa carpeta rige sección 7.1 |
 | Nada equivalente a `--st-*` | Un color = un significado por semáforo | Los colores de semáforo **no** se mapean a variables de shadcn: son su propia escala, consumida por `SemaforoBadge` |
 
 ### Lo que ninguna de las dos cubre
@@ -493,13 +493,13 @@ Del catálogo de [[Convenciones de Diseño]] quedan sin equivalente el **KPI ric
 > **El riesgo que se asume está en el móvil.** react-native-reusables es un proyecto **comunitario** y su catálogo va detrás del de shadcn. Antes de la primera pantalla de `apps/mobile` hay que verificar que existan los componentes que el ponche necesita; lo que falte se escribe a mano sobre rn-primitives. Si faltara demasiado, la salida es **gluestack-ui v2** — y eso reabre D-12, no es un cambio de dependencia.
 
 > [!note]
-> **El Storybook obligatorio no alcanza al móvil.** [[Estándares de Desarrollo]] §8 lo exige para `packages/ui`, y los componentes del móvil viven en `apps/mobile/src/shared/ui/`. Quedan fuera a propósito: montar Storybook de React Native es una decisión aparte que hoy no se justifica.
+> **El Storybook obligatorio no alcanza al móvil.** [[Estándares de Desarrollo]] sección 8 lo exige para `packages/ui`, y los componentes del móvil viven en `apps/mobile/src/shared/ui/`. Quedan fuera a propósito: montar Storybook de React Native es una decisión aparte que hoy no se justifica.
 
 ---
 
 ## D-17 · Las tres librerías que el frontend necesitaba y ningún documento nombraba
 
-**Decisión:** **React Router 8** en *data mode*, **Recharts** para gráficas y **`@vis.gl/react-google-maps`** para el mapa. Ninguna estaba elegida: [[Estructura de Proyecto y Nomenclatura]] §4 dibujaba `app/router.tsx` sin decir con qué, y el maquetado de Ventas pedía un embudo y un mapa sin librería asignada.
+**Decisión:** **React Router 8** en *data mode*, **Recharts** para gráficas y **`@vis.gl/react-google-maps`** para el mapa. Ninguna estaba elegida: [[Estructura de Proyecto y Nomenclatura]] sección 4 dibujaba `app/router.tsx` sin decir con qué, y el maquetado de Ventas pedía un embudo y un mapa sin librería asignada.
 
 ### Router — React Router 8, paquete `react-router`, *data mode*
 
@@ -541,13 +541,127 @@ La **tipografía** no es una librería: Montserrat se sirve como fuente variable
 
 ---
 
+## D-18 · El catálogo de roles: 19 filas, IDs unificados, y dos roles transversales
+
+**Decisión:** `identity.role` se siembra con **19 roles**. Los IDs de Reclutamiento pasan de `ROL-01…ROL-05` a `ROL-R-NN`, el Sistema y el Administrador dejan de existir por triplicado, y los 8 roles de los departamentos sin `Arquitecturas/` reciben ID.
+
+### El problema que resolvía
+
+`Roles del Sistema.md` estaba **vacío** — el catálogo que debía consolidar los roles no existía. Y los IDs estaban repartidos en las Portadas de cada departamento con tres formatos distintos:
+
+| Departamento | Cómo estaba |
+|---|---|
+| Hotel, Ventas | `ROL-H-01`, `ROL-V-01` — con letra de departamento |
+| Reclutamiento | `ROL-01`…`ROL-05` — **sin letra** |
+| Inspección, QA, Customer Service, Contabilidad | los roles existen como notas, **sin ningún ID** |
+
+Sin catálogo de roles no se puede sembrar `identity.role`, y sin esa tabla `status_light_transition.authorized_role_id` no apunta a nada: **el semáforo no camina.** Era el bloqueo de toda la Fase 3.
+
+### La convención del número
+
+**El rol operativo de base es 01, y de ahí hacia arriba.** No es una invención: es lo que ya hacían Hotel y Ventas. El `ROL-H-01` es el Supervisor —el de campo— y el `ROL-H-03` el Manager General; el `ROL-V-01` es el BD y el `ROL-V-02` su BDC.
+
+Por eso el Inspector es `ROL-I-01` y el Coordinador `ROL-I-02`; el Operador de QA es `ROL-Q-01` y su Manager `ROL-Q-02`.
+
+### El Sistema y el Administrador son transversales, no de un departamento
+
+Estaban tres veces: `ROL-H-04`/`ROL-V-03`/`ROL-04` para el Sistema, y `ROL-H-05`/`ROL-V-04`/`ROL-05` para el Administrador.
+
+Quedan como **`ROL-SYS-01`** y **`ROL-ADM-01`**, uno de cada uno. Con tres IDs habría que **repetir sus permisos tres veces** en `role_permission`, y un usuario Administrador tendría que declarar "de qué departamento" es — cuando su alcance es todo el sistema.
+
+### Los 19
+
+| `code` | `name` | `department` |
+|---|---|---|
+| `ROL-H-01` · `ROL-H-02` · `ROL-H-03` | Supervisor · Manager de Área · Manager General | Hotel |
+| `ROL-R-01` · `ROL-R-02` · `ROL-R-03` | Reclutadora · Líder de Grupo · Manager de Reclutamiento | Reclutamiento |
+| `ROL-V-01` · `ROL-V-02` | Business Developer · Business Developer Coordinator | Ventas |
+| `ROL-I-01` · `ROL-I-02` | Inspector · Coordinador | Inspección |
+| `ROL-Q-01` · `ROL-Q-02` | Operador de QA · Manager de QA | QA |
+| `ROL-CS-01` · `ROL-CS-02` | Agente de CS · Customer Service Manager | Customer Service |
+| `ROL-CO-01` · `ROL-CO-02` | Contadora · Manager de Contabilidad | Contabilidad |
+| `ROL-C-01` | Colaborador | — |
+| `ROL-SYS-01` · `ROL-ADM-01` | Sistema · Administrador | — |
+
+### Consecuencias
+
+**Deuda de propagación:** los `ROL-0N` de Reclutamiento aparecen **48 veces en ~34 archivos** del vault, y siguen con el formato viejo. La base ya usa `ROL-R-NN`; el vault todavía no. Hasta que se propague, quien lea la Matriz de Permisos de Reclutamiento va a ver un ID que no existe en `identity.role`.
+
+**`Roles del Sistema.md` sigue vacío.** El catálogo real vive hoy en `apps/api/prisma/seed.ts`, que es donde la sección 5 de [[Estándares de Desarrollo]] manda los datos semilla. Pero el vault debería tener su propia versión legible.
+
+**Los 8 roles nuevos no tienen `Arquitecturas/`.** Tienen ID y fila en la base, pero ningún `01 - Portada` que los describa. El ID existe antes que su documentación — al revés de como se hizo con Hotel, Ventas y Reclutamiento.
+
+---
+
+## D-19 · La Requisición carga tres semáforos, y por eso la Posición lleva dos pares de columnas
+
+**Decisión:** `demand.position` guarda **dos pares** de columnas de estado —`coverage_state_id` + `coverage_light_id` y `urgency_state_id` + `urgency_light_id`— porque la Posición pertenece a dos semáforos distintos a la vez.
+
+### Por qué tres semáforos sobre dos filas
+
+Una requisición no tiene un estado, tiene tres, y cada uno mide **una dimensión distinta**:
+
+| Semáforo | Dónde vive | Qué mide |
+|---|---|---|
+| [[Core/Módulos/Semáforos/Semáforo de Requisición\|Requisición]] | `requisition` | El ciclo de vida de la cabecera |
+| [[Core/Módulos/Semáforos/Semáforo de Posiciones de la Requisición\|Posiciones]] | `position` | El % de cobertura de esa posición |
+| [[Core/Módulos/Semáforos/Semáforo de Urgencia de Requisición\|Urgencia]] | `position` | El tiempo restante |
+
+Es la regla de oro aplicada: **un semáforo, una dimensión.** Colapsarlos en una columna obligaría a inventar estados compuestos —"cubierta parcialmente y urgente"— y a multiplicar los colores.
+
+### Lo que compran los dos pares
+
+Cada par sostiene su propia **FK compuesta** contra `catalogs.status_light_state (id, status_light_id)`. Sin la columna redundante del semáforo, nada impediría que la urgencia tomara "Dorado" —un color del Semáforo de Posiciones— y **ninguna consulta se quejaría**.
+
+Verificado contra la instancia: el intento se rechaza en el motor.
+
+Son dos desnormalizaciones deliberadas más, en la misma línea que `prospect.status_light_id` de **D-13**: redundancia a cambio de una garantía del motor.
+
+### Y las dos que son derivadas y aun así se guardan
+
+`coverage_state_id` sale de contar slots ocupados. `urgency_state_id` sale de la fórmula de RR-H-05 sobre `authorized_at` contra `start_date`, y la recalcula un job de Cloud Scheduler.
+
+Las dos se guardan porque el tablero las **filtra** en cada carga; recalcularlas en cada consulta obligaría a repetir la fórmula en cada lugar que las lea.
+
+### Tres desviaciones de nomenclatura, a propósito
+
+`Modelo de Datos` sección 3 nombra columnas que este modelo **no usó**, y conviene saber por qué antes de "corregirlas":
+
+| Sección 3 dice | Se usó | Por qué |
+|---|---|---|
+| `index` en `slot` | **`ordinal`** | "Índice" en la sección 2 es un objeto de base de datos con su convención `ix_`. Y en el ORM se leería como el índice de un arreglo |
+| `index` en `position` | **`line_number`** | La posición es un renglón de la requisición, como una partida de factura |
+| `schedule` | **`start_time`** | `schedule` colisiona con el módulo Schedule (`operations.schedule`), que es el calendario semanal — otra cosa |
+
+La autoridad de nomenclatura es la sección 2 de [[Estándares de Base de Datos]], no la sección 3 de `Modelo de Datos`, que describe entidades.
+
+### El borrado, que el semáforo obliga
+
+`requisition` y `position` llevan `deleted_at`. El argumento no es el estándar: es que **el Semáforo de Requisición tiene un estado Morado llamado "Eliminada"**, y una fila borrada físicamente no puede tener estado. Si Morado existe, el borrado es lógico por definición.
+
+Por eso `ux_position_requisition_line` es **parcial**: sin el `WHERE deleted_at IS NULL`, eliminar el renglón 2 impediría volver a usar ese número.
+
+`slot` **no** lleva `deleted_at`: si `quantity` baja, el slot libre se borra físicamente —nunca tuvo a nadie— y el ocupado lo impide la FK de `coverage.assignment` con `ON DELETE RESTRICT`. La regla la hace cumplir el motor.
+
+> [!warning] Contradicción del vault, pendiente del semaforo-guardian
+> El [[Core/Módulos/Semáforos/Semáforo de Requisición|Semáforo de Requisición]] describe Morado como *"Requisición eliminada **físicamente**"*. Debería decir "eliminada" a secas: como está, contradice a la sección 4 de [[Estándares de Base de Datos]] y a sí mismo. Corregirlo toca la fuente de verdad, así que va por el subagente `semaforo-guardian`.
+
+---
+
 ## Decisiones pendientes
 
-1. **RR-05 — exclusividad absoluta o cobertura temporal.** [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] dice que un colaborador no puede estar activo en dos hoteles simultáneamente; el repositorio de código vigente permite que un permanente cubra solicitudes temporales. Cambia la restricción de exclusión del modelo.
-2. **Nube definitiva.** GCP es defendible por Cloud Run y Firebase. La decisión debe basarse en qué domina el equipo, no en capacidades de mensajería —equivalentes en ambas nubes.
-3. **Número de marcas del ponche.** El diseño elegido captura tres (`CLOCK_IN`, `LUNCH`, `CLOCK_OUT`); [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] define seis. Cambia el cálculo de horas pagables. Ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] §5.
-4. **Excepción al ponche bloqueado.** Falta la regla del ponche manual cuando el GPS falla dentro de la propiedad.
-5. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
+1. **RR-05 — exclusividad absoluta o cobertura temporal.** [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] dice que un colaborador no puede estar activo en dos hoteles simultáneamente; el repositorio de código vigente permite que un permanente cubra solicitudes temporales. Cambia la restricción de exclusión del modelo. **Bloquea el diagrama de `coverage`:** si un permanente puede cubrir temporales, el `EXCLUDE USING gist` tiene que excluir las asignaciones de tipo `temporary`, y eso se decide antes de modelar, no después.
+2. **Las transiciones de los otros 6 semáforos.** Los 43 estados están sembrados, pero el vault solo documenta los 12 pasos legales del Onboarding. Sin esas filas, esos semáforos tienen colores y no caminan: el servicio de transición devuelve `409` a todo. Es trabajo de negocio, no de ingeniería.
+3. **`journal.journal` ya viene tarde.** La sección 9 de [[Estándares de Base de Datos]] pide crearlo **particionado por mes desde la primera migración**, porque retrofitear la partición exige reescribir la tabla con la aplicación detenida. Van tres migraciones y no existe. Hoy no duele —está vacío— y por eso conviene crearlo ahora.
+4. **El módulo del expediente del Colaborador.** D-01 no le asigna uno: hoy iría en `coverage`, y la alternativa es un `personal/` propio — en ese caso son **11 esquemas**, no 10. Se decide al modelar `coverage`.
+5. **La identidad del Colaborador.** Poncha desde su teléfono, así que se autentica (D-05), pero su expediente no es `identity.user`. La propuesta en discusión es Firebase Auth como único proveedor y una tabla `identity.account` con el `firebase_uid` único, referenciada por `user` y por `worker` — el UID como columna, nunca como PK. Se asienta al modelar `coverage`.
+6. **La duración del turno.** `demand.position` guarda solo `start_time`. El dato del negocio es **8.5 horas brutas** (8 netas tras los 30 min de lunch) y **varía**, pero no está en [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]]. Falta decidir dónde vive —`position`, el Contrato o el Schedule— y asentarlo en la fuente de verdad. Sin ella `operations` no puede calcular la hora de salida ni comparar lo planeado contra lo ponchado.
+7. **El GH responsable frente a quien autoriza.** `demand.requisition` lleva `area_manager_user_id` y `authorized_by` como columnas distintas, porque un Manager General puede autorizar la requisición de un departamento cuyo GH es otro. Falta confirmarlo con el negocio; si siempre coinciden, sobra una columna.
+8. **La homoclave del número de requisición.** El formato es `AAAAMMDDHHMM` + 2 caracteres. Falta definir quién los genera y contra qué se verifica que no choquen: si es aleatoria, necesita reintento.
+9. **Nube definitiva.** GCP es defendible por Cloud Run y Firebase. La decisión debe basarse en qué domina el equipo, no en capacidades de mensajería —equivalentes en ambas nubes.
+10. **Número de marcas del ponche.** El diseño elegido captura tres (`CLOCK_IN`, `LUNCH`, `CLOCK_OUT`); [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] define seis. Cambia el cálculo de horas pagables. Ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] sección 5.
+11. **Excepción al ponche bloqueado.** Falta la regla del ponche manual cuando el GPS falla dentro de la propiedad.
+12. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
 
 > [!note]
 > **Cerradas en esta ronda:** el idioma del esquema (D-11) y el nombre inglés del Colaborador, que es **`Worker`** desde el 2026-08-06.

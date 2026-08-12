@@ -18,7 +18,7 @@ Define cómo se organiza el código de la plataforma Oranje: topología de repos
 > **Alcance:** organización física del código. Las decisiones de infraestructura y despliegue que este documento materializa viven en [[Arquitecturas/_Globales/Decisiones de Arquitectura|Decisiones de Arquitectura]] (D-01 … D-10). Las reglas de proceso (Git, PRs, API, base de datos, testing, DoD) viven en [[Estándares de Desarrollo]]. Las reglas de negocio que el código implementa viven en [[Reglas de Negocio]].
 
 > [!important]
-> Este documento **no decide arquitectura**: la traduce a carpetas. Ante conflicto con [[Arquitecturas/_Globales/Decisiones de Arquitectura|Decisiones de Arquitectura]] o con [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]], ganan ellos. La trazabilidad decisión → estructura está en la §10.
+> Este documento **no decide arquitectura**: la traduce a carpetas. Ante conflicto con [[Arquitecturas/_Globales/Decisiones de Arquitectura|Decisiones de Arquitectura]] o con [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]], ganan ellos. La trazabilidad decisión → estructura está en la sección 10.
 
 ---
 
@@ -163,7 +163,7 @@ apps/api/
 ```
 
 > [!note]
-> D-01 escribe esta carpeta como `modulos/`. Aquí es `modules/`, igual que `common/`, `config/` e `infra/`. Pero los **nombres de los módulos** que van dentro sí son los de D-01, en español y sin traducir: `demand/`, `coverage/`, `settlement/`. Es la misma frontera que en Postgres — el contenedor en inglés, el módulo de negocio en español (§8 y [[Estándares de Base de Datos]] §2).
+> D-01 escribe esta carpeta como `modulos/`. Aquí es `modules/`, igual que `common/`, `config/` e `infra/`. Pero los **nombres de los módulos** que van dentro sí son los de D-01, en español y sin traducir: `demand/`, `coverage/`, `settlement/`. Es la misma frontera que en Postgres — el contenedor en inglés, el módulo de negocio en español (sección 8 y [[Estándares de Base de Datos]] sección 2).
 
 ### Mapa de módulos
 
@@ -552,7 +552,7 @@ Los nombres de los tokens documentados en [[Convenciones de Diseño]] (`--o-500`
 > **Dónde va cada componente.** Lo reutilizable entre features vive aquí; `apps/web/src/shared/components/` queda para lo que depende del store, del router o del permiso del usuario. Antes ambos listaban `Button, Modal, Table, StatusChip` sin decir cuál mandaba; la CLI de shadcn escribe en una sola ruta, así que la ambigüedad se cerró en D-16.
 
 > [!note]
-> **Excepción de nombrado, acotada a `src/components/ui/`.** Ahí los archivos conservan el `kebab-case` de shadcn (`button.tsx` exportando `Button`), contra la regla de §7.1, para que `shadcn diff` siga detectando cambios al actualizar. Fuera de esa carpeta —composiciones incluidas— rige §7.1: `PascalCase.tsx`.
+> **Excepción de nombrado, acotada a `src/components/ui/`.** Ahí los archivos conservan el `kebab-case` de shadcn (`button.tsx` exportando `Button`), contra la regla de sección 7.1, para que `shadcn diff` siga detectando cambios al actualizar. Fuera de esa carpeta —composiciones incluidas— rige sección 7.1: `PascalCase.tsx`.
 
 > [!warning]
 > `tokens.ts` es la **única** definición. Un color de semáforo escrito a mano en un `className` (`bg-[#e63946]`) rompe lo que el preset garantiza: que el rojo del [[Semáforo de Requisición]] sea el mismo en la tabla del web y en la tarjeta del móvil.
@@ -592,7 +592,7 @@ Los nombres de los tokens documentados en [[Convenciones de Diseño]] (`--o-500`
 > **`camelCase` es para identificadores dentro del código, no para nombres de archivo.** En NestJS los archivos van en `kebab-case` (convención oficial del framework y de su CLI); en React los componentes van en `PascalCase` porque el archivo se nombra igual que el componente que exporta. Mezclar estos tres criterios es el error de nombrado más común: la regla es **el archivo se nombra según lo que exporta**.
 
 > [!note]
-> **Una sola excepción:** `packages/ui/src/components/ui/`, donde las primitivas copiadas de shadcn conservan su `kebab-case` para no romper `shadcn diff` (D-16, §6). En cualquier otra carpeta el componente React va en `PascalCase.tsx`.
+> **Una sola excepción:** `packages/ui/src/components/ui/`, donde las primitivas copiadas de shadcn conservan su `kebab-case` para no romper `shadcn diff` (D-16, sección 6). En cualquier otra carpeta el componente React va en `PascalCase.tsx`.
 
 > [!note]
 > **Tabla en singular, endpoint en plural.** No es incoherencia: la tabla nombra *una fila* y ya viene calificada por su esquema (`demand.requisition`), como en D-01 y en [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]]; el endpoint nombra *una colección* (`GET /api/v1/requisitions`), como manda REST.
@@ -641,10 +641,10 @@ Rige la misma regla que en el web —**el archivo se nombra según lo que export
 Lo demás no cambia: carpetas en `kebab-case` (`my-file/`), hooks con prefijo `use`, slices con sufijo `Slice`, componentes en `PascalCase.tsx`, tests en `.spec.tsx`, y una feature se importa **solo desde su `index.ts`**.
 
 > [!note]
-> **Mismas clases, componentes propios.** NativeWind hace que `className="bg-o-500"` funcione igual que en el web, pero `packages/ui/src/components/` sigue siendo solo web (§6). Y `StyleSheet.create` no está prohibido: queda para lo que Tailwind no expresa (animaciones, `shadow` por plataforma).
+> **Mismas clases, componentes propios.** NativeWind hace que `className="bg-o-500"` funcione igual que en el web, pero `packages/ui/src/components/` sigue siendo solo web (sección 6). Y `StyleSheet.create` no está prohibido: queda para lo que Tailwind no expresa (animaciones, `shadow` por plataforma).
 
 > [!important]
-> El dominio también va en inglés aquí (§8): `PunchScreen`, no `PoncheScreen`; `WorkerNavigator`, no `ColaboradorNavigator`. La única cosa en español que sobrevive en el móvil son los nombres de los diez módulos cuando aparecen en una ruta de API.
+> El dominio también va en inglés aquí (sección 8): `PunchScreen`, no `PoncheScreen`; `WorkerNavigator`, no `ColaboradorNavigator`. La única cosa en español que sobrevive en el móvil son los nombres de los diez módulos cuando aparecen en una ruta de API.
 
 ---
 
@@ -714,7 +714,7 @@ Un concepto del vault, un identificador en código. Es la **única traducción a
 | Modalidad de Contratación | `HiringModality` | `catalogs.hiring_modality` |
 
 > [!warning]
-> Los nombres de tabla de esta columna se toman de [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]]; el esquema, del mapa de módulos de la §3. Si alguno cambia allá, cambia aquí — este documento no es la fuente de verdad del esquema. La ubicación de `worker` depende del hueco señalado en la §3.
+> Los nombres de tabla de esta columna se toman de [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]]; el esquema, del mapa de módulos de la sección 3. Si alguno cambia allá, cambia aquí — este documento no es la fuente de verdad del esquema. La ubicación de `worker` depende del hueco señalado en la sección 3.
 
 > [!note]
 > Términos que ya son ingleses en el vault (`Schedule`, `Timesheet`, `Blacklist`, `Self-Pick`, `Onboarding`) **se dejan como están**. No se castellanizan.
@@ -745,7 +745,7 @@ export const Rol = {
 > 2. La Matriz de Permisos de Reclutamiento usa `ROL-01…ROL-05` (sin letra de departamento), mientras Hotel usa `ROL-H-xx` y Ventas `ROL-V-xx`. Hay que unificar a `ROL-[X]-[NN]` antes de fijar los identificadores en código.
 
 > [!note]
-> El enum es la **lista** de roles; los **permisos** no viven aquí ni en el token, sino en la tabla `identity.permission` (D-05 y [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] §9). Agregar un permiso es un `INSERT`, no un despliegue.
+> El enum es la **lista** de roles; los **permisos** no viven aquí ni en el token, sino en la tabla `identity.permission` (D-05 y [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] sección 9). Agregar un permiso es un `INSERT`, no un despliegue.
 
 ---
 
@@ -763,7 +763,7 @@ Cada decisión de [[Arquitecturas/_Globales/Decisiones de Arquitectura|Decisione
 | **D-06** Un proyecto de GCP por ambiente | `infra/` con la definición de `oranje-dev`, `oranje-staging` y `oranje-prod` |
 | **D-07** Observabilidad y secretos desde el día uno | `infra/secrets/` (Secret Manager y cifrado de campo) y logging estructurado en `common/interceptors/` |
 | **D-08** Ponche validado en el servidor | La geocerca se evalúa en `modules/operations/`; la app solo captura. Fotos a Cloud Storage vía `infra/storage/`, nunca por Firestore |
-| **D-09** Solo el ponche aprobado paga | El estado de la marca vive en `modules/operations/`; `settlement` pide las horas pagables por el `index.ts` de `operations` · el permiso de aprobar es una fila de `identity.permission` acotada al hotel, no un rol · falta la feature de validación en `apps/web` (§4) |
+| **D-09** Solo el ponche aprobado paga | El estado de la marca vive en `modules/operations/`; `settlement` pide las horas pagables por el `index.ts` de `operations` · el permiso de aprobar es una fila de `identity.permission` acotada al hotel, no un rol · falta la feature de validación en `apps/web` (sección 4) |
 | **D-10** Overtime por requisición | `modules/settlement/` desglosa el consolidado **por requisición** (`consolidation_detail`), no por hotel; el vínculo sale de `assignment → slot → position → requisition` |
 | **D-12** Redux Toolkit con RTK Query, Tailwind con NativeWind | Un solo `store.ts` y un solo `baseApi.ts` por cliente, con endpoints inyectados por feature · `tailwind-preset.ts` compartido y `src/components/` de `packages/ui` solo para web |
 | **D-16** La librería de componentes se copia | `packages/ui/components.json` + `src/components/ui/` (shadcn) · `apps/mobile/src/shared/ui/` (react-native-reusables) · `shadcn-vars.css` derivado de `tokens.ts`, nunca al revés |

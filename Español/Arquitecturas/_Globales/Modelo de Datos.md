@@ -219,8 +219,8 @@ Si la app decidiera *"estoy dentro"*, bastaría una aplicación de GPS falso par
 **Regla elegida: el ponche se bloquea.** Eso obliga a definir la tolerancia con cuidado: el radio se amplía con la precisión que reporta el dispositivo, acotada por un máximo configurable por hotel, y una lectura con precisión peor que ese máximo se rechaza en lugar de aceptarse "por si acaso".
 
 > [!warning] **Hueco: falta la válvula de escape.**
-> Si el GPS no ubica al colaborador —cocina en sótano, edificio con estructura metálica, teléfono con GPS degradado— un colaborador que **sí** trabajó no puede ponchar y no cobra. [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] §*Fallo de ponche* solo contempla reintentar, lo que no resuelve este caso.
-> Propuesta a autorizar: **ponche manual del [[Hotel/Supervisor|Supervisor]]** con motivo obligatorio, `source = 'manual'` y asiento en el journal (§7). Es una regla de negocio, no una decisión técnica.
+> Si el GPS no ubica al colaborador —cocina en sótano, edificio con estructura metálica, teléfono con GPS degradado— un colaborador que **sí** trabajó no puede ponchar y no cobra. [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] sección *Fallo de ponche* solo contempla reintentar, lo que no resuelve este caso.
+> Propuesta a autorizar: **ponche manual del [[Hotel/Supervisor|Supervisor]]** con motivo obligatorio, `source = 'manual'` y asiento en el journal (sección 7). Es una regla de negocio, no una decisión técnica.
 
 ### Las tres marcas
 
@@ -274,7 +274,7 @@ net_hours = (salida − entrada) − actual_lunch − actual_breaks
 Con la regla de lunch mínimo: `< 30 min` → 30 min · `≥ 30 min` → tiempo real · sin ponche → 30 min.
 
 > [!warning]
-> Esta fórmula es la de [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] y **presupone seis ponches**. Con las tres marcas del §5 no hay `actual_lunch` ni `actual_breaks` que calcular, y la fórmula colapsa a `(salida − entrada) − 30 min`. Es el conflicto abierto del §5: hasta que se resuelva, la fuente de verdad manda y esta fórmula queda como está.
+> Esta fórmula es la de [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] y **presupone seis ponches**. Con las tres marcas del sección 5 no hay `actual_lunch` ni `actual_breaks` que calcular, y la fórmula colapsa a `(salida − entrada) − 30 min`. Es el conflicto abierto del sección 5: hasta que se resuelva, la fuente de verdad manda y esta fórmula queda como está.
 
 ---
 
@@ -354,7 +354,7 @@ puede(user, accion, fila) =
 > Un Manager de Área **debe** tener `department_id`; un Manager General **no debe** tenerlo. La regla cruza `identity.user` con `identity.role`, así que ningún `CHECK` la expresa: va como trigger con el comentario de su regla, o como validación al crear el usuario.
 
 > [!note]
-> Todo este documento usa los identificadores en inglés que fija **D-11**, esquemas incluidos. El puente con los términos del vault es el glosario canónico de [[Estructura de Proyecto y Nomenclatura]] §8.
+> Todo este documento usa los identificadores en inglés que fija **D-11**, esquemas incluidos. El puente con los términos del vault es el glosario canónico de [[Estructura de Proyecto y Nomenclatura]] sección 8.
 
 ---
 
@@ -385,7 +385,7 @@ puede(user, accion, fila) =
 Preguntas que hay que responder **antes** de escribir el esquema, porque cambian tablas:
 
 1. **RR-05 — ¿exclusividad absoluta o cobertura temporal?** [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] dice que un colaborador no puede estar activo en dos hoteles simultáneamente. El `GEMINI.md` del repositorio de código dice que un permanente sí puede cubrir solicitudes temporales marcadas como `COVER`. Si vale la segunda, la restricción de exclusión necesita excluir las asignaciones de tipo `temporary`.
-2. **¿Tres marcas de ponche o seis?** El §5 documenta el conflicto completo. Con tres se pierden lunch real, breaks y el Indicador de Lunch Extendido, y cambia lo que se paga y lo que se factura. Exige modificar [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] y [[Timesheet]].
+2. **¿Tres marcas de ponche o seis?** El sección 5 documenta el conflicto completo. Con tres se pierden lunch real, breaks y el Indicador de Lunch Extendido, y cambia lo que se paga y lo que se factura. Exige modificar [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] y [[Timesheet]].
 3. **Válvula de escape del ponche bloqueado.** Si el GPS falla dentro de la propiedad, hoy el colaborador no puede ponchar y no cobra. Falta la regla del ponche manual del [[Hotel/Supervisor|Supervisor]] y quién lo autoriza.
 4. **PostGIS en Cloud SQL.** La geocerca lo asume. Hay que habilitar la extensión y decidir si el perímetro es punto + radio o polígono por hotel.
 5. **Horas aprobadas después del cierre semanal.** Si el [[Hotel/Manager de Área|Manager de Área]] no aprueba a tiempo, las horas quedan en espera indefinidamente (D-09). Falta decidir si al aprobarse reabren el `weekly_consolidation` de su semana o entran en el siguiente — el umbral de overtime es semanal, así que la elección cambia el pago.

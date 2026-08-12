@@ -35,7 +35,7 @@ Nadie hace push directo a `main` ni a `staging`. Todo entra por Pull Request.
 
 > [!note] Por qué `staging` y no `develop`
 > La rama se llama como el ambiente al que despliega. Antes se llamaba `develop`
-> y la §11 tenía que explicar que *"`develop` despliega a staging"* — una
+> y la sección 11 tenía que explicar que *"`develop` despliega a staging"* — una
 > indirección que no compraba nada y que obligaba a traducir cada vez.
 >
 > Con dos ramas y dos ambientes con pipeline, la correspondencia es 1 a 1:
@@ -196,7 +196,7 @@ if (requisition.statusLight !== RequisitionStatusLight.APPLE_GREEN) {
 | Formato | JSON, `camelCase` en las llaves |
 | Fechas | ISO 8601 en UTC: `2026-07-29T14:30:00Z` |
 | IDs | UUID v7 |
-| Idioma | **Recursos, campos y códigos de error en inglés** (D-11 y [[Estructura de Proyecto y Nomenclatura]] §8) |
+| Idioma | **Recursos, campos y códigos de error en inglés** (D-11 y [[Estructura de Proyecto y Nomenclatura]] sección 8) |
 
 > [!important] Identificadores en inglés, textos en español
 > La frontera no es "el código en inglés" sino **qué lo lee**:
@@ -261,7 +261,7 @@ Lo que sí es proceso de este documento:
 - Toda migración es reversible, o el PR explica por qué no.
 - Los cambios destructivos van por **expandir y contraer**, nunca en un solo despliegue.
 - Los datos semilla de catálogos ([[Posiciones]], [[Zonas]], [[Niveles de Inglés]]) viven en `prisma/seed.ts`, versionado.
-- Un PR que toca el esquema pasa el checklist de [[Estándares de Base de Datos]] §14.
+- Un PR que toca el esquema pasa el checklist de [[Estándares de Base de Datos]] sección 14.
 
 > [!warning]
 > Un cambio en un estado de semáforo toca `catalogs.status_light_state`, `packages/domain`, la validación de transiciones y la UI. Se hace **en un solo PR** y requiere dos aprobaciones.

@@ -17,7 +17,7 @@ Reglas de diseño, evolución y operación del esquema Postgres de Oranje. Es el
 > **Alcance:** el *cómo* del esquema — tipos, nombres, restricciones, índices, migraciones y crecimiento. El *qué* —las entidades y las reglas que hacen cumplir— vive en [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]]. La topología de módulos y esquemas, en [[Arquitecturas/_Globales/Decisiones de Arquitectura|Decisiones de Arquitectura]] D-01.
 
 > [!important] Principio rector
-> **Toda regla que pueda vivir como restricción de base de datos, vive ahí.** Una regla en el código se puede saltar con un script, un job o un endpoint nuevo; una restricción, no. El catálogo de invariantes que este principio produce está en [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] §10.
+> **Toda regla que pueda vivir como restricción de base de datos, vive ahí.** Una regla en el código se puede saltar con un script, un job o un endpoint nuevo; una restricción, no. El catálogo de invariantes que este principio produce está en [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] sección 10.
 
 ---
 
@@ -58,7 +58,7 @@ settlement · supervision · journal · notifications · catalogs
 | Restricción CHECK | `ck_<tabla>_<regla>` | `ck_punch_mark_photo_required` |
 | Clave foránea | `fk_<tabla>_<tabla_destino>` | `fk_position_requisition` |
 | Vista | `vw_<nombre>` | `vw_worker_pool` |
-| Enum de dominio | **No se usa** — ver §5 | — |
+| Enum de dominio | **No se usa** — ver sección 5 | — |
 
 **Sin acentos ni eñes** en ningún identificador de base de datos. Los acentos viven en los textos de la UI, no en el esquema.
 
@@ -70,7 +70,7 @@ settlement · supervision · journal · notifications · catalogs
 > El prefijo sigue diciendo **en qué módulo estás** y la tabla **qué guarda**. Lo que se fue es tener que recordar qué parte del identificador tocaba en cada idioma.
 
 > [!warning]
-> La tabla va en **singular** y el endpoint en **plural** (`GET /api/v1/requisitions`). No es incoherencia: la tabla nombra una fila y ya viene calificada por su esquema; el endpoint nombra una colección. Ver [[Estructura de Proyecto y Nomenclatura]] §7.
+> La tabla va en **singular** y el endpoint en **plural** (`GET /api/v1/requisitions`). No es incoherencia: la tabla nombra una fila y ya viene calificada por su esquema; el endpoint nombra una colección. Ver [[Estructura de Proyecto y Nomenclatura]] sección 7.
 
 ---
 
@@ -85,12 +85,12 @@ Un concepto, un tipo. Estas equivalencias no se eligen por tabla.
 | Dinero | `numeric(12,2)` | **Nunca `float`.** Un `double precision` no representa 0.1 |
 | Tarifa (pay/bill rate) | `numeric(10,4)` | El decimal extra evita arrastre al multiplicar por horas |
 | Duración | `integer` en **minutos** | 37.5 h son 2250 minutos exactos. Con horas decimales el error se acumula por jornada |
-| Fecha y hora | `timestamptz` | **Nunca `timestamp`** — ver §11 |
+| Fecha y hora | `timestamptz` | **Nunca `timestamp`** — ver sección 11 |
 | Fecha sin hora | `date` | Jornada, semana de nómina |
 | Rango de vigencia | `daterange` | Lo exige la restricción de exclusión de RR-05 |
 | Coordenada / perímetro | `geography(Point,4326)` | PostGIS. La geocerca del hotel (D-08) |
 | Estructura variable | `jsonb` | Solo para el `payload` del journal. No para datos consultables |
-| Estado de semáforo | FK a `catalogs.status_light_state` | Ver §5 |
+| Estado de semáforo | FK a `catalogs.status_light_state` | Ver sección 5 |
 
 > [!important] Cálculo de dinero
 > Toda operación aritmética sobre montos se hace en `numeric`, dentro de la base de datos o en un tipo decimal de la aplicación — **nunca en el `number` de JavaScript**. El redondeo se aplica **una sola vez**, al final del cálculo, no en cada paso intermedio. Redondear por jornada y volver a redondear por semana produce centavos de diferencia contra lo que el colaborador espera cobrar.
@@ -108,11 +108,11 @@ Toda tabla de negocio lleva:
 | `updated_at` | `timestamptz` | Mantenido por trigger, no por la aplicación |
 
 > [!warning] El `id` no lo genera Postgres
-> **No hay `DEFAULT` en la PK.** Ninguna función del motor produce un uuid v7: `gen_random_uuid()` —de `pgcrypto`, o nativa desde Postgres 13— devuelve **v4**, que es aleatorio y fragmenta el índice primario en cada inserción. Eso es justo lo que la §3 evita al pedir v7.
+> **No hay `DEFAULT` en la PK.** Ninguna función del motor produce un uuid v7: `gen_random_uuid()` —de `pgcrypto`, o nativa desde Postgres 13— devuelve **v4**, que es aleatorio y fragmenta el índice primario en cada inserción. Eso es justo lo que la sección 3 evita al pedir v7.
 >
 > El v7 lo genera la aplicación con una librería, antes del `INSERT`. Es lo que además permite conocer el `id` sin ida y vuelta a la base, que es lo que hace posible armar un grafo de objetos completo dentro de una sola transacción.
 >
-> **`pgcrypto` está en el esquema por otra razón:** el cifrado de campo de SSN e ITIN (§12). No por las llaves.
+> **`pgcrypto` está en el esquema por otra razón:** el cifrado de campo de SSN e ITIN (sección 12). No por las llaves.
 
 Y donde el negocio identifica a un responsable:
 
@@ -120,7 +120,20 @@ Y donde el negocio identifica a un responsable:
 |---|---|
 | `created_by`, `updated_by` | FK a `identity.user` |
 
-**Excepciones deliberadas:** `journal` no lleva `updated_at` ni `updated_by` — es append-only y no se toca (RR-16). Las tablas de catálogo sembradas no llevan autoría.
+**Excepciones deliberadas:**
+
+| Qué | Qué no lleva | Por qué |
+|---|---|---|
+| `journal.journal` | `updated_at`, `updated_by` | Append-only y no se toca (RR-16) |
+| **Las tablas de historia de semáforo** | `updated_at`, `updated_by`, `deleted_at` | Misma razón que el journal: una fila registra que algo *pasó*. Corregirla sería reescribir la historia. Lo que se corrige es el estado actual, con una fila nueva |
+| Las tablas de catálogo sembradas | `created_by`, `updated_by` | No tienen autor: las siembra la migración |
+
+> [!note] Por qué la historia de semáforo es su propia excepción
+> **D-14** hace que cada semáforo lleve su tabla de historia, así que esta excepción aplica hasta siete veces —hoy existen `commercial.prospect_state_history` y `demand.requisition_state_history`— y no una.
+>
+> Si no estuviera escrita aquí, el siguiente en modelar una de esas tablas le agregaría `updated_at` leyendo la regla general de arriba. Y una fila de historia con `updated_at` es una contradicción: significa que alguien puede cambiar lo que ya ocurrió.
+>
+> Estas tablas **sí llevan `user_id`**: no es autoría del registro, es el dato de negocio de quién hizo el cambio.
 
 ### Borrado
 
@@ -155,7 +168,7 @@ El borrado lógico **no es el comportamiento por defecto**: se agrega `deleted_a
 | Un color significa cosas distintas por semáforo | `status_light_state` está calificado por `status_light_id`; un enum global no lo estaría |
 
 > [!warning] Corrige el estándar anterior
-> [[Estándares de Desarrollo]] §5 decía *"enum nativo de Postgres para los semáforos"*. Contradecía [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] §4. **Manda esta sección.**
+> [[Estándares de Desarrollo]] sección 5 decía *"enum nativo de Postgres para los semáforos"*. Contradecía [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] sección 4. **Manda esta sección.**
 
 Los enums nativos sí son válidos para conjuntos **cerrados y técnicos** que solo cambian con un despliegue: `type` del ponche (`CLOCK_IN`/`LUNCH`/`CLOCK_OUT`), `source` (`mobile`/`manual`). Si el negocio puede querer agregar un valor sin avisar, es tabla.
 
@@ -200,7 +213,7 @@ La pregunta operativa es **quién agrega el valor**. Si es el negocio sin pedir 
 |---|---|
 | `NOT NULL` | Por defecto. Nullable es la excepción y se justifica |
 | `CHECK` | Toda regla expresable sobre la propia fila |
-| `UNIQUE` parcial | Unicidad condicionada por estado (§4) |
+| `UNIQUE` parcial | Unicidad condicionada por estado (sección 4) |
 | `EXCLUDE USING gist` | Solapamiento temporal — RR-05 |
 | Trigger | Último recurso, solo cuando la regla necesita ver otras filas |
 
@@ -264,7 +277,7 @@ Una migración que espera indefinidamente por un lock no falla: **encola todas l
 `NOT NULL` sobre una tabla con datos se agrega en dos pasos: primero `CHECK ... NOT VALID`, luego `VALIDATE CONSTRAINT`, que no bloquea escrituras.
 
 > [!warning]
-> Un cambio en un estado de semáforo toca `catalogs.status_light_state`, `packages/domain`, la validación de transiciones y la UI. Va **en un solo PR** y requiere dos aprobaciones ([[Estándares de Desarrollo]] §2).
+> Un cambio en un estado de semáforo toca `catalogs.status_light_state`, `packages/domain`, la validación de transiciones y la UI. Va **en un solo PR** y requiere dos aprobaciones ([[Estándares de Desarrollo]] sección 2).
 
 ---
 
@@ -343,7 +356,7 @@ Por eso la jornada se guarda como `date` explícito (`punch_mark.work_date`) cal
 | Journal inmutable | `REVOKE UPDATE, DELETE ON journal.journal FROM app_user` — RR-16 |
 | SSN e ITIN | **Cifrado de campo**, no solo cifrado en reposo. Llave en Secret Manager (D-07) |
 | Acceso a PII | Consultar el expediente de un colaborador **escribe en el journal**: quién, qué y cuándo |
-| Datos fuera de producción | Ningún ambiente que no sea producción contiene PII real ([[Estándares de Desarrollo]] §8) |
+| Datos fuera de producción | Ningún ambiente que no sea producción contiene PII real ([[Estándares de Desarrollo]] sección 8) |
 | Respaldos | PITR activo en Cloud SQL. La restauración se **prueba**, al menos una vez por trimestre |
 
 > [!note] Decisión tomada: sin Row Level Security
@@ -388,23 +401,23 @@ El repositorio tiene el resto en `docs/base-de-datos.md`: primeros pasos, los co
 | `psql` | Scripts y migraciones a mano | Gratis (`brew install libpq`) |
 
 > [!warning]
-> **Nada vive en `public`.** Con un esquema por módulo (§1), `SELECT * FROM prospect` falla: hay que calificar (`commercial.prospect`) o fijar el `search_path` en la conexión guardada. Y en DBeaver hay que activar *Show all databases*, o solo se ve un esquema y parece que la base está vacía.
+> **Nada vive en `public`.** Con un esquema por módulo (sección 1), `SELECT * FROM prospect` falla: hay que calificar (`commercial.prospect`) o fijar el `search_path` en la conexión guardada. Y en DBeaver hay que activar *Show all databases*, o solo se ve un esquema y parece que la base está vacía.
 
 > [!note]
-> `oranje_dev` es un usuario de **desarrollo**, no los tres de §12 (`app_user`, `migrator`, `analytics_ro`). Esa separación se aplica cuando exista el ambiente de producción; hoy la base solo tiene el esquema de Ventas y sus dos dependencias (D-15).
+> `oranje_dev` es un usuario de **desarrollo**, no los tres de sección 12 (`app_user`, `migrator`, `analytics_ro`). Esa separación se aplica cuando exista el ambiente de producción; hoy la base solo tiene el esquema de Ventas y sus dos dependencias (D-15).
 
 ---
 
 ## 14. Checklist de PR que toca la base de datos
 
-- [ ] Nombres conforme a §2, sin acentos ni eñes
-- [ ] Tipos canónicos de §3 — dinero en `numeric`, instantes en `timestamptz`, duraciones en minutos
-- [ ] Columnas obligatorias de §4 presentes
+- [ ] Nombres conforme a sección 2, sin acentos ni eñes
+- [ ] Tipos canónicos de sección 3 — dinero en `numeric`, instantes en `timestamptz`, duraciones en minutos
+- [ ] Columnas obligatorias de sección 4 presentes
 - [ ] Toda FK nueva tiene índice
 - [ ] Índices únicos parciales si la tabla usa borrado lógico
 - [ ] La regla de negocio quedó como restricción, no como validación de aplicación
 - [ ] Migración reversible, o el PR explica por qué no
-- [ ] Si es destructiva, va por expandir/contraer (§8)
+- [ ] Si es destructiva, va por expandir/contraer (sección 8)
 - [ ] `EXPLAIN` adjunto si agrega consultas sobre tablas grandes
 - [ ] Dos aprobaciones si toca semáforos, permisos o dinero
 
@@ -412,11 +425,11 @@ El repositorio tiene el resto en `docs/base-de-datos.md`: primeros pasos, los co
 
 ## 15. Decisiones pendientes
 
-1. ~~**`time_zone` en `commercial.hotel`**~~ — **cerrado** el 2026-08-08: la columna existe en la base desde la migración `identity_y_hotel` (§11). Falta reflejarla en [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]].
-2. **Esquema del expediente del Colaborador** — depende del hueco de módulo señalado en [[Estructura de Proyecto y Nomenclatura]] §3.
-3. ~~**Idioma del esquema**~~ — **cerrado** por **D-11**: esquemas, tablas y columnas en inglés, sin excepciones (§2). El Colaborador es `worker` (`coverage.worker`, `vw_worker_pool`) desde el 2026-08-06.
-4. **Retención de las fotos del ponche** — la define Legal, no Ingeniería (§9).
-5. **Los tres usuarios de §12** — hoy todos usan `oranje_dev`, que puede hacer DDL. `app_user` / `migrator` / `analytics_ro` se separan cuando exista producción, y hasta entonces cualquiera con la contraseña puede borrar una tabla.
+1. ~~**`time_zone` en `commercial.hotel`**~~ — **cerrado** el 2026-08-08: la columna existe en la base desde la migración `identity_y_hotel` (sección 11). Falta reflejarla en [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]].
+2. **Esquema del expediente del Colaborador** — depende del hueco de módulo señalado en [[Estructura de Proyecto y Nomenclatura]] sección 3.
+3. ~~**Idioma del esquema**~~ — **cerrado** por **D-11**: esquemas, tablas y columnas en inglés, sin excepciones (sección 2). El Colaborador es `worker` (`coverage.worker`, `vw_worker_pool`) desde el 2026-08-06.
+4. **Retención de las fotos del ponche** — la define Legal, no Ingeniería (sección 9).
+5. **Los tres usuarios de sección 12** — hoy todos usan `oranje_dev`, que puede hacer DDL. `app_user` / `migrator` / `analytics_ro` se separan cuando exista producción, y hasta entonces cualquiera con la contraseña puede borrar una tabla.
 
 ---
 

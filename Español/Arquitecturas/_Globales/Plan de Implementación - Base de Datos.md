@@ -28,9 +28,9 @@ Ninguna es técnica: son datos que el vault todavía no tiene y sin los que el s
 
 | # | Tarea | Qué bloquea | Dónde |
 |---|---|---|---|
-| 1 | **Unificar los IDs de rol** a `ROL-[X]-[NN]` y llenar `Roles del Sistema.md`, que hoy está **vacío** | Sin el catálogo de roles no se puede sembrar `identity.role`, y sin eso `status_light_transition.authorized_role_id` apunta a la nada. Reclutamiento usa `ROL-01…ROL-05` sin letra de departamento; Hotel y Ventas sí la usan | [[Estructura de Proyecto y Nomenclatura]] §9 |
-| 2 | **Geocerca: punto + radio o polígono por hotel** | `hotel.coordinates` y `hotel.geofence_radius_m` salen en la migración #1. Cambiar la forma después es cambiar el tipo de una columna con PostGIS | [[Arquitecturas/_Globales/Modelo de Datos\|Modelo de Datos]] §11 |
-| 3 | **Módulo del expediente del Colaborador** — `coverage/` o un `personal/` propio | No bloquea la #1, pero define si el proyecto tiene 10 u 11 esquemas, y eso se declara en `schema.prisma` desde el principio | [[Estructura de Proyecto y Nomenclatura]] §3 |
+| 1 | **Unificar los IDs de rol** a `ROL-[X]-[NN]` y llenar `Roles del Sistema.md`, que hoy está **vacío** | Sin el catálogo de roles no se puede sembrar `identity.role`, y sin eso `status_light_transition.authorized_role_id` apunta a la nada. Reclutamiento usa `ROL-01…ROL-05` sin letra de departamento; Hotel y Ventas sí la usan | [[Estructura de Proyecto y Nomenclatura]] sección 9 |
+| 2 | **Geocerca: punto + radio o polígono por hotel** | `hotel.coordinates` y `hotel.geofence_radius_m` salen en la migración #1. Cambiar la forma después es cambiar el tipo de una columna con PostGIS | [[Arquitecturas/_Globales/Modelo de Datos\|Modelo de Datos]] sección 11 |
+| 3 | **Módulo del expediente del Colaborador** — `coverage/` o un `personal/` propio | No bloquea la #1, pero define si el proyecto tiene 10 u 11 esquemas, y eso se declara en `schema.prisma` desde el principio | [[Estructura de Proyecto y Nomenclatura]] sección 3 |
 
 ---
 
@@ -38,16 +38,16 @@ Ninguna es técnica: son datos que el vault todavía no tiene y sin los que el s
 
 | # | Tarea | Estándar que aplica |
 |---|---|---|
-| 4 | Monorepo **pnpm workspaces** con `apps/` y `packages/`, `tsconfig.base.json`, ESLint y Prettier compartidos en `packages/config`, Husky + lint-staged + commitlint | [[Estructura de Proyecto y Nomenclatura]] §2 y §6 · [[Estándares de Desarrollo]] §1 y §9 |
-| 5 | **NestJS** en `apps/api` con los **10 módulos de D-01** como carpetas vacías, `common/`, `config/` e `infra/` | [[Estructura de Proyecto y Nomenclatura]] §3 |
+| 4 | Monorepo **pnpm workspaces** con `apps/` y `packages/`, `tsconfig.base.json`, ESLint y Prettier compartidos en `packages/config`, Husky + lint-staged + commitlint | [[Estructura de Proyecto y Nomenclatura]] sección 2 y sección 6 · [[Estándares de Desarrollo]] sección 1 y sección 9 |
+| 5 | **NestJS** en `apps/api` con los **10 módulos de D-01** como carpetas vacías, `common/`, `config/` e `infra/` | [[Estructura de Proyecto y Nomenclatura]] sección 3 |
 | 6 | Proyecto GCP `oranje-dev` + instancia **Cloud SQL Postgres** | **D-06** — un proyecto por ambiente |
-| 7 | Extensiones en `public`: `postgis`, `pgcrypto`, `btree_gist` | [[Estándares de Base de Datos]] §1 |
-| 8 | **Prisma** con `multiSchema` y los esquemas declarados. Ya es GA desde la 6.13.0: no lleva flag de preview | **D-01** · [[Estándares de Base de Datos]] §1 |
-| 9 | Librería de **uuid v7** en la aplicación | [[Estándares de Base de Datos]] §4 — Postgres no genera v7, y `gen_random_uuid()` devuelve v4 |
-| 10 | Validación de variables de entorno con **Zod al arranque**: si falta una, la app no levanta | [[Estándares de Desarrollo]] §9 |
+| 7 | Extensiones en `public`: `postgis`, `pgcrypto`, `btree_gist` | [[Estándares de Base de Datos]] sección 1 |
+| 8 | **Prisma** con `multiSchema` y los esquemas declarados. Ya es GA desde la 6.13.0: no lleva flag de preview | **D-01** · [[Estándares de Base de Datos]] sección 1 |
+| 9 | Librería de **uuid v7** en la aplicación | [[Estándares de Base de Datos]] sección 4 — Postgres no genera v7, y `gen_random_uuid()` devuelve v4 |
+| 10 | Validación de variables de entorno con **Zod al arranque**: si falta una, la app no levanta | [[Estándares de Desarrollo]] sección 9 |
 
 > [!warning] El código no vive en este vault
-> `oranje-matrix-system` es documentación. La §10 de [[Estándares de Desarrollo]] es explícita: *"la documentación de negocio no se duplica en el repo de código"*. El monorepo va en su propio repositorio.
+> `oranje-matrix-system` es documentación. La sección 10 de [[Estándares de Desarrollo]] es explícita: *"la documentación de negocio no se duplica en el repo de código"*. El monorepo va en su propio repositorio.
 
 ---
 
@@ -62,12 +62,12 @@ catalogs  →  identity  →  commercial
 | # | Tarea | Detalle |
 |---|---|---|
 | 11 | **Completar y crear `catalogs`** | Solo lo que Ventas necesita: `status_light`, `status_light_state`, `status_light_transition`, `status_change_reason`, `zone` y `hotel_department`. **`position`, `english_level` y `hiring_modality` NO van aquí** — son de la Requisición y del Colaborador, y llegan con el diagrama de su departamento |
-| 12 | **Completar y crear `identity`** | `role`, `user` (con `hotel_id` + `department_id` nulable), `role_permission`. El diseño del alcance de permisos está en [[Arquitecturas/_Globales/Modelo de Datos\|Modelo de Datos]] §9 |
+| 12 | **Completar y crear `identity`** | `role`, `user` (con `hotel_id` + `department_id` nulable), `role_permission`. El diseño del alcance de permisos está en [[Arquitecturas/_Globales/Modelo de Datos\|Modelo de Datos]] sección 9 |
 | 13 | **Crear `commercial`** | Las 7 tablas de `Ventas - Modelo de Datos v2.drawio`: `hotel`, `hotel_contact`, `prospect`, `prospect_state_history`, `contact_attempt`, `proposal`, `user_zone` |
-| 14 | **`journal.journal` particionado por mes** | Desde esta migración, no después: retrofitearlo exige reescribir la tabla con la aplicación detenida ([[Estándares de Base de Datos]] §9) |
+| 14 | **`journal.journal` particionado por mes** | Desde esta migración, no después: retrofitearlo exige reescribir la tabla con la aplicación detenida ([[Estándares de Base de Datos]] sección 9) |
 | 15 | Las **9 restricciones** | Página 3 del diagrama v2: índices únicos parciales, FK compuestas, CHECK de coherencia de fila |
-| 16 | Los **índices** | Cada uno defendible con una consulta concreta ([[Estándares de Base de Datos]] §7) |
-| 17 | Trigger de `updated_at` | Lo mantiene la base, no la aplicación ([[Estándares de Base de Datos]] §4) |
+| 16 | Los **índices** | Cada uno defendible con una consulta concreta ([[Estándares de Base de Datos]] sección 7) |
+| 17 | Trigger de `updated_at` | Lo mantiene la base, no la aplicación ([[Estándares de Base de Datos]] sección 4) |
 | 18 | La vista `commercial.vw_client` | Filtra por los estados ORANGE y BLACK del ciclo abierto |
 
 > [!warning] El diagrama es la especificación, no el punto de partida
@@ -88,7 +88,7 @@ Sin esto el esquema existe y el negocio no funciona: **las reglas del semáforo 
 | 21 | `status_change_reason` | `09 - Dependencias` de Ventas |
 | 22 | Los catálogos que Ventas usa: [[Zonas]] y [[Departamentos del Hotel]]. [[Posiciones]], [[Niveles de Inglés]] y [[Modalidades de Contratación]] se siembran con su departamento | `Core/Catálogos/` |
 | 23 | La **Matriz de Permisos de Ventas** en `role_permission` | `06 - Matriz de Permisos` de Ventas |
-| 24 | Un BD y un BDC de prueba | **Sin PII real**, en ningún ambiente que no sea producción ([[Estándares de Desarrollo]] §8) |
+| 24 | Un BD y un BDC de prueba | **Sin PII real**, en ningún ambiente que no sea producción ([[Estándares de Desarrollo]] sección 8) |
 
 > [!important]
 > Sin las transiciones sembradas, el servicio de transición devuelve `409` a todo y el semáforo no camina. El seed no es un extra del final: es parte de la migración.
