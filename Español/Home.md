@@ -23,9 +23,9 @@ Búsqueda, entrevista y asignación de personal a hoteles.
 
 Operación diaria y gestión de personal en hoteles clientes.
 
-- [[Hotel/Manager General|Manager General]] — máxima autoridad en hoteles con jerarquía extendida.
-- [[Hotel/Manager de Área|Manager de Área]] — aprueba requisiciones, genera QR de ponchado y gestiona el schedule semanal. En jerarquía extendida: Gerente de Departamento.
-- [[Hotel/Supervisor|Supervisor]] — crea requisiciones de personal y reporta accidentes laborales.
+- [[Hotel/Manager General|Manager General]] — máxima autoridad en hoteles con jerarquía extendida. Aprueba horas de cualquier departamento.
+- [[Hotel/Manager de Área|Manager de Área]] — aprueba requisiciones, **aprueba las horas trabajadas** y gestiona el schedule semanal. También llamado Hotel Manager; en jerarquía extendida: Gerente de Departamento.
+- [[Hotel/Supervisor|Supervisor]] — crea requisiciones de personal, revisa ponches y reporta accidentes laborales.
 
 ### [[Inspección/Inspección|Inspección]]
 
@@ -82,7 +82,7 @@ Proceso: [[Contabilidad/Flujo de Nómina|Flujo de Nómina]]
 ### Operación
 
 - [[Core/Módulos/Schedule|Schedule]] — asignación semanal de colaboradores a hoteles.
-- [[Timesheet]] — registro de horas trabajadas mediante ponches QR.
+- [[Timesheet]] — registro de horas trabajadas mediante ponches con GPS y foto, aprobados por el [[Hotel/Manager de Área|Manager de Área]] o el [[Hotel/Manager General|Manager General]].
 - [[Pool de Colaboradores]] — repositorio de colaboradores disponibles para asignación.
 
 ### Control

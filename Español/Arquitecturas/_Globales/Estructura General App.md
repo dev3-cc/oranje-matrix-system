@@ -89,7 +89,7 @@ Cada módulo del sidebar es una vista que se renderiza en el área `content`. No
 | **Colaborador** | **Web + Móvil** |
 
 > [!important]
-> El **Colaborador** accede desde web y móvil (responsive). El ponche por QR (RF-C-03) es una acción exclusiva de móvil, ya que requiere la cámara del dispositivo para escanear el QR físico del hotel. Ver RR-C-04 y [[00 - Arquitectura Colaborador]].
+> El **Colaborador** accede desde web y móvil (responsive). El ponche (RF-C-03) es una acción exclusiva de móvil: requiere GPS dentro del perímetro del hotel y la cámara del dispositivo para la foto de Entrada y Salida. Ver RR-C-04 y [[00 - Arquitectura Colaborador]].
 
 ---
 

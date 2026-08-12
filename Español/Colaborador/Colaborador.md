@@ -65,13 +65,13 @@ El estado del Colaborador se gestiona a través del [[Semáforo del Colaborador]
 
 - [[Reclutadora]] — lo recluta, valida documentos y lo asigna a un hotel.
 - [[Manager de Reclutamiento]] — supervisa el proceso y revisa casos de Blacklist.
-- [[Hotel/Manager de Área|Manager de Área]] — genera su QR de acceso, gestiona descansos y reportes.
+- [[Hotel/Manager de Área|Manager de Área]] — gestiona descansos y reportes.
 - [[Inspector]] — verifica su llegada el Día 1, entrega uniforme en Día 3+, investiga casos Rojo.
 
 ## Operación diaria
 
 - Su asignación semanal se registra en el [[Core/Módulos/Schedule|Schedule]].
-- Sus horas trabajadas se registran en el [[Timesheet]] mediante ponches vía QR por pares de entrada/salida: Entrada, Salida Lunch, Entrada Lunch, Salida Break, Entrada Break, Salida.
+- Sus horas trabajadas se registran en el [[Timesheet]] mediante tres ponches por jornada desde su teléfono, con GPS dentro del perímetro del hotel y foto en Entrada y Salida: Entrada, Comida, Salida. Los revisa el [[Hotel/Supervisor|Supervisor]] y los aprueba el [[Hotel/Manager de Área|Manager de Área]] de su departamento o el [[Hotel/Manager General|Manager General]].
 
 ## Relacionado
 

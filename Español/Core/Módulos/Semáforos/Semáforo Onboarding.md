@@ -24,17 +24,17 @@ Sistema de estados que representa el seguimiento de la negociación comercial co
 
 ## Estados
 
-| Color      | Estado                                                              | Responsable                                                          |
-| ---------- | ------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Gris       | [[#Gris — Hotel identificado\|Hotel identificado]]                  | [[Business Developer\|BD]]                                           |
-| Azul claro | [[#Azul Claro — Contacto y recopilación de datos\|Contacto y recopilación de datos]] | [[Business Developer\|BD]]                          |
-| Café       | [[#Café — Renegociación / desbloqueo\|Renegociación / desbloqueo]]  | [[Business Developer Coordinator\|BDC]]                              |
-| Verde      | [[#Verde — Propuesta enviada\|Propuesta enviada]]                   | [[Business Developer\|BD]]                                           |
-| Amarillo   | [[#Amarillo — En seguimiento tras propuesta\|En seguimiento tras propuesta]] | [[Business Developer\|BD]]                                  |
-| Rosa       | [[#Rosa — Negociación de términos\|Negociación de términos]]        | [[Business Developer\|BD]] + [[Business Developer Coordinator\|BDC]] |
-| Naranja    | [[#Naranja — Acuerdo firmado, hotel cliente activo\|Acuerdo firmado, hotel cliente activo]] | [[Business Developer Coordinator\|BDC]]       |
-| Rojo       | [[#Rojo — Rechazo o no interés\|Rechazo o no interés]]              | [[Business Developer\|BD]]                                           |
-| Negro      | [[#Negro — Cliente pausado o inactivo\|Cliente pausado o inactivo]]  | [[Business Developer Coordinator\|BDC]]                              |
+| Color      | Estado                                                                                      | Responsable                                                          |
+| ---------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Gris       | [[#Gris — Hotel identificado\|Hotel identificado]]                                          | [[Business Developer\|BD]]                                           |
+| Azul claro | [[#Azul Claro — Contacto y recopilación de datos\|Contacto y recopilación de datos]]        | [[Business Developer\|BD]]                                           |
+| Café       | [[#Café — Renegociación / desbloqueo\|Renegociación / desbloqueo]]                          | [[Business Developer Coordinator\|BDC]]                              |
+| Verde      | [[#Verde — Propuesta enviada\|Propuesta enviada]]                                           | [[Business Developer\|BD]]                                           |
+| Amarillo   | [[#Amarillo — En seguimiento tras propuesta\|En seguimiento tras propuesta]]                | [[Business Developer\|BD]]                                           |
+| Rosa       | [[#Rosa — Negociación de términos\|Negociación de términos]]                                | [[Business Developer\|BD]] + [[Business Developer Coordinator\|BDC]] |
+| Naranja    | [[#Naranja — Acuerdo firmado, hotel cliente activo\|Acuerdo firmado, hotel cliente activo]] | [[Business Developer Coordinator\|BDC]]                              |
+| Rojo       | [[#Rojo — Rechazo o no interés\|Rechazo o no interés]]                                      | [[Business Developer\|BD]]                                           |
+| Negro      | [[#Negro — Cliente pausado o inactivo\|Cliente pausado o inactivo]]                         | [[Business Developer Coordinator\|BDC]]                              |
 
 ---
 

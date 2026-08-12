@@ -78,7 +78,8 @@ Responsabilidades sobre los colaboradores asignados (todos los roles del hotel):
 
 | Acción | Efecto en [[Semáforo del Colaborador]] | Descripción |
 |---|---|---|
-| Generar código QR | — | Permite a los colaboradores ponchar en el [[Timesheet]] |
+| Revisar ponches | — | Acción del [[Hotel/Supervisor\|Supervisor]]: resuelve anómalos y registra manuales. No aprueba |
+| Aprobar horas | — | Solo [[Hotel/Manager de Área\|Manager de Área]] (su departamento) y [[Hotel/Manager General\|Manager General]] (cualquiera). Solo lo aprobado alimenta el [[Timesheet]] y la facturación |
 | Poner en Stand-by | → **Rosa** | Espera por decisión del hotel (vacaciones, temporada baja). Sin fecha de fin; termina cuando cualquier rol del hotel cambia el estado. El colaborador queda sin Schedule ni Timesheet y no puede ponchar |
 | Reportar colaborador | → **Rojo** | Inicia investigación por parte del [[Inspector]] |
 | Gestionar Schedule semanal | — | Administra las asignaciones del [[Core/Módulos/Schedule\|Schedule]] del hotel |
@@ -103,28 +104,24 @@ Responsabilidades sobre los colaboradores asignados (todos los roles del hotel):
 
 ### Ponchado
 
-- El colaborador poncha vía **QR** generado por el [[Hotel/Manager de Área|Manager de Área]] o el [[Hotel/Manager General|Manager General]].
-- Los ponches se registran por pares de entrada/salida para cada periodo (exactamente seis):
-  - **Entrada** — inicio de jornada
-  - **Salida Lunch** — sale a comer
-  - **Entrada Lunch** — regresa de comer
-  - **Salida Break** — sale a descanso
-  - **Entrada Break** — regresa de descanso
-  - **Salida** — fin de jornada
+- El colaborador poncha **desde su teléfono, dentro de la propiedad**, en el formulario de la app móvil.
+- Cada marca exige **ubicación GPS dentro del perímetro del hotel**; fuera de él, el ponche se bloquea.
+- Se registran **tres marcas por jornada**:
+  - **Entrada** — inicio de jornada, con foto
+  - **Comida** — hora de salida a comer
+  - **Salida** — fin de jornada, con foto
+- Los ponches **no son definitivos hasta que el [[Hotel/Manager de Área|Manager de Área]] (su departamento) o el [[Hotel/Manager General|Manager General]] (cualquiera) los aprueban**. El [[Hotel/Supervisor|Supervisor]] revisa antes, pero no aprueba. Ver [[Timesheet#Aprobación]].
 
 ### Deducción de Lunch
 
 > [!important] Esta regla aplica a **todos** los colaboradores sin excepción, en cada jornada.
 
-| Escenario | Deducción aplicada |
-|---|---|
-| Lunch < 30 min | 30 min (mínimo obligatorio) |
-| Lunch ≥ 30 min | Tiempo real tomado |
-| Sin ponche de Lunch | 30 min (auto-deducción) |
-
+- Se deducen **30 minutos por jornada**, haya o no marca de Comida. La marca de Comida registra la hora de salida a comer, no su duración.
 - **Horas brutas** = Salida − Entrada
-- **Horas netas** = Horas brutas − Deducción de Lunch − Breaks reales
+- **Horas netas** = Horas brutas − 30 min de lunch
 - Después de 6 horas continuas de trabajo, el colaborador debe tomar su lunch.
+
+> [!warning] Los **breaks** ya no se ponchan y por lo tanto no se deducen. Decisión pendiente en [[Reglas de Negocio#Deducción de Breaks]].
 
 ## Indicador de Lunch Extendido
 
@@ -159,7 +156,7 @@ El [[Hotel/Manager General|Manager General]] es la máxima autoridad del hotel y
 
 - Tiene **visibilidad global** del [[Core/Módulos/Schedule|Schedule]] y [[Timesheet]] de todos los departamentos.
 - Puede crear, autorizar y rechazar requisiciones.
-- Puede generar QR, poner Stand-by, reportar colaboradores y reportar accidentes laborales.
+- Puede poner Stand-by, reportar colaboradores y reportar accidentes laborales.
 - En jerarquía simple, también opera como [[Hotel/Manager de Área|Manager de Área]] (misma persona).
 - Punto de contacto principal con Oranje a nivel directivo.
 
@@ -177,13 +174,14 @@ El [[Hotel/Manager General|Manager General]] es la máxima autoridad del hotel y
 | Crear requisición | Sí | Sí | Sí |
 | Autorizar requisición | Sí | Sí | No |
 | Rechazar requisición | Sí | Sí | No |
-| Generar QR para ponchado | Sí | Sí | No |
+| Revisar ponches y resolver anómalos | No | No | Sí |
+| **Aprobar horas** | Sí (cualquier departamento) | Sí (su departamento) | No |
 | Poner en Stand-by (Rosa) | Sí | Sí | Sí |
 | Reportar colaborador (Rojo) | Sí | Sí | Sí |
 | Reportar accidente laboral | Sí | Sí | Sí |
 | Gestionar Schedule semanal | Visibilidad global | Sí (su departamento) | No |
 | Ver Indicador de Lunch Extendido | No | No | No |
-| Visibilidad global Schedule/Timesheet | Sí | No | Sí (su departamento) |
+| Visibilidad global Schedule/Timesheet | Sí | Sí (su departamento) | No |
 
 ## Relacionado
 

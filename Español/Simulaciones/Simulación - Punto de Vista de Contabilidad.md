@@ -53,7 +53,7 @@ Patricia Solano, [[Contadora]] de Oranje, es la responsable de ejecutar toda la 
 | Bill rate (Housekeeper) | $18.25/hr                                         |
 | Bill rate (Houseman)    | $16.50/hr                                         |
 | Bill rate (Laundry)     | $17.00/hr                                         |
-| Overtime                | 1.5x después de 40 hrs brutas semanales por hotel |
+| Overtime                | 1.5x después de 40 hrs brutas semanales por requisición |
 | Festivos                | 2x bill rate en días festivos federales           |
 | Inicio de semana        | Lunes                                             |
 | Fin de semana           | Domingo                                           |
@@ -61,7 +61,7 @@ Patricia Solano, [[Contadora]] de Oranje, es la responsable de ejecutar toda la 
 | Factura partida por mes | Sí                                                |
 
 > [!warning] Regla de negocio
-> El overtime se calcula **por hotel**, no de forma global. Si un colaborador trabaja en dos hoteles, cada hotel tiene su umbral de 40 horas brutas semanales independiente. — [[Consolidado Semanal del Colaborador#Cálculo]]
+> El overtime se calcula **por requisición**, no por hotel ni de forma global. Si un colaborador trabaja en dos requisiciones, cada una tiene su umbral de 40 horas brutas semanales independiente — incluso si las dos son del mismo hotel. Las horas de requisiciones distintas no se suman. — [[Consolidado Semanal del Colaborador#Cálculo]]
 
 ### 0.3 — Colaboradores y sus condiciones
 

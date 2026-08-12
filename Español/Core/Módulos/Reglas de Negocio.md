@@ -81,7 +81,6 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 - El [[Hotel/Manager General|Manager General]] es la máxima autoridad del hotel y **siempre existe** en ambas jerarquías
 - En jerarquía simple, también opera como [[Hotel/Manager de Área|Manager de Área]] (misma persona, dos roles)
 - Puede crear, autorizar y rechazar requisiciones
-- Puede generar QR para ponchado
 - Tiene visibilidad global del [[Core/Módulos/Schedule|Schedule]] y [[Timesheet]] de todos los departamentos
 - Punto de contacto principal con Oranje a nivel directivo
 
@@ -146,6 +145,11 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 - Los journals registran un **evento por acción con actor** (rol y nombre) y timestamp, no solo cambios de status. Son **inmutables** y alimentan el [[Core/Módulos/Requisicion/Requisición#Historial de la Requisición|Historial de la Requisición]] (RR-16)
 - **RUTINA Journal Requisición:** registra Requisición, Hotel, Manager General / Manager de Área, **Reclutadores** (lista de participantes), Inspector, **Tipo de evento** (`TOMO` / `SE_UNIO` / `SALIO` / `CAMBIO_STATUS`), **Actor**, Status, Nota, Fecha y hora del evento
 - **RUTINA Journal Posición:** registra Número de requisición, Número de posición, Posición, Cantidad de personas, Fecha de inicio, Fecha fin, **Tipo de evento** (`ASIGNO_COLAB` / `REASIGNO` / `CAMBIO_STATUS`), **Actor**, **Colaborador** (cuando aplica), Status, Fecha y hora del evento
+
+> [!important] Qué es la "Fecha fin" del Journal Posición
+> **No es la fecha de fin de la posición** — esa no existe: la posición termina cuando el colaborador pasa a **Rosa**, no en una fecha pactada. La "Fecha fin" del journal es el **cierre del periodo semanal**: los 7 días que se usan para pagar (5 de trabajo + 2 de descanso, 40 horas brutas). Es el mismo periodo sobre el que se evalúa el umbral de overtime y se genera el Consolidado Semanal.
+>
+> Se aclara aquí porque el nombre invita a leerlo como el fin de la posición, y eso contradiría la regla de arriba.
 
 ## Blacklist
 
@@ -282,15 +286,34 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 - Si el [[Core/Módulos/Schedule|Schedule]] se modifica después de que el [[Timesheet]] fue creado, el Timesheet se actualiza automáticamente para reflejar los cambios
 
 ### Mecanismo de ponchado
-- El colaborador poncha vía QR que genera el [[Hotel/Manager General|Manager General]] o el [[Hotel/Manager de Área|Manager de Área]]
-- Los ponches se registran por pares de entrada/salida para cada periodo:
-  - **Entrada** — inicio de jornada
-  - **Salida Lunch** — sale a comer
-  - **Entrada Lunch** — regresa de comer
-  - **Salida Break** — sale a descanso
-  - **Entrada Break** — regresa de descanso
-  - **Salida** — fin de jornada
+
+- El colaborador poncha **desde su teléfono, dentro de la propiedad**, en el formulario de la app móvil
+- El ponche exige **ubicación GPS dentro del perímetro del hotel**. Fuera de ese perímetro el sistema **bloquea** el ponche
+- Se registran **tres marcas por jornada**:
+  - **Entrada** — inicio de jornada · requiere foto
+  - **Comida** — salida a comer
+  - **Salida** — fin de jornada · requiere foto
+- La foto se toma con la cámara en el momento del ponche; no se admite una imagen guardada
+- El ponche funciona **sin señal**: la marca se guarda en el teléfono y se envía cuando hay conexión
+- Cuando el ponche se captura sin señal, la validación del perímetro ocurre **al sincronizar**. Si el sistema lo rechaza, entra al calendario del [[Hotel/Supervisor|Supervisor]] como ponche anómalo
 - Esto contabiliza el tiempo trabajado del colaborador
+
+### Aprobación de ponches
+
+- Los ponches **no son definitivos hasta que el [[Hotel/Manager de Área|Manager de Área]] o el [[Hotel/Manager General|Manager General]] los aprueban**. Son los **dos únicos roles** que pueden aprobar horas
+- La aprobación es **por departamento, no por hotel**: cada [[Hotel/Manager de Área|Manager de Área]] aprueba las horas de los colaboradores de su [[Departamentos del Hotel|departamento]]
+- El [[Hotel/Manager General|Manager General]] puede aprobar las horas de **cualquier departamento** del hotel, por su visibilidad global
+- Es la misma pareja de autoridad que ya rige la [[Core/Módulos/Requisicion/Requisición|requisición]]: quien puede autorizarla es quien puede aprobar las horas que genera
+- La aprobación cubre **todos los días de la requisición**: revisa las jornadas completas en el calendario de ponches
+- Solo los ponches aprobados alimentan el [[Timesheet]] y, por lo tanto, el [[Contabilidad/Consolidado Semanal del Colaborador|Consolidado Semanal]] y la facturación al hotel
+- El [[Hotel/Supervisor|Supervisor]] **revisa pero no aprueba**: resuelve los ponches anómalos —fuera del perímetro, sin foto, o con desfase entre la hora de captura y la de sincronización—, registra los manuales y deja la jornada lista para aprobación
+
+### Horas sin aprobar
+
+- Si nadie aprueba antes del cierre semanal, las horas **quedan en espera de aprobación**
+- Las horas en espera **no se pagan ni se facturan** hasta que se aprueben
+- **No hay aprobación automática y el plazo no vence:** la aprobación sigue pendiente hasta que ocurra
+- Tampoco hay escalamiento automático, pero el [[Hotel/Manager General|Manager General]] puede aprobar en cualquier momento lo que el [[Hotel/Manager de Área|Manager de Área]] no haya aprobado
 
 ### Restricción de ponchado por estado del colaborador
 
@@ -303,23 +326,28 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 
 > [!important] Esta regla aplica a **todos** los colaboradores sin excepción, en cada jornada.
 
-- El sistema deduce tiempo de lunch del [[Timesheet]] del colaborador:
-  - **Lunch menor a 30 min:** se deducen 30 minutos (mínimo obligatorio)
-  - **Lunch mayor a 30 min:** se deduce el tiempo real tomado
-  - **Sin ponche de Lunch:** se auto-deducen 30 minutos
+- El sistema deduce **30 minutos de lunch por jornada**, haya o no marca de Comida
+- La marca de **Comida** registra la hora a la que el colaborador salió a comer, no cuánto tardó
 - La deducción de lunch impacta directamente el cómputo de horas pagables en el [[Timesheet]]
+
+> [!warning] Cambio respecto al mecanismo anterior
+> Con seis ponches (pares Salida/Entrada de Lunch) el sistema deducía el **tiempo real** cuando superaba los 30 minutos. Con una sola marca de Comida esa duración ya no se captura y la deducción es fija. Pendiente de confirmar antes de calcular nómina con esta regla.
 
 ### Deducción de Breaks
 
-- Los breaks también se deducen del tiempo pagable en el [[Timesheet]]
-- El tiempo deducido es el tiempo real registrado con el par **Salida Break / Entrada Break**
-- La cantidad y duración de breaks la define cada hotel
+> [!warning] Regla sin origen de datos
+> Los breaks se deducían con el tiempo real del par **Salida Break / Entrada Break**, con cantidad y duración definidas por cada hotel. El mecanismo de tres marcas **no captura breaks**, así que hoy no hay tiempo de break que deducir.
+> Hay que elegir entre dos caminos: **eliminar** la deducción de breaks del cálculo, o **volver a capturarlos** como marcas propias. Mientras no se decida, el cálculo de horas pagables queda incompleto.
 
 ### Fórmula de horas pagables
 
-- **Horas netas** = (Salida − Entrada) − Lunch real − Breaks reales
+- **Horas netas** = (Salida − Entrada) − 30 min de lunch
+- Los breaks no entran en la fórmula mientras no se capturen
 
 ### Indicador de Lunch Extendido
+
+> [!warning] Indicador sin cálculo posible
+> Este indicador compara la duración real del lunch contra 30 minutos. Con una sola marca de **Comida** no hay duración que comparar, así que **no puede calcularse**. Se conserva la definición porque el negocio la sigue necesitando: o se recupera la marca de fin de comida, o el indicador se retira.
 
 - El sistema identifica automáticamente a los colaboradores cuyo tiempo de lunch excede los 30 minutos
 - **Visibilidad restringida** — solo roles internos de Oranje:
@@ -343,11 +371,20 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 - El sistema genera automáticamente un [[Contabilidad/Consolidado Semanal del Colaborador|Consolidado Semanal]] por colaborador al cierre de cada semana
 - El consolidado agrupa los [[Timesheet|Timesheets]] de todos los hoteles donde el colaborador trabajó esa semana
 - El cálculo aplica el pay rate del [[Core/Módulos/Contrato|Contrato]] de cada hotel por separado
-- El overtime se calcula **por hotel**, según la política pactada en cada contrato
+- El overtime se calcula **por requisición**, según la política pactada en cada contrato
 - El periodo de pago es **semanal**
 - **Oranje paga al colaborador**; cada hotel paga a Oranje según su bill rate
 - La [[Contadora]] revisa y el [[Manager de Contabilidad]] aprueba el Consolidado antes de ejecutar el pago
-- El umbral de overtime es de **40 horas brutas semanales** por hotel
+- El umbral de overtime es de **40 horas brutas semanales por colaborador en cada [[Core/Módulos/Requisicion/Requisición|requisición]]**
+- Las horas que un colaborador trabaja por encima de 40 en una misma requisición y en una misma semana cuentan como **overtime dentro de esa requisición**
+- Si el colaborador trabaja en más de una requisición durante la semana, el umbral se evalúa **en cada una por separado**; las horas de requisiciones distintas no se suman para efectos de overtime
+
+### Autorización de horas extra
+
+- El colaborador **sí puede quedarse** más allá de su jornada; esas horas se registran y se pagan
+- Quien autoriza rebasar las 40 horas brutas semanales de una requisición es el **[[Hotel/Manager de Área|Manager de Área]]**, y solo él. Es el mismo reparto que ya rige la aprobación de horas: el [[Hotel/Supervisor|Supervisor]] **revisa**, el Manager de Área **aprueba**
+- El disparador es el ponche que cruza las 40 horas acumuladas de esa semana en esa requisición. El sistema lo detecta antes del cierre semanal porque lleva el acumulado
+- Las 8 horas diarias no son un tope independiente: salen de 40 ÷ 5. El overtime se puede generar de dos maneras que caen en la misma bolsa de 40 horas — **un día más largo o un sexto día**
 
 ## Inspección y Zonas
 
@@ -370,6 +407,7 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 ### Fallo de ponche
 - Si el sistema falla al registrar un ponche, el colaborador puede reintentar.
 - Si el fallo persiste, el sistema notifica al [[Hotel/Supervisor|Supervisor]] para que tome acción manual.
+- **Ponche rechazado por ubicación:** si el colaborador está en la propiedad pero el GPS no lo ubica dentro del perímetro —sótanos, cocinas, edificios con estructura metálica— el ponche queda registrado como rechazado y se notifica al Supervisor. El Supervisor puede registrarlo manualmente con **motivo obligatorio**, y queda asentado quién lo registró.
 
 ### Colisión de IDs (homoclave)
 - Si al generar un número de requisición, posición o reporte se produce una colisión de homoclave (duplicado), el sistema regenera la homoclave automáticamente hasta obtener un valor único.

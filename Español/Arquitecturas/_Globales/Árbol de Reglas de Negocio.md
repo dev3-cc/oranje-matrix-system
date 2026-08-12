@@ -150,7 +150,7 @@ HOTEL
     │   └── RR-H-06  Asignación automática de Inspector por zona
     │
     ├── Colaborador en piso — acciones compartidas por los 3 roles
-    │   ├── RR-H-09  Generación de QR del Timesheet (Manager de Área + Manager General)
+    │   ├── RR-H-09  OBSOLETA — Generación de QR del Timesheet. El ponche ya no usa QR
     │   ├── RR-H-10  Reporte de colaborador (Rojo) → inicia investigación del Inspector
     │   ├── RR-H-11  Stand-by (Rosa) → sin Schedule ni Timesheet, no puede ponchar
     │   ├── RR-H-19  Reporte de accidentes (Escenario A y Escenario B)
@@ -233,7 +233,7 @@ COLABORADOR (ROL-C-01)  →  [[Arquitecturas/Colaborador/00 - Arquitectura Colab
 │
 ├── PRIMARIAS
 │   ├── Onboarding ............ Fase 2 (alta en app) y Fase 3 (datos de emergencia) — RR-06
-│   ├── Asistencia / Ponche QR . 6 ponches por jornada sobre el QR del hotel — RR-H-09, RR-H-16
+│   ├── Asistencia / Ponche ... 3 marcas por jornada con GPS y foto; aprueba el Manager de Área o el Manager General — RR-H-16
 │   ├── Disponibilidad ......... toggle Amarillo (disponible voluntario)
 │   └── Reportar Accidente ..... Escenario A del RR-H-19 → estado Gris (RR-H-20)
 │

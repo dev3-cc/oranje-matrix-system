@@ -84,7 +84,7 @@ Operador 1 revisa el mapa de cobertura de zonas: las 6 [[Zonas|zonas]] (Centro, 
 | 1 | Autorización oportuna de requisiciones | 92% | ≥ 90% | En meta |
 | 2 | Tasa de rechazo de requisiciones | 8% | ≤ 10% | En meta |
 | 3 | Cumplimiento de ponchado | 93% | ≥ 90% | En meta |
-| 4 | Generación oportuna de QR | 97% | ≥ 95% | En meta |
+| 4 | Aprobación oportuna de ponches | 97% | ≥ 95% | En meta |
 | 5 | Tasa de Stand-by prolongado | 5% | ≤ 10% | En meta |
 
 Operador 2 revisa el ranking de hoteles por cumplimiento de ponchado. El Hotel Costa Esmeralda aparece en el tercio superior.
@@ -518,7 +518,7 @@ Alejandra prepara el reporte semanal consolidado para el Director de Operaciones
 | 1 | Autorización oportuna de requisiciones | 91% | ≥ 90% | En meta |
 | 2 | Tasa de rechazo de requisiciones | 9% | ≤ 10% | En meta |
 | 3 | Cumplimiento de ponchado | 90% | ≥ 90% | En meta |
-| 4 | Generación oportuna de QR | 96% | ≥ 95% | En meta |
+| 4 | Aprobación oportuna de ponches | 96% | ≥ 95% | En meta |
 | 5 | Tasa de Stand-by prolongado | 7% | ≤ 10% | En meta |
 
 ### Colaborador
@@ -616,7 +616,7 @@ graph TD
 ## Simulaciones relacionadas
 
 - [[Simulación - Punto de Vista de Inspección]] — Narra la semana operativa del Inspector Daniel Ortega en la zona Noroeste. En esta simulación de QA, una falla en la cobertura por ausencia de Daniel dispara la transición del Indicador a Amarillo y su rápida corrección.
-- [[Simulación - Punto de Vista del Hotel]] — Muestra el ciclo del hotel como cliente. QA monitorea KPIs del departamento Hotel (autorización, ponchado, QR, Stand-by) que en esta simulación se mantienen estables.
+- [[Simulación - Punto de Vista del Hotel]] — Muestra el ciclo del hotel como cliente. QA monitorea KPIs del departamento Hotel (autorización, ponchado, aprobación de ponches, Stand-by) que en esta simulación se mantienen estables.
 - [[Simulación - Punto de Vista de Ventas]] — Detalla el proceso comercial narrado desde Ventas. QA supervisa tasas de conversión, ciclo de onboarding y reactivación, todos en meta durante esta simulación.
 - [[Simulación - Punto de Vista de Reclutamiento]] — Cubre el proceso de staffing. En esta simulación de QA, los fallos persistentes de Reclutamiento (requisiciones sin tomar, auto-asignaciones, cobertura parcial) disparan la crisis que lleva al departamento a Rojo y requiere escalación a dirección.
 - [[Simulación - Ciclo de Vida del Colaborador]] — Recorre los estados del colaborador. QA monitorea métricas agregadas del Pool (inasistencia, Blacklist, salud del Pool) que aquí aparecen como señales preventivas bajo vigilancia.

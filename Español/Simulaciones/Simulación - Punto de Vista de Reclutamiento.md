@@ -339,7 +339,7 @@ Sofía Cruz se presenta en el Hotel Coral Bay a las 06:45.
 > [!warning] Regla de negocio
 > [[Core/Módulos/Semáforos/Semáforo del Colaborador|Semáforo del Colaborador]] — "Blanco → Verde manzana: al ser asignado y asistir el Día 1. El Inspector verifica su llegada en sitio."
 
-Sofía poncha por primera vez vía QR generado por Andrea Fuentes (GH):
+Sofía poncha por primera vez desde su teléfono, dentro de la propiedad, con GPS y foto:
 
 | Evento | Hora |
 |---|---|
@@ -726,12 +726,12 @@ Carlos trabajó en 2 hoteles durante la semana:
 | Sierra Alta (antes de descanso) | 2 | 15h | Según contrato Sierra Alta |
 | Coral Bay (asignación temporal) | 3 | 22.5h | Según contrato Coral Bay |
 
-El overtime se calcula **por hotel**, no de forma global:
-- Sierra Alta: 15h (no excede 40h → sin overtime)
-- Coral Bay: 22.5h (no excede 40h → sin overtime)
+El overtime se calcula **por requisición**, no por hotel ni de forma global:
+- La requisición de Sierra Alta: 15h (no excede 40h → sin overtime)
+- La requisición de Coral Bay: 22.5h (no excede 40h → sin overtime)
 
 > [!warning] Regla de negocio
-> [[Contabilidad/Consolidado Semanal del Colaborador|Consolidado Semanal del Colaborador]] — "El overtime se calcula por hotel según política de cada contrato."
+> [[Contabilidad/Consolidado Semanal del Colaborador|Consolidado Semanal del Colaborador]] — "El overtime se calcula **por requisición**, no por hotel ni de forma global." El umbral son 40 horas brutas semanales en cada requisición, evaluado por separado.
 
 ### 9.2 — Lunes 26 mayo — Pre-Payroll
 

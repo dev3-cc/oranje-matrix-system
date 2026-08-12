@@ -214,7 +214,7 @@ Miguel Ochoa ([[Inspector]] de zona Sureste) se presenta en la propiedad. Verifi
 
 ### 3.2 — Primer ponchado
 
-Laura Torres ([[Manager de Área|GH]]) genera el código QR de ponchado desde la app. Los tres colaboradores ponchan su primer día de trabajo.
+Los tres colaboradores ponchan su primer día de trabajo desde su teléfono, dentro de la propiedad, con GPS y foto.
 
 Registro de ponchado de María López — Día 1 (25 mayo):
 

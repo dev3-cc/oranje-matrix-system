@@ -171,7 +171,7 @@ Conecta cada documento con todo lo que referencia (semáforos, otros roles, mód
 **Estructura:**
 - Cabecera del documento.
 - Tipos de Requerimiento (leyenda RF/RNF/RR/RI).
-- Prioridad y Estado (leyenda 🔴/🟡/🟢/⬜/🔵/✅).
+	- Prioridad y Estado (leyenda 🔴/🟡/🟢/⬜/🔵/✅).
 - Tabla maestra:
 
 | ID | Tipo | Módulo | Requerimiento | Descripción Detallada | Rol(es) | Criterio de Aceptación | Prioridad | Estado | Notas |

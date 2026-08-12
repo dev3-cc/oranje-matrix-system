@@ -59,15 +59,15 @@ Operador asignado: Operador 2. Departamento supervisado: [[Hotel/Hotel|Hotel]].
 |---|-----|-------------------|-----------------|------|-----------|---------|
 | 1 | **Autorización oportuna de requisiciones** | (Requisiciones autorizadas en ≤ 24h desde creación / Total de requisiciones creadas) × 100 | Timestamps del [[Core/Módulos/Semáforos/Semáforo de Requisición\|Semáforo de Requisición]] | ≥ 90% | 75–89% | < 75% |
 | 2 | **Tasa de rechazo de requisiciones** | (Requisiciones rechazadas / Total de requisiciones enviadas a autorización) × 100 | Journal de [[Core/Módulos/Requisicion/Requisición\|Requisición]] | ≤ 10% | 11–25% | > 25% |
-| 3 | **Cumplimiento de ponchado** | (Timesheets con 6 ponches completos / Total de timesheets del periodo) × 100 | [[Timesheet]] | ≥ 90% | 75–89% | < 75% |
-| 4 | **Generación oportuna de QR** | (Colaboradores con QR generado antes de Día 1 / Total de colaboradores asignados) × 100 | Sistema de QR, [[Core/Módulos/Schedule\|Schedule]] | ≥ 95% | 85–94% | < 85% |
+| 3 | **Cumplimiento de ponchado** | (Timesheets con las 3 marcas completas / Total de timesheets del periodo) × 100 | [[Timesheet]] | ≥ 90% | 75–89% | < 75% |
+| 4 | **Aprobación oportuna de ponches** | (Ponches aprobados antes del cierre semanal / Total de ponches del periodo) × 100 — aprueban [[Hotel/Manager de Área\|Manager de Área]] y [[Hotel/Manager General\|Manager General]] | [[Timesheet]] | ≥ 95% | 85–94% | < 85% |
 | 5 | **Tasa de Stand-by prolongado** | (Colaboradores en Rosa por > 30 días / Total de colaboradores en Rosa) × 100 | [[Semáforo del Colaborador]], timestamps de estado Rosa | ≤ 10% | 11–25% | > 25% |
 
 **Por qué estos KPIs:**
 - KPI 1 evita que el hotel sea un cuello de botella en el flujo de requisiciones.
 - KPI 2 es un indicador inverso de calidad — tasas altas de rechazo sugieren mala preparación por parte del [[Hotel/Supervisor|Supervisor]].
 - KPI 3 mide la disciplina operativa del hotel en el registro de asistencia.
-- KPI 4 es un habilitador básico — sin QR, los colaboradores no pueden ponchar.
+- KPI 4 vigila el cuello de botella del cierre semanal — sin aprobación, los ponches no llegan al Consolidado y la nómina no se puede calcular.
 - KPI 5 detecta colaboradores olvidados o abandonados en estado de espera.
 
 ## Colaborador

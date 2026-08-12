@@ -22,18 +22,18 @@ Resumen semanal que agrupa todos los [[Timesheet|Timesheets]] de un colaborador 
 | ------------------ | ------------------------------------------------------------------------------ |
 | Colaborador        | Nombre y datos del colaborador                                                 |
 | Semana             | Número de semana y rango de fechas                                             |
-| Detalle por hotel  | Hotel, horas netas, pay rate del [[Core/Módulos/Contrato\|Contrato]], subtotal |
-| Overtime por hotel | Horas extra calculadas según la política del contrato de cada hotel            |
-| Total a pagar      | Suma de subtotales de todos los hoteles                                        |
+| Detalle por requisición | Requisición, hotel, horas netas, pay rate del [[Core/Módulos/Contrato\|Contrato]], subtotal |
+| Overtime por requisición | Horas extra calculadas según la política del contrato del hotel de esa requisición |
+| Total a pagar      | Suma de subtotales de todas las requisiciones                                  |
 
 ## Cálculo
 
-- **Por cada hotel donde trabajó:**
-  - Horas netas × pay rate del contrato de ese hotel = subtotal regular
-  - Horas de overtime × tasa de overtime del contrato de ese hotel = subtotal overtime
-- **Umbral de overtime:** se calcula por hotel a partir de las **40 horas brutas semanales** (8 hrs × 5 días). Las horas que excedan ese umbral en un hotel se consideran overtime de ese hotel
-- **Total a pagar** = Σ (subtotal regular + subtotal overtime) de todos los hoteles
-- El overtime se calcula **por hotel**, no de forma global entre hoteles
+- **Por cada [[Core/Módulos/Requisicion/Requisición|requisición]] en la que trabajó:**
+  - Horas netas × pay rate del contrato del hotel de esa requisición = subtotal regular
+  - Horas de overtime × tasa de overtime de ese mismo contrato = subtotal overtime
+- **Umbral de overtime:** se calcula **por requisición** a partir de las **40 horas brutas semanales** (8 hrs × 5 días). Las horas que excedan ese umbral dentro de una requisición se consideran overtime de esa requisición
+- **Total a pagar** = Σ (subtotal regular + subtotal overtime) de todas las requisiciones
+- El overtime se calcula **por requisición**, no por hotel ni de forma global. Si el colaborador trabajó en dos requisiciones del mismo hotel, cada una evalúa su umbral por separado y las horas **no se suman**
 
 > [!info] **Festivos** — El [[Core/Módulos/Contrato|Contrato]] define el manejo y recargos por días festivos, pero la regla de cálculo de recargos por festivo aún no está definida. Al definirse, se integrará en esta sección.
 

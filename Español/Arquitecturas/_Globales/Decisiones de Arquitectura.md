@@ -216,9 +216,43 @@ Sin ese corte, cualquier marca capturada en un teléfono entra directo al cálcu
 
 `consolidado_detalle` estaba diseñado con **una fila por hotel**. Si el umbral es por requisición y un colaborador puede participar en más de una requisición del mismo hotel en una semana, la fila por hotel ya no alcanza: el detalle se rompe **por requisición**, y de ahí sale tanto el pago como la factura.
 
-El vínculo existe en el modelo sin agregar tablas: `asignacion → slot → posicion → requisicion`.
+El vínculo existe en el modelo sin agregar tablas: `assignment → slot → position → requisition`.
 
-> [!warning] Consecuencia a validar con Contabilidad: con el umbral por requisición, un colaborador que trabaja 40 horas en dos requisiciones distintas de la misma semana acumula 80 horas **sin generar overtime**. Antes, con el umbral por hotel, sí lo generaba si ambas eran del mismo hotel.
+> [!note] Confirmado el 2026-08-12
+> La consecuencia que este ADR marcaba como *"a validar con Contabilidad"* — que un colaborador con 40 horas en dos requisiciones distintas acumula **80 horas sin generar overtime** — **es la regla, no un descuido.** [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] la enuncia sin ambigüedad: *"si el colaborador trabaja en más de una requisición durante la semana, el umbral se evalúa en cada una por separado; las horas de requisiciones distintas no se suman para efectos de overtime"*.
+>
+> Antes, con el umbral por hotel, dos requisiciones del mismo hotel sí lo generaban.
+
+### Cómo se derivan las 8 horas diarias
+
+No son una regla aparte: salen de **40 ÷ 5**. [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] fija la semana laboral en 7 días — **5 de trabajo + 2 de descanso** — y el bruto semanal en 40 horas (8 hrs × 5 días).
+
+Consecuencia para `operations`: el overtime se puede generar de **dos maneras** que caen en la misma bolsa de 40 horas — un día más largo, o un sexto día. No hay tope diario por requisición, y ponerlo sería un error: el colaborador **sí** se puede quedar horas extra, y esas horas hay que registrarlas y pagarlas.
+
+> [!warning] El overtime NO es una restricción de base de datos
+> Se evaluó escribirlo como `CHECK` y no funciona, por dos razones:
+> 1. Un `CHECK` solo ve su propia fila. Las horas esperadas viven en `demand.position` (`start_time` + 8h), en otra tabla.
+> 2. Un `CHECK` solo sabe **rechazar**, y el overtime es un hecho que hay que **registrar**. No se tira un ponche porque el colaborador se quedó tarde.
+>
+> El overtime es un **valor derivado**: `max(0, horas_reales − horas_esperadas)` por día y por requisición. Lo único que sí merece `CHECK` es el absurdo: `worked_minutes BETWEEN 0 AND 1440` — un día no puede tener 25 horas, y eso sí atrapa un ponche corrupto o un error de zona horaria.
+
+### Quién autoriza que el colaborador se quede
+
+**Solo el [[Hotel/Manager de Área|Manager de Área]]** (2026-08-12). Es consistente con el reparto que ya existe: el [[Hotel/Supervisor|Supervisor]] **revisa** las horas y el Manager de Área las **aprueba**. El disparador es el ponche que cruza las 40 horas acumuladas de esa semana en esa requisición — el sistema lo sabe antes de que cierre la semana porque lleva el acumulado.
+
+Asentado con autorización del usuario en [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] (nueva subsección *Autorización de horas extra*) y propagado a [[Core/Módulos/Timesheet|Timesheet]] y [[Hotel/Manager de Área|Manager de Área]].
+
+### La requisición no tiene duración
+
+Se evaluó la hipótesis de que una requisición dura **una semana**, y **la documentación no la sostiene**: la cabecera de [[Core/Módulos/Requisicion/Requisición|Requisición]] tiene 7 campos y **ninguno es fecha**, y la posición tiene fecha de inicio con una nota explícita de que **no tiene fecha de fin**. La requisición se cierra **por estado** — Azul claro, *cubierta totalmente*, en el [[Semáforo de Requisición]] — no por calendario; y la posición termina cuando el colaborador pasa a **Rosa**.
+
+Lo que dura una semana es el **periodo de pago**, no la requisición. Por eso el umbral de 40 horas es semanal aunque la requisición siga abierta, y por eso `demand.position` **no lleva** fecha de fin: el diagrama de Demanda ya está correcto.
+
+**Consecuencia resuelta:** la `RUTINA Journal Posición` registra un campo *"Fecha fin"* que parecía contradecir la regla de arriba. No la contradice — es el **cierre del periodo semanal** (los 7 días que se usan para pagar), no el fin de la posición. Aclarado con un callout en la fuente de verdad, porque el nombre invita a la lectura equivocada. Al modelarlo en `settlement`, la columna debe llamarse por lo que es (`week_end_date` o equivalente), no `end_date`.
+
+### Deuda que cerró este ADR
+
+Seis archivos afirmaban que el overtime se calculaba **por hotel**, contradiciendo la fuente de verdad. Corregidos el 2026-08-12: [[Contabilidad/Consolidado Semanal del Colaborador|Consolidado Semanal]] (el cálculo y la tabla de contenido), [[Reglas del Colaborador]] y las tres Simulaciones (Ciclo de Vida del Colaborador, Punto de Vista de Reclutamiento, Punto de Vista de Contabilidad). No era cosmético: **por hotel, dos requisiciones del mismo hotel sí suman 80 horas y generan overtime; por requisición, no.** Cambia lo que se paga y lo que se factura.
 
 ---
 

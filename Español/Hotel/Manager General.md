@@ -22,9 +22,14 @@ Rol de máxima autoridad dentro del hotel. Supervisa a los [[Hotel/Manager de Á
 - **Aprueba** requisiciones (estado **Autorizada**).
 - **Rechaza** requisiciones, regresándolas al creador con observaciones (estado **En elaboración**).
 
+### Aprobación de horas
+
+- **Aprueba las horas** de los colaboradores de **cualquier [[Departamentos del Hotel|departamento]]** del hotel, por su visibilidad global.
+- Comparte esta atribución con el [[Hotel/Manager de Área|Manager de Área]], que solo aprueba las de su departamento. Son los **dos únicos roles** que pueden aprobar horas.
+- Puede aprobar en cualquier momento lo que un Manager de Área haya dejado pendiente, pero **no es un escalamiento automático**: nadie le transfiere la jornada al vencer un plazo.
+
 ### Gestión de personal asignado
 
-- Genera el código **QR** para que los colaboradores ponchen en el [[Timesheet]].
 - Manda a colaboradores a descansar (estado **Rosa — Stand-by** en el [[Semáforo del Colaborador]]).
 - Reporta colaboradores (estado **Rojo — Reportado** en el [[Semáforo del Colaborador]]).
 - Reporta [[Core/Módulos/Accidente Laboral/Accidente Laboral|accidentes laborales]] detectados en la propiedad.

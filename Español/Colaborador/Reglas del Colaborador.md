@@ -108,14 +108,15 @@ El [[Semáforo del Colaborador]] define 12 estados. A continuación se documenta
 
 ### Mecanismo de ponchado
 
-- El colaborador poncha vía **QR** generado por el [[Hotel/Manager General|Manager General]] o el [[Hotel/Manager de Área|Manager de Área]].
-- Los ponches se registran por pares de entrada/salida para cada periodo (exactamente seis):
-  - **Entrada** — inicio de jornada
-  - **Salida Lunch** — sale a comer
-  - **Entrada Lunch** — regresa de comer
-  - **Salida Break** — sale a descanso
-  - **Entrada Break** — regresa de descanso
-  - **Salida** — fin de jornada
+- El colaborador poncha **desde su teléfono, dentro de la propiedad**, en el formulario de la app móvil.
+- Cada marca exige **ubicación GPS dentro del perímetro del hotel**; fuera de él, el ponche se bloquea.
+- Se registran **tres marcas por jornada**:
+  - **Entrada** — inicio de jornada, con foto tomada en el momento
+  - **Comida** — hora de salida a comer
+  - **Salida** — fin de jornada, con foto tomada en el momento
+- El ponche funciona **sin señal**: la marca se guarda en el teléfono y se envía al recuperar conexión.
+- Los ponches **no son definitivos hasta que el [[Hotel/Manager de Área|Manager de Área]] de su departamento o el [[Hotel/Manager General|Manager General]] los aprueban**; el [[Hotel/Supervisor|Supervisor]] los revisa antes. Ver [[Timesheet#Aprobación]].
+- Si el colaborador está en la propiedad pero el GPS no lo ubica dentro del perímetro, el ponche se rechaza y el Supervisor puede registrarlo manualmente con motivo.
 - El [[Timesheet]] se crea a partir del [[Core/Módulos/Schedule|Schedule]]; no puede existir de forma independiente.
 
 ### Restricción por estado del semáforo
@@ -130,17 +131,16 @@ El [[Semáforo del Colaborador]] define 12 estados. A continuación se documenta
 
 > [!important] Esta regla aplica a **todos** los colaboradores sin excepción, en cada jornada.
 
-| Escenario | Deducción aplicada |
-|---|---|
-| Lunch < 30 min | 30 min (mínimo obligatorio) |
-| Lunch ≥ 30 min | Tiempo real tomado |
-| Sin ponche de Lunch | 30 min (auto-deducción) |
-
+- Se deducen **30 minutos por jornada**, haya o no marca de Comida. La marca de Comida registra la hora de salida a comer, no su duración.
 - **Horas brutas** = Salida − Entrada
-- **Horas netas** = Horas brutas − Deducción de Lunch − Breaks reales
+- **Horas netas** = Horas brutas − 30 min de lunch
 - Después de 6 horas continuas de trabajo, el colaborador debe tomar su lunch.
 
+> [!warning] Los **breaks** ya no se ponchan y por lo tanto no se deducen. Decisión pendiente en [[Reglas de Negocio#Deducción de Breaks]].
+
 ### Indicador de Lunch Extendido
+
+> [!warning] Sin marca de fin de comida no hay duración que comparar, así que este indicador **no puede calcularse** con el mecanismo vigente.
 
 - El sistema marca automáticamente a los colaboradores cuyo lunch excede 30 minutos.
 - **Visible para:** [[Inspector]], [[Inspección/Coordinador|Coordinador]], [[Manager de Reclutamiento]].
@@ -152,7 +152,7 @@ El [[Semáforo del Colaborador]] define 12 estados. A continuación se documenta
 - El colaborador recibe pago **semanal** por parte de Oranje
 - El monto se calcula a partir del [[Contabilidad/Consolidado Semanal del Colaborador|Consolidado Semanal]], que agrupa los [[Timesheet|Timesheets]] de todos los hoteles donde trabajó esa semana
 - Si trabajó en múltiples hoteles, cada hotel aporta sus horas con el pay rate de su [[Core/Módulos/Contrato|Contrato]]
-- El overtime se calcula por hotel, según la política de cada contrato
+- El overtime se calcula **por [[Core/Módulos/Requisicion/Requisición|requisición]]**, según la política pactada en cada contrato. El umbral son 40 horas brutas semanales en cada requisición, evaluado por separado: las horas de requisiciones distintas no se suman
 
 ## Elegibilidad y Pool
 

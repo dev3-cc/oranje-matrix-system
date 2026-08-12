@@ -15,8 +15,8 @@ Módulo que representa al hotel como cliente de Oranje. El hotel solicita person
 ### Roles
 
 - [[Hotel/Manager General|Manager General]] — Máxima autoridad del hotel. Siempre existe en ambas jerarquías.
-- [[Hotel/Manager de Área|Manager de Área]] — Rol operativo por departamento. Aprueba o rechaza requisiciones; gestiona el personal asignado.
-- [[Hotel/Supervisor|Supervisor]] — Crea las requisiciones de personal.
+- [[Hotel/Manager de Área|Manager de Área]] — También llamado **Hotel Manager**. Rol operativo por departamento: aprueba o rechaza requisiciones, **aprueba las horas trabajadas** y gestiona el personal asignado.
+- [[Hotel/Supervisor|Supervisor]] — Crea las requisiciones de personal y revisa los ponches antes de la aprobación.
 
 ### Estructura organizacional
 
@@ -46,8 +46,8 @@ Manager General (GM)
 | Jerarquía simple | Jerarquía extendida | Responsabilidades en plataforma |
 |---|---|---|
 | [[Hotel/Manager General\|Manager General]] | [[Hotel/Manager General\|Manager General]] | Supervisión general, visibilidad global, todas las acciones operativas |
-| [[Hotel/Manager General\|Manager General]] (mismo rol) | [[Hotel/Manager de Área\|Manager de Área]] | Aprueba requisiciones, gestiona schedule, genera QR, reporta colaboradores |
-| [[Hotel/Supervisor\|SUP]] | [[Hotel/Supervisor\|Supervisor]] | Crea requisiciones, reporta colaboradores, reporta accidentes laborales |
+| [[Hotel/Manager General\|Manager General]] (mismo rol) | [[Hotel/Manager de Área\|Manager de Área]] | Aprueba requisiciones, **aprueba las horas trabajadas**, gestiona schedule, reporta colaboradores |
+| [[Hotel/Supervisor\|SUP]] | [[Hotel/Supervisor\|Supervisor]] | Crea requisiciones, **revisa ponches** (no aprueba), reporta colaboradores, reporta accidentes laborales |
 
 #### Departamentos del hotel
 

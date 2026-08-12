@@ -127,7 +127,7 @@ Carlos llega al Hotel Riviera. El [[Inspector]] verifica su llegada en sitio.
 > **Blanco** → **Verde manzana** — Día 1 verificado
 > **Responsable:** Inspector (zona Centro) · **Comentario:** "Carlos verificado en sitio en Hotel Riviera."
 
-El [[Timesheet]] se crea a partir del [[Schedule]]. Carlos poncha su primera Entrada vía QR generado por el [[Manager de Área]].
+El [[Timesheet]] se crea a partir del [[Schedule]]. Carlos poncha su primera Entrada desde su teléfono, dentro de la propiedad, con GPS y foto.
 
 ### 2.4 — Día 3 — Azul claro
 
@@ -154,7 +154,7 @@ Carlos completa 7 días consecutivos. El sistema lo transiciona automáticamente
 
 > Referencia: [[Timesheet]] · [[Reglas del Colaborador]] · [[Reglas de Inspección]]
 
-Un día típico de Carlos en Hotel Riviera. Poncha vía QR generado por el [[Manager de Área]].
+Un día típico de Carlos en Hotel Riviera. Poncha desde su teléfono dentro de la propiedad; el [[Hotel/Supervisor|Supervisor]] revisa las jornadas y el [[Hotel/Manager de Área|Manager de Área]] de su departamento las aprueba al cierre.
 
 ### 3.1 — Registro de ponches
 
@@ -317,15 +317,15 @@ Al vencer los 3 días, el sistema cierra automáticamente el estado Café. Como 
 
 Semanas después, Carlos ya regresó del descanso y está como **Naranja** (fijo) en Hotel Riviera. El Hotel Playa Sol necesita cobertura extra y la [[Reclutadora]] lo asigna temporalmente (**Café**) para cubrir 2 días adicionales esa semana.
 
-### 6.2 — Horas por hotel
+### 6.2 — Horas por requisición
 
-| Hotel | Tipo | Días | Horas brutas | Horas netas | OT (brutas > 40) |
-|---|---|---|---|---|---|
-| Hotel Riviera | Fijo | 5 | 42h | 38h 10min | 2h OT |
-| Hotel Playa Sol | Temporal | 2 | 16h | 14h 30min | 0h OT |
+| Requisición | Hotel | Tipo | Días | Horas brutas | Horas netas | OT (brutas > 40) |
+|---|---|---|---|---|---|---|
+| La del Hotel Riviera | Hotel Riviera | Fijo | 5 | 42h | 38h 10min | 2h OT |
+| La del Hotel Playa Sol | Hotel Playa Sol | Temporal | 2 | 16h | 14h 30min | 0h OT |
 
 > [!warning] Regla de negocio
-> El overtime se calcula **por hotel**, no de forma global entre hoteles. Hotel Riviera tiene 42h brutas (2h OT). Hotel Playa Sol tiene 16h brutas (sin OT, por debajo de 40h). — [[Consolidado Semanal del Colaborador]]
+> El overtime se calcula **por requisición**, no por hotel ni de forma global. La requisición del Riviera tiene 42h brutas (2h OT); la del Playa Sol tiene 16h brutas (sin OT, por debajo de 40h). Aquí cada hotel aportó una sola requisición, así que el número no cambia — pero si Carlos hubiera trabajado dos requisiciones del mismo hotel, cada una evaluaría su umbral por separado y las horas **no se sumarían**. — [[Consolidado Semanal del Colaborador]]
 
 ### 6.3 — Rate interno vs. contractual
 
