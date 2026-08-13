@@ -41,15 +41,22 @@ Cuando un colaborador entra en estado Rojo (reporte del hotel), el [[Inspector]]
 - **Resolución a favor del hotel:** el colaborador pasa a **Negro** ([[Core/Módulos/Blacklist|Blacklist]]).
 - **Resolución a favor del colaborador:** el colaborador regresa a **Verde fuerte** (disponible).
 
-## Permanencia del estado Negro
+## Salida del estado Negro
 
-> [!warning] Negro es PERMANENTE. No existe proceso de rehabilitación ni instancia de apelación.
+> [!important] El veto se puede levantar, pero **solo por un perfil de Administrador**.
+> Cambiado el 2026-08-13. Antes este documento decía que Negro era permanente y que no existía rehabilitación ni apelación.
 
-El registro del colaborador se conserva en el sistema con las siguientes condiciones:
+**No es rehabilitación automática ni una instancia de apelación**: es una acción administrativa deliberada, con **motivo obligatorio**, y ningún rol de Reclutamiento o del hotel la puede ejecutar.
+
+Al levantarse, el colaborador regresa a **Blanco** —no a Verde fuerte— y vuelve a pasar por la validación de la [[Reclutadora]] antes de ser asignable. Es el mismo patrón de punto único de reingreso que usa el [[Semáforo Onboarding]].
+
+Mientras el veto esté vigente:
 
 - El colaborador **no se elimina** del sistema.
-- **No aparece en búsquedas activas** de reclutamiento.
+- **No aparece en búsquedas activas** de reclutamiento ni en el [[Pool de Colaboradores]].
 - El **historial se conserva** íntegro para consulta interna.
+
+Y el registro del veto **nunca se borra**: se marca como levantado, con quién lo levantó y por qué. Un colaborador puede haber sido vetado más de una vez a lo largo del tiempo, pero **solo un veto puede estar vigente**.
 
 ## Relacionado
 

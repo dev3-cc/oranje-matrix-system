@@ -19,7 +19,7 @@ Wireframe de la plataforma Oranje para el rol [[Manager de Reclutamiento]]. Defi
 > 1. Gestionar el equipo (dar de alta Líderes de Grupo y Reclutadoras).
 > 2. Resolver problemas y escalamientos.
 > 3. Supervisar a los Líderes de Grupo.
-> 4. Consultar y agregar a Blacklist (el veto Negro es permanente; las disputas las resuelve el Inspector de zona).
+> 4. Consultar y agregar a Blacklist (remover es exclusivo del Administrador; las disputas las resuelve el Inspector de zona).
 > 5. Ver métricas globales del módulo Reclutamiento.
 > 6. Tomar requisiciones excepcionalmente (caso especial).
 
@@ -205,7 +205,7 @@ Mismo formulario que Reclutadora / Líder. El Manager solo lo usa cuando intervi
 - ✅ Agregar a Blacklist (con motivo y evidencia — igual que cualquier rol de Reclutamiento)
 
 > [!note]
-> El veto (estado Negro) es **permanente**: no existe remoción ni rehabilitación. Las disputas (estado Rojo del colaborador) las resuelve el **Inspector de zona**, no el Manager.
+> El Manager **agrega** a Blacklist pero **no puede remover**: levantar un veto es exclusivo de un perfil de Administrador (`ROL-ADM-01`), y el colaborador regresa a Blanco para ser revalidado *(cambiado el 2026-08-13; antes el veto era permanente)*. Las disputas (estado Rojo del colaborador) las resuelve el **Inspector de zona**, no el Manager.
 
 ---
 

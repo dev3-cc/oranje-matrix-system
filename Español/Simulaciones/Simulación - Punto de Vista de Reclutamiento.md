@@ -187,7 +187,7 @@ Luis Gerardo Vega se presenta como candidato. Daniela inicia el protocolo están
 > [[Core/Módulos/Blacklist|Blacklist]] — "3 inasistencias → Blacklist automático por sistema."
 
 > [!warning] Regla de negocio
-> [[Core/Módulos/Blacklist|Blacklist]] — "Negro es PERMANENTE. No existe proceso de rehabilitación ni apelación."
+> [[Core/Módulos/Blacklist|Blacklist]] — El veto bloquea la asignación mientras esté vigente. Solo un perfil de Administrador puede levantarlo, y el colaborador regresa a Blanco para ser revalidado *(cambiado el 2026-08-13; antes era permanente)*.
 
 > [!warning] Regla de negocio
 > [[Reclutamiento/Reglas de Reclutamiento|Reglas de Reclutamiento]] — "La Reclutadora debe consultar la Blacklist antes de reclutar."
@@ -648,7 +648,7 @@ Vencen los 3 días asignados. Carlos Rivera **no** ha terminado su periodo de de
 > [[Core/Módulos/Blacklist|Blacklist]] — "3 inasistencias → Blacklist automático por sistema."
 
 > [!warning] Regla de negocio
-> [[Core/Módulos/Blacklist|Blacklist]] — "Negro es PERMANENTE. No existe proceso de rehabilitación ni apelación."
+> [[Core/Módulos/Blacklist|Blacklist]] — El veto bloquea la asignación mientras esté vigente. Solo un perfil de Administrador puede levantarlo, y el colaborador regresa a Blanco para ser revalidado *(cambiado el 2026-08-13; antes era permanente)*.
 
 > [!warning] Regla de negocio
 > [[Core/Módulos/Semáforos/Semáforo del Colaborador|Semáforo del Colaborador]] — "Negro: colaborador bloqueado. No aparece en búsquedas activas. Historial conservado."

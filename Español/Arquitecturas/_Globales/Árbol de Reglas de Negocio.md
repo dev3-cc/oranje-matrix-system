@@ -202,7 +202,7 @@ RECLUTAMIENTO
     │   └── RR-04  Cobertura 100% para poder cerrar como Cubierta
     │
     ├── Blacklist
-    │   └── RR-03  Cualquier rol agrega (motivo + evidencia); veto Negro permanente;
+    │   └── RR-03  Cualquier rol agrega (motivo + evidencia); solo el Admin levanta;
     │              disputas las resuelve el Inspector de zona, no el Manager
     │
     └── Automatismos y control
@@ -224,7 +224,7 @@ INSPECCIÓN  →  [[Arquitecturas/Inspección/00 - Arquitectura Inspector|00 - A
     ├── Verifica llegada Día 1 ................ Verde fuerte → Verde manzana
     ├── Entrega uniforme Día 3+ ............... Verde manzana → Azul claro
     ├── Investiga casos en estado Rojo ........ resuelve la disputa (RR-03)
-    ├── Ejecuta entrada manual a Blacklist .... Rojo → Negro (permanente)
+    ├── Ejecuta entrada manual a Blacklist .... cualquier estado → Negro
     ├── Reincorpora colaborador ............... Rojo → Verde fuerte
     ├── Cierra tarjeta de accidente ........... y gestiona Gris → Verde fuerte (alta médica)
     └── Consulta Indicador de Lunch Extendido . acceso exclusivo interno (RR-11, RR-H-15)

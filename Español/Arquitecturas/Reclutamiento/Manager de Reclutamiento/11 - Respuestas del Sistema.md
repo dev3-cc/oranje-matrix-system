@@ -19,7 +19,7 @@ aliases:
 | Reclutador participante asigna colaborador a una posición | Marca la posición como cubierta (lock de posición/slot); registra la asignación como evento del timeline con autor y fecha |
 | Reclutador participante desasigna colaborador | Libera la posición para reasignar; registra la desasignación como evento del timeline con autor y fecha |
 | Reclutador sale de la requisición             | Lo retira solo a él; sigue "En proceso" si quedan otros reclutadores; vuelve a "Autorizada" solo al salir el último; registra el evento en el Historial |
-| Manager agrega a Blacklist                    | Colaborador pasa a Negro (permanente); notifica al colaborador; bloquea futuras asignaciones |
+| Manager agrega a Blacklist                    | Colaborador pasa a Negro; notifica al colaborador; bloquea futuras asignaciones mientras el veto siga vigente |
 | Manager da de alta Líder                      | Crea cuenta; envía credenciales por email; aparece en Mi Equipo                 |
 | Manager da de alta Reclutadora                | Crea cuenta y asigna al Líder; notifica al Líder asignado                       |
 | Manager mueve Reclutadora a otro Líder        | Notifica a ambos Líderes; actualiza relación                                    |

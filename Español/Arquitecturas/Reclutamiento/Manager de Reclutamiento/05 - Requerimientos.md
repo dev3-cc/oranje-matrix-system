@@ -26,7 +26,7 @@ aliases:
 | RF-31  | Escalar a comercial                           | 🟡 Media  |
 | RNF-02 | Disponibilidad 99.5%                          | 🔴 Alta   |
 | RR-01  | Modelo Self-Pick (intervención excepcional)   | 🔴 Alta   |
-| RR-03  | Cualquier rol agrega a Blacklist; veto Negro es permanente | 🔴 Alta   |
+| RR-03  | Cualquier rol agrega a Blacklist; solo el Administrador lo levanta | 🔴 Alta   |
 | RR-04  | Cobertura 100% para cierre                    | 🔴 Alta   |
 | RR-10  | Jerarquía de supervisión                      | 🔴 Alta   |
 | RR-11  | Indicador de Lunch Extendido                  | 🟡 Media  |

@@ -14,7 +14,7 @@ aliases:
 **Actor principal:** [[Inspector]]
 
 **Historia:**
-Cuando el hotel reporta a un colaborador (estado **Rojo** en el [[Semáforo del Colaborador]]), el Inspector de la zona investiga el caso. La investigación puede confirmar la falta (veto permanente a Blacklist) o absolver al colaborador (reincorporación). La autoridad de decisión es exclusiva del Inspector; no escala al [[Manager de Reclutamiento]].
+Cuando el hotel reporta a un colaborador (estado **Rojo** en el [[Semáforo del Colaborador]]), el Inspector de la zona investiga el caso. La investigación puede confirmar la falta (veto a Blacklist) o absolver al colaborador (reincorporación). La autoridad de decisión es exclusiva del Inspector; no escala al [[Manager de Reclutamiento]].
 
 > [!info]
 > El estado Rojo lo activa el [[Hotel/Manager General|Manager General]], [[Hotel/Manager de Área|Manager de Área]] o [[Hotel/Supervisor|Supervisor]] del hotel. La regla de 3 inasistencias NO pasa por Rojo: va directamente a Negro de forma automática (sin intervención del Inspector). Solo los reportes manuales del hotel generan el estado Rojo que dispara este flujo.
@@ -25,19 +25,19 @@ Cuando el hotel reporta a un colaborador (estado **Rojo** en el [[Semáforo del 
 - Si el Inspector titular de la zona no está disponible, el [[Inspección/Coordinador|Coordinador]] reasigna temporalmente a otro Inspector.
 
 **Postcondiciones:**
-- El colaborador transita a **Negro** ([[Core/Módulos/Blacklist|Blacklist]]) — veto permanente — si la disputa se resuelve a favor del hotel.
+- El colaborador transita a **Negro** ([[Core/Módulos/Blacklist|Blacklist]]) si la disputa se resuelve a favor del hotel. El Inspector ya no puede revertirlo.
 - El colaborador transita a **Verde fuerte** (reincorporado al pool) si la disputa se resuelve a su favor.
 - El resultado queda registrado en el log del sistema con actor, fecha y resolución.
 
 > [!info]
-> Una vez que el colaborador alcanza estado **Negro**, el veto es permanente: no existe remoción ni rehabilitación. La transición Negro → cualquier otro estado no existe en el sistema.
+> Una vez que el colaborador alcanza estado **Negro**, el Inspector ya no puede revertirlo: la única salida es `Negro → Blanco`, y la autoriza exclusivamente un perfil de Administrador (`ROL-ADM-01`) *(cambiado el 2026-08-13; antes no existía salida alguna)*. No es una instancia de apelación de la disputa.
 
 **Flujo:**
 
 `Notificación de estado Rojo` → AUTOMATICO → `Sistema notifica al Inspector de zona asignado` → MANUAL → `Inspector accede al caso del colaborador` → `Revisa historial del colaborador, evidencia del hotel y contexto del reporte` → MANUAL → `Inspector emite veredicto`
 
 Rama A — A favor del hotel:
-`Veredicto: Blacklist` → MANUAL → `Inspector registra resultado con motivo obligatorio` → AUTOMATICO → `Sistema transita colaborador de Rojo → Negro` → `Colaborador queda vetado permanentemente` → `Sistema notifica a involucrados (hotel, Reclutadora responsable)` → `Registra en log auditable`
+`Veredicto: Blacklist` → MANUAL → `Inspector registra resultado con motivo obligatorio` → AUTOMATICO → `Sistema transita colaborador de Rojo → Negro` → `Colaborador queda vetado` → `Sistema notifica a involucrados (hotel, Reclutadora responsable)` → `Registra en log auditable`
 
 Rama B — A favor del colaborador:
 `Veredicto: Reincorporación` → MANUAL → `Inspector registra resultado con motivo obligatorio` → AUTOMATICO → `Sistema transita colaborador de Rojo → Verde fuerte` → `Colaborador queda disponible en el pool para nueva asignación` → `Sistema notifica a involucrados (hotel, Reclutadora responsable)` → `Registra en log auditable`

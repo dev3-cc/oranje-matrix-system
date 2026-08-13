@@ -178,7 +178,7 @@ Daniel ejecuta la transición a Negro (Blacklist manual).
 > El [[Inspector]] es el **único rol** que puede ejecutar la entrada manual a [[Blacklist]]. — [[Reglas de Inspección]]
 
 > [!warning] Regla de negocio — Permanencia
-> **Negro es PERMANENTE.** No existe proceso de rehabilitación ni apelación. Miguel Ángel Paredes queda vetado permanentemente del sistema. — [[Blacklist]]
+> Miguel Ángel Paredes queda vetado. El Inspector ya no puede revertirlo: la única salida es `Negro → Blanco`, y la autoriza exclusivamente un perfil de Administrador *(cambiado el 2026-08-13; antes el veto era permanente)*. — [[Blacklist]]
 
 > [!tip] QA — Operador 1 observa
 > Tiempo de resolución del reporte: **mismo día** (9:20 → 14:30 = ~5 horas). Meta: ≤ 3 días. Estado: **En meta**. — [[Métricas y KPIs por Departamento#Inspección|KPI 3]]

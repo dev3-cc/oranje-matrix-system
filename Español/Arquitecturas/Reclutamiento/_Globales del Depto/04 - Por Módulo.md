@@ -63,7 +63,7 @@ Incluye recepción, toma libre (Self-Pick), gestión del estado de la requisici�
 | RF-11 | Consultar Blacklist                             | 🔴 Alta   | ⬜ Pendiente |
 | RF-12 | Agregar a Blacklist (todos los roles del depto) | 🔴 Alta   | ⬜ Pendiente |
 | RF-13 | Resolver disputa de colaborador (Inspector de zona) | 🟡 Media  | ⬜ Pendiente — ver [[RF-13 Resolver disputa de colaborador]] en Arquitecturas/Inspección |
-| ~~RF-14~~ | ~~Remover de Blacklist~~ — acción inexistente (el veto Negro es permanente) | — | Eliminado |
+| RF-14 | Remover de Blacklist — **existe desde el 2026-08-13**, pero NO es de Reclutamiento: solo un perfil de Administrador la ejecuta, con motivo obligatorio. El colaborador regresa a Blanco | — | Fuera del depto |
 
 ---
 
@@ -143,7 +143,7 @@ Incluye recepción, toma libre (Self-Pick), gestión del estado de la requisici�
 | ----- | --------------------------------------------- | --------- | ----------- |
 | RR-01 | Modelo Self-Pick colaborativo                 | 🔴 Alta   | ⬜ Pendiente |
 | RR-02 | Consulta obligatoria de Blacklist             | 🔴 Alta   | ⬜ Pendiente |
-| RR-03 | Cualquier rol agrega a Blacklist; veto Negro es permanente | 🔴 Alta   | ⬜ Pendiente |
+| RR-03 | Cualquier rol agrega a Blacklist; solo el Administrador lo levanta | 🔴 Alta   | ⬜ Pendiente |
 | RR-04 | Cobertura 100% para cierre                    | 🔴 Alta   | ⬜ Pendiente |
 | RR-15 | Modelo colaborativo de requisición            | 🔴 Alta   | ⬜ Pendiente |
 | RR-16 | Historial / trazabilidad de la requisición    | 🔴 Alta   | ⬜ Pendiente |

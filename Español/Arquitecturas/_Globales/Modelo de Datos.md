@@ -50,7 +50,7 @@ Zone ──< Hotel ──< Contract ──< ContractRate   (por posición)
                       │
                       └──> InvoiceDetail >── Invoice >── Hotel
 
-Worker ──< BlacklistEntry     (permanente, sin borrado)
+Worker ──< BlacklistEntry     (historial: sin borrado, con baja)
 Worker ──< WorkerDocument     (Cloud Storage, cifrado)
 Worker ──< WorkAccident >── Inspector
 
@@ -297,9 +297,11 @@ El mismo journal cubre la auditoría de acceso a PII: quién consultó qué expe
 
 ## 8. Blacklist
 
-`blacklist_entry` — `worker_id`, `reason`, `evidence_path`, `author_user_id`, `source` (`automatic` | `manual`), `created_at`.
+`blacklist_entry` — `worker_id`, `reason`, `evidence_path`, `entered_by`, `source` (`MANUAL` | `ABSENCES` | `DISPUTE`), `occurred_at`, más `lifted_at`, `lifted_by` y `lift_reason`.
 
-Sin columna de baja y sin borrado: el veto (estado Negro) es **permanente** (RR-03). Las disputas se resuelven en el [[Semáforo del Colaborador]] —Rojo → Negro o reincorporación, decisión del [[Inspector]]— no removiendo el registro.
+**Sin borrado, pero con baja.** El registro nunca se elimina; el veto se **levanta** marcando los tres campos de `lifted_*`, que van juntos o no van (un CHECK lo obliga: levantar un veto es la acción que más necesita quedar atribuida). Solo un perfil de Administrador puede hacerlo, y el colaborador regresa a **Blanco**.
+
+Es por eso una tabla de **historial**: la misma persona puede entrar, salir y volver a entrar. Lo que impide dos vetos vigentes a la vez es un único parcial, `ux_blacklist_active` sobre `worker_id WHERE lifted_at IS NULL`.
 
 `reason` y `evidence_path` son `NOT NULL`: la regla exige evidencia obligatoria.
 

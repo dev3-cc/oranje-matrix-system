@@ -20,7 +20,7 @@ aliases:
 > [!important]
 > **Autoridad propia del Inspector en disputas:**
 > El Inspector es el **único rol** que puede ejecutar la entrada manual a Blacklist. Cuando un colaborador está en estado Rojo (reportado por el hotel), el Inspector investiga y resuelve:
-> - A favor del hotel → **Negro** ([[Core/Módulos/Blacklist|Blacklist]]) — veto permanente.
+> - A favor del hotel → **Negro** ([[Core/Módulos/Blacklist|Blacklist]]) — el Inspector ya no puede revertirlo; solo un Administrador levanta el veto.
 > - A favor del colaborador → **Verde fuerte** — reincorporación.
 > No escala al Manager de Reclutamiento para esta decisión.
 

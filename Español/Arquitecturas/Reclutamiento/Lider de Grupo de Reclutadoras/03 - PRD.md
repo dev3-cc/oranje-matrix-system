@@ -73,7 +73,7 @@ Permitir al Líder de Grupo cubrir requisiciones (igual que una Reclutadora) y s
 | Restricción | Descripción |
 | ----------- | ----------- |
 | **Blacklist — solo consulta y agrega** | El Líder puede consultar la Blacklist y agregar a colaboradores, pero no puede remover ni resolver disputas. Las disputas las gestiona el Inspector de Blacklist; las remociones, el Manager. |
-| **Veto permanente** | Un colaborador en Blacklist con veto permanente no puede ser asignado bajo ninguna circunstancia, independientemente de la urgencia de la requisición. |
+| **Veto vigente** | Un colaborador con un veto **vigente** en Blacklist no puede ser asignado bajo ninguna circunstancia, independientemente de la urgencia de la requisición. Solo un Administrador puede levantarlo. |
 | **Sin estado "Liberada"** | El modelo colaborativo no usa estado "Liberada". El flujo es: entrar a la requisición / salir de ella. Si salen todos los reclutadores, la requisición vuelve a "Autorizada". |
 | **Aprobación de cierre solo con 100 %** | La acción RF-05 (marcar como cubierta) solo está disponible cuando la requisición alcanza el 100 % de cobertura. |
 | **Reasignación solo dentro del grupo** | RF-37 permite reasignar una requisición únicamente entre las Reclutadoras del grupo propio del Líder. Mover requisiciones entre grupos requiere intervención del Manager. |

@@ -161,9 +161,11 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 - Disparado por disputa resuelta a favor del hotel (estado Rojo → investigación del [[Inspector]])
 - El [[Inspector]] de la zona decide con autoridad propia; no requiere validación del [[Manager de Reclutamiento]]
 
-### Permanencia del estado Negro
-- Negro es **PERMANENTE**: no existe rehabilitación ni apelación
-- El registro se conserva en el sistema marcado como Negro
+### Salida del estado Negro
+- Negro **se puede levantar**, pero solo por un perfil de **Administrador** (`ROL-ADM-01`). Ningún rol de Reclutamiento ni del hotel puede hacerlo *(regla cambiada el 2026-08-13; antes el veto era permanente y sin apelación)*
+- **No es rehabilitación automática ni instancia de apelación:** es una acción administrativa deliberada, con motivo obligatorio, que queda en el historial
+- Al levantarse, el colaborador regresa a **Blanco** —no a Verde fuerte— y tiene que volver a pasar por la validación de la [[Reclutadora]] antes de ser asignable
+- El registro del veto **no se borra**: se marca como levantado. Un colaborador puede haber sido vetado más de una vez a lo largo del tiempo, pero **solo un veto puede estar vigente**
 - El colaborador no aparece en búsquedas activas; el historial se conserva para consulta interna
 
 ### Consulta obligatoria

@@ -142,7 +142,7 @@ El borrado lógico **no es el comportamiento por defecto**: se agrega `deleted_a
 | Entidad | Política |
 |---|---|
 | `worker`, `requisition`, `timesheet`, `contract` | `deleted_at` — nunca `DELETE` físico |
-| `blacklist_entry`, `journal` | **Ni físico ni lógico.** El veto es permanente (RR-03) y la bitácora es inmutable (RR-16) |
+| `blacklist_entry`, `journal` | **Ni físico ni lógico.** El veto no se borra: se **levanta** marcando `lifted_at` (RR-03), y la bitácora es inmutable (RR-16) |
 | Catálogos, tablas puente | `DELETE` físico si no hay referencias |
 
 > [!warning]
@@ -306,7 +306,7 @@ Las únicas cuatro tablas que crecen sin techo:
 | `journal` | Vivo 24 meses | Particiones antiguas a Cloud Storage; la tabla se desprende, no se borra |
 | Fotos del ponche | Definir con Legal | Cloud Storage, clase Nearline tras 90 días (D-08) |
 | Consolidados y facturas | Permanente | No se archiva: es información fiscal |
-| `blacklist_entry` | Permanente | RR-03 |
+| `blacklist_entry` | Permanente | RR-03 — la FILA se conserva siempre, aunque el veto se haya levantado |
 
 ### Paginación
 
