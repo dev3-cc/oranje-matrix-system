@@ -722,13 +722,108 @@ Los tres rompen la siguiente migración. **Se resolvió con una vista:** `person
 
 ---
 
+## D-20 · El turno planeado es una tabla, y es lo único que puede hacer cumplir RR-05
+
+**Decisión:** `operations.schedule_entry` guarda el turno **planeado** de cada día como un `tstzrange`, y ahí vive la restricción de exclusión de RR-05:
+
+```sql
+EXCLUDE USING gist (worker_id WITH =, shift_range WITH &&)
+```
+
+### Por qué no cabía en `coverage.assignment`
+
+`assignment.validity` es un **`daterange`**: solo ve días. Y la regla —precisada el 2026-08-12— es que el colaborador **sí puede** estar en dos hoteles el mismo día mientras los turnos no se solapen. Hotel A de 6am a 2pm y Hotel B de 3pm a 11pm se ven como el mismo día, así que una exclusión sobre `validity` habría rechazado el caso legal.
+
+`schedule_entry` es la **primera tabla del sistema con horas reales**. Por eso la regla bajó hasta aquí y no antes.
+
+### Por qué sobre lo planeado y no sobre los ponches
+
+Porque el choque hay que **impedirlo al asignar**, no descubrirlo cuando el colaborador ya se presentó a los dos hoteles.
+
+### Se evaluó eliminar la tabla y derivarla
+
+La pregunta fue directa: si el turno sale de `assignment.validity` + `position.start_time` + 8 horas, ¿para qué guardarlo? Para el cálculo de horas y overtime, en efecto **no hace falta** — eso sale de los ponches reales. Pero se rompen dos cosas:
+
+1. **Un `EXCLUDE` necesita FILAS con rangos.** No opera sobre un conjunto calculado al vuelo; sin filas materializadas, Postgres no tiene qué comparar y RR-05 vuelve a ser lógica de aplicación.
+2. **Sin turno planeado no se distingue una FALTA de un DESCANSO.** La semana es 5 de trabajo + 2 de descanso y **el vault no dice cuáles 2**. Sin eso, la regla de 3 inasistencias → Negro no se puede disparar.
+
+`worker_id` va **desnormalizado** desde `assignment` por la misma razón: un `EXCLUDE` no puede hacer JOIN, y necesita las dos columnas en la misma fila.
+
+### Verificado contra la instancia
+
+| Turno | Resultado |
+|---|---|
+| 6am-2pm | entra |
+| 10am-6pm | **rechazado** — se solapa |
+| 3pm-11pm el mismo día | **entra** — es el caso que la regla permite |
+| 10pm-6am | **rechazado** — choca con el de 3pm |
+| 11:30pm-7:30am | entra, **cruza medianoche** sin problema |
+
+El turno nocturno sale gratis precisamente porque el rango lleva fecha completa. Con dos columnas de solo-hora, `22:00 → 06:00` sería un rango invertido y no habría forma de compararlo.
+
+---
+
+## D-21 · Cuatro marcas de ponche, y la duración del lunch se mide pero no se paga
+
+**Decisión (2026-08-13, autorizada por el usuario):** el ponche pasa de **tres** marcas a **cuatro**, de las cuales solo dos son obligatorias.
+
+| Marca | Obligatoria | Foto |
+|---|---|---|
+| `CLOCK_IN` | **sí** | sí |
+| `LUNCH_OUT` | no | no |
+| `LUNCH_IN` | no | no |
+| `CLOCK_OUT` | **sí** | sí |
+
+### El vault se contradecía, y ninguna de las dos versiones quedó
+
+[[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] y [[Timesheet]] decían **tres** marcas; [[Core/Módulos/Schedule|Schedule.md]] seguía diciendo **seis** (pares de lunch y de break). Era el pendiente 2 del [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]], abierto desde antes.
+
+Cada pieza resolvió algo distinto:
+
+- **Vuelve el regreso de lunch**, y con él el **Indicador de Lunch Extendido**, que con tres marcas era literalmente incalculable: sin fin de comida no hay duración que comparar contra los 30 minutos. [[Timesheet]] ya lo admitía.
+- **Los breaks se eliminan.** Se evaluó recuperar su par y se descartó: con la deducción fija no descuentan nada, así que serían dos marcas que nadie ponchará. La *Deducción de Breaks* pasa de "regla sin origen de datos" a **regla eliminada**.
+
+### La deducción sigue fija en 30 minutos, aunque ya se conozca la real
+
+Es lo no obvio de esta decisión. El par de lunch alimenta el **indicador** —supervisión interna de Oranje, que el hotel no ve— y **no** el cálculo del pago.
+
+> [!warning] Consecuencia asumida
+> Quien se toma **90 minutos** de lunch **cobra 60 de ellos**. El indicador lo marca; la nómina no lo corrige.
+>
+> Y un sesgo que conviene tener presente: al ser el par opcional, **solo ponchan los cumplidos** —justo los que no se pasan—, así que el indicador ve menos de lo que busca.
+>
+> Verificado en la instancia: con 50 minutos de lunch reales, `net_minutes` sigue siendo 450 sobre un bruto de 480.
+
+### Un ponche manual tampoco lleva foto
+
+El `CHECK` de la foto exceptúa a `is_manual`. Es justo el caso en que el colaborador **no pudo** ponchar —el GPS falló dentro de la propiedad—, así que exigírsela sería pedirle lo que no tiene. Lo registra el [[Hotel/Supervisor|Supervisor]] y lo aprueba el [[Hotel/Manager de Área|Manager de Área]], mismo reparto que el resto de las horas.
+
+### El doble reloj, y por qué sobrevive aunque el ponche sea web
+
+`device_at` queda **nulable**: el ponche será web por ahora y no hay modo offline que llenarlo. Cuando exista la app móvil empieza a llegar, sin migración.
+
+`server_at` **se queda igual**, pero la razón cambia: no es por el offline, es porque **el reloj del cliente no es de fiar** — cualquiera cambia la hora de su dispositivo, en web también. Es la única hora confiable.
+
+> [!note] Deuda que esto abre
+> El vault dice que el ponche es desde la **app móvil** y que **funciona sin señal**. Si el ponche web se vuelve definitivo, eso hay que corregirlo en la fuente de verdad.
+
+---
+
 ## Decisiones pendientes
 
-1. **RR-05 — exclusividad absoluta o cobertura temporal.** [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] dice que un colaborador no puede estar activo en dos hoteles simultáneamente; el repositorio de código vigente permite que un permanente cubra solicitudes temporales. Cambia la restricción de exclusión del modelo. **Bloquea el diagrama de `coverage`:** si un permanente puede cubrir temporales, el `EXCLUDE USING gist` tiene que excluir las asignaciones de tipo `temporary`, y eso se decide antes de modelar, no después.
-2. **Las transiciones de los otros 6 semáforos.** Los 43 estados están sembrados, pero el vault solo documenta los 12 pasos legales del Onboarding. Sin esas filas, esos semáforos tienen colores y no caminan: el servicio de transición devuelve `409` a todo. Es trabajo de negocio, no de ingeniería.
-3. **`journal.journal` ya viene tarde.** La sección 9 de [[Estándares de Base de Datos]] pide crearlo **particionado por mes desde la primera migración**, porque retrofitear la partición exige reescribir la tabla con la aplicación detenida. Van tres migraciones y no existe. Hoy no duele —está vacío— y por eso conviene crearlo ahora.
-4. **El módulo del expediente del Colaborador.** D-01 no le asigna uno: hoy iría en `coverage`, y la alternativa es un `personal/` propio — en ese caso son **11 esquemas**, no 10. Se decide al modelar `coverage`.
-5. **La identidad del Colaborador.** Poncha desde su teléfono, así que se autentica (D-05), pero su expediente no es `identity.user`. La propuesta en discusión es Firebase Auth como único proveedor y una tabla `identity.account` con el `firebase_uid` único, referenciada por `user` y por `worker` — el UID como columna, nunca como PK. Se asienta al modelar `coverage`.
+1. ~~**RR-05 — exclusividad absoluta o cobertura temporal.**~~ **RESUELTO** (2026-08-12 / 2026-08-13). Ni una ni otra: el criterio son las **horas**, no el hotel ni el tipo de asignación. La restricción vive en `operations.schedule_entry` — ver **D-20**.
+2. ~~**Las transiciones de los otros 6 semáforos.**~~ **RESUELTO en su mayor parte** (2026-08-12 / 2026-08-13). **115 transiciones** sembradas en 4 semáforos: Colaborador (89, incluidas las 34 del Blacklist), Onboarding (13), Requisición (9) y Calidad (4). Los otros tres —Posiciones, Urgencia y Cumplimiento del Timesheet— **no necesitan filas**: son **derivados**. Nadie pide pasar a Rojo; se pasa solo cuando la cobertura, las horas restantes o las horas trabajadas cruzan un umbral, y los recalcula un job. `status_light_transition` es para pasos que una **persona** pide y el sistema autoriza.
+3. ~~**`journal.journal` ya viene tarde.**~~ **RESUELTO** (2026-08-12). Creado particionado por mes, con 17 particiones hasta 2027-12, mientras estaba vacío y el costo era cero.
+4. ~~**El módulo del expediente del Colaborador.**~~ **RESUELTO** (2026-08-12). Esquema `personal/` propio, y la razón es de **permisos**: el expediente lleva SSN e ITIN, y un esquema aparte es un solo `GRANT` en vez de permisos columna por columna. El proyecto pasa a **11 esquemas**.
+5. ~~**La identidad del Colaborador.**~~ **RESUELTO** (2026-08-12). El Colaborador **sí** lleva renglón en `identity.user` —un solo camino de login para todos— con `hotel_id` nulo, porque no pertenece a un hotel sino a Oranje. Se descartó la tabla `identity.account`: basta una columna `firebase_uid` única, y una tabla aparte solo haría falta si una persona tuviera varios proveedores. Firebase guarda la contraseña; nosotros no guardamos ningún hash.
+
+### Lo que sigue abierto
+
+6. **El flujo proponer → aprobar del Indicador de Calidad.** El vault dice que el [[Operador de QA]] **propone** el cambio con base en sus mediciones y el [[Manager de QA]] **valida y aprueba**. `status_light_transition` es de **un solo paso**, así que solo quedó sembrado el Manager —la transición se efectúa al aprobar— y **la propuesta del Operador no se registra en ningún lado**. Falta decidir si es un estado más, una tabla `state_change_request`, o si vive solo en la UI. Se resuelve al modelar `supervision`.
+7. **La evidencia del ponche manual.** El vault dice quién lo registra y ahora también quién lo aprueba, pero no **con qué evidencia** se justifica. Hoy `manual_reason` es texto libre.
+8. **Los días festivos.** [[Core/Módulos/Schedule|Schedule.md]] dice que se registran "como datos de la operación" para alimentar el módulo de **forecast**, que está sin definir. Y el Contrato pacta *"2x bill rate en días festivos"*, pero el [[Contabilidad/Consolidado Semanal del Colaborador|Consolidado]] admite que la regla de cálculo del recargo **aún no está definida**. Modelarlo ahora sería adivinar la forma de un cálculo que nadie escribió.
+9. **El ponche web contra el ponche móvil.** Ver la deuda de **D-21**.
+10. **La deuda de los `ROL-0N` viejos.** Siguen apareciendo en ~34 archivos del vault, y `Roles del Sistema.md` sigue vacío. Ver **D-18**.
 6. **La duración del turno.** `demand.position` guarda solo `start_time`. El dato del negocio es **8.5 horas brutas** (8 netas tras los 30 min de lunch) y **varía**, pero no está en [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]]. Falta decidir dónde vive —`position`, el Contrato o el Schedule— y asentarlo en la fuente de verdad. Sin ella `operations` no puede calcular la hora de salida ni comparar lo planeado contra lo ponchado.
 7. **El GH responsable frente a quien autoriza.** `demand.requisition` lleva `area_manager_user_id` y `authorized_by` como columnas distintas, porque un Manager General puede autorizar la requisición de un departamento cuyo GH es otro. Falta confirmarlo con el negocio; si siempre coinciden, sobra una columna.
 8. **La homoclave del número de requisición.** El formato es `AAAAMMDDHHMM` + 2 caracteres. Falta definir quién los genera y contra qué se verifica que no choquen: si es aleatoria, necesita reintento.
