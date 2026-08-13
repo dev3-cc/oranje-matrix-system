@@ -16,11 +16,14 @@ Registro de tiempo trabajado por un colaborador en un hotel. Se crea a partir de
 
 ## Ponchado
 
-El colaborador poncha **desde su teléfono, dentro de la propiedad**, en el formulario de la app móvil. Se registran tres marcas por jornada:
+El colaborador poncha **desde su teléfono, dentro de la propiedad**, en el formulario de la app móvil. Se registran **cuatro marcas por jornada**, de las cuales solo dos son obligatorias:
 
-- **Entrada** — inicio de jornada, con foto
-- **Comida** — hora de salida a comer
-- **Salida** — fin de jornada, con foto
+- **Entrada** — inicio de jornada · **obligatoria** · con foto
+- **Salida a lunch** — opcional
+- **Regreso de lunch** — opcional
+- **Salida** — fin de jornada · **obligatoria** · con foto
+
+El par de lunch es **opcional a propósito**: si no se poncha, se deducen los 30 minutos igual. Existe para **medir**, no para calcular el pago.
 
 Cada marca exige **ubicación GPS dentro del perímetro del hotel**; fuera de él, el ponche se bloquea. La foto se toma con la cámara en ese momento, no se admite una imagen guardada. El ponche funciona sin señal: se guarda en el teléfono y se envía al recuperar conexión, y la validación del perímetro ocurre al sincronizar.
 
@@ -57,7 +60,7 @@ El sistema aplica una deducción de lunch al cómputo de horas del colaborador e
 
 ### Regla de deducción
 
-Se deducen **30 minutos por jornada**, haya o no marca de Comida. La marca de Comida registra la hora de salida a comer, no su duración.
+Se deducen **30 minutos por jornada, siempre**: haya o no marcas de lunch, y sin importar cuánto haya durado en realidad. Quien se toma 50 minutos cobra igual que quien se toma 20.
 
 > [!info] La regla aplica a **todos** los colaboradores sin excepción. Ver [[Reglas de Negocio#Deducción de Lunch]] para la definición formal.
 
@@ -67,11 +70,13 @@ Se deducen **30 minutos por jornada**, haya o no marca de Comida. La marca de Co
 - **Horas netas** = Horas brutas − 30 min de lunch
 - La deducción de lunch aplica en cada jornada sin excepción
 
-> [!warning] Los **breaks** ya no se ponchan, así que hoy no se deducen. Antes se descontaba el tiempo real del par Salida/Entrada de Break. Decisión pendiente: eliminar la deducción o recuperar la captura. Ver [[Reglas de Negocio#Deducción de Breaks]].
+> [!info] Los **breaks** ya no se ponchan y su deducción quedó **eliminada** (2026-08-13). Con la deducción de lunch fija, un par de marcas que no descuenta nada no aportaba al cálculo. Ver [[Reglas de Negocio#Deducción de Breaks]].
 
 ### Indicador de Lunch Extendido
 
-> [!warning] Sin la marca de fin de comida no hay duración que comparar contra los 30 minutos, así que este indicador **no puede calcularse** con el mecanismo vigente. Se conserva la definición hasta que se decida recuperar la marca o retirarlo.
+> [!info] Este indicador **revive** con la marca de *Regreso de lunch* (2026-08-13). Ya hay duración que comparar contra los 30 minutos.
+>
+> Dos cosas que hay que tener presentes al leerlo: **no descuenta nada** —la deducción sigue siendo fija en 30— y, al ser el par de lunch opcional, **solo ponchan los cumplidos**, justo los que no se pasan. El indicador ve menos de lo que busca.
 
 El sistema marca automáticamente a los colaboradores cuyo lunch excede 30 minutos.
 

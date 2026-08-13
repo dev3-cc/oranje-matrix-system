@@ -110,10 +110,12 @@ El [[Semáforo del Colaborador]] define 12 estados. A continuación se documenta
 
 - El colaborador poncha **desde su teléfono, dentro de la propiedad**, en el formulario de la app móvil.
 - Cada marca exige **ubicación GPS dentro del perímetro del hotel**; fuera de él, el ponche se bloquea.
-- Se registran **tres marcas por jornada**:
-  - **Entrada** — inicio de jornada, con foto tomada en el momento
-  - **Comida** — hora de salida a comer
-  - **Salida** — fin de jornada, con foto tomada en el momento
+- Se registran **cuatro marcas por jornada**, solo dos obligatorias:
+  - **Entrada** — inicio de jornada · **obligatoria** · con foto tomada en el momento
+  - **Salida a lunch** — opcional
+  - **Regreso de lunch** — opcional
+  - **Salida** — fin de jornada · **obligatoria** · con foto tomada en el momento
+- El par de lunch es opcional: si no lo ponchas, se te deducen los 30 minutos igual. Sirve para medir, no para calcular tu pago
 - El ponche funciona **sin señal**: la marca se guarda en el teléfono y se envía al recuperar conexión.
 - Los ponches **no son definitivos hasta que el [[Hotel/Manager de Área|Manager de Área]] de su departamento o el [[Hotel/Manager General|Manager General]] los aprueban**; el [[Hotel/Supervisor|Supervisor]] los revisa antes. Ver [[Timesheet#Aprobación]].
 - Si el colaborador está en la propiedad pero el GPS no lo ubica dentro del perímetro, el ponche se rechaza y el Supervisor puede registrarlo manualmente con motivo.
@@ -131,12 +133,12 @@ El [[Semáforo del Colaborador]] define 12 estados. A continuación se documenta
 
 > [!important] Esta regla aplica a **todos** los colaboradores sin excepción, en cada jornada.
 
-- Se deducen **30 minutos por jornada**, haya o no marca de Comida. La marca de Comida registra la hora de salida a comer, no su duración.
+- Se deducen **30 minutos por jornada, siempre**: haya o no marcas de lunch, y sin importar cuánto haya durado en realidad.
 - **Horas brutas** = Salida − Entrada
 - **Horas netas** = Horas brutas − 30 min de lunch
 - Después de 6 horas continuas de trabajo, el colaborador debe tomar su lunch.
 
-> [!warning] Los **breaks** ya no se ponchan y por lo tanto no se deducen. Decisión pendiente en [[Reglas de Negocio#Deducción de Breaks]].
+> [!info] Los **breaks** ya no se ponchan y su deducción quedó **eliminada** (2026-08-13). Ver [[Reglas de Negocio#Deducción de Breaks]].
 
 ### Indicador de Lunch Extendido
 

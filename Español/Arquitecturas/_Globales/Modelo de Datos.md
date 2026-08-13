@@ -223,16 +223,19 @@ Si la app decidiera *"estoy dentro"*, bastaría una aplicación de GPS falso par
 > Si el GPS no ubica al colaborador —cocina en sótano, edificio con estructura metálica, teléfono con GPS degradado— un colaborador que **sí** trabajó no puede ponchar y no cobra. [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] sección *Fallo de ponche* solo contempla reintentar, lo que no resuelve este caso.
 > Propuesta a autorizar: **ponche manual del [[Hotel/Supervisor|Supervisor]]** con motivo obligatorio, `source = 'manual'` y asiento en el journal (sección 7). Es una regla de negocio, no una decisión técnica.
 
-### Las tres marcas
+### Las cuatro marcas
 
-> [!warning] **Conflicto con la fuente de verdad — requiere decisión antes de migrar.**
-> [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] define **seis ponches**: Entrada, Salida/Entrada de Lunch, Salida/Entrada de Break y Salida. El diseño elegido captura **tres**: `CLOCK_IN`, `LUNCH`, `CLOCK_OUT`. Consecuencias que no son cosméticas:
-> 1. **El lunch real deja de medirse.** Con una sola marca de `LUNCH` no hay duración; siempre se aplica el mínimo de 30 min. La regla *"lunch ≥ 30 min → se deduce el tiempo real"* queda sin datos.
-> 2. **Los breaks dejan de capturarse.** La *Deducción de Breaks* —tiempo real del par Salida/Entrada de Break, con cantidad y duración definidas por cada hotel— se queda sin origen.
-> 3. **El [[Timesheet|Indicador de Lunch Extendido]] deja de ser calculable.** Ese indicador marca a quien excede 30 min de lunch y lo ven [[Inspector]], [[Inspección/Coordinador|Coordinador]] y [[Manager de Reclutamiento]]. Sin fin de comida, no existe.
-> 4. **Cambia lo que se paga y lo que se factura:** de `(Salida − Entrada) − Lunch real − Breaks reales` a `(Salida − Entrada) − 30 min`.
+> [!important] Conflicto **RESUELTO** el 2026-08-13, con autorización del usuario.
+> El vault se contradecía: `Reglas de Negocio` y `Timesheet.md` decían **tres** marcas; `Schedule.md` seguía diciendo **seis**. Ninguna de las dos quedó.
 >
-> Modificar [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] y [[Timesheet]] requiere autorización explícita. Este documento describe el diseño elegido, no lo da por aprobado.
+> Son **cuatro**: `CLOCK_IN` · `LUNCH_OUT` · `LUNCH_IN` · `CLOCK_OUT`. Solo las dos de los extremos son **obligatorias**; el par de lunch es opcional.
+>
+> Qué resolvió cada pieza:
+> 1. **El regreso de lunch se recupera**, y con él el [[Timesheet|Indicador de Lunch Extendido]], que con tres marcas era incalculable.
+> 2. **Los breaks se eliminan.** Se evaluó recuperar su par y se descartó: con la deducción fija no descuenta nada, así que serían dos marcas que nadie poncharía.
+> 3. **La deducción sigue siendo fija en 30 minutos**, aunque ahora se conozca la duración real. Es deliberado: el par de lunch alimenta el indicador —supervisión interna de Oranje— y **no** el pago.
+>
+> Consecuencia asumida: quien se toma 90 minutos de lunch cobra 60 de ellos. Y como el par es opcional, **solo ponchan los cumplidos**, así que el indicador ve menos de lo que busca.
 
 ### Fotos
 
@@ -272,10 +275,14 @@ Esta separación es la que hace posible *"el cálculo aplica el pay rate del Con
 net_hours = (salida − entrada) − actual_lunch − actual_breaks
 ```
 
-Con la regla de lunch mínimo: `< 30 min` → 30 min · `≥ 30 min` → tiempo real · sin ponche → 30 min.
-
-> [!warning]
-> Esta fórmula es la de [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] y **presupone seis ponches**. Con las tres marcas del sección 5 no hay `actual_lunch` ni `actual_breaks` que calcular, y la fórmula colapsa a `(salida − entrada) − 30 min`. Es el conflicto abierto del sección 5: hasta que se resuelva, la fuente de verdad manda y esta fórmula queda como está.
+> [!important] Actualizada el 2026-08-13
+> La fórmula anterior era `(salida − entrada) − actual_lunch − actual_breaks` y presuponía seis ponches. Con las **cuatro marcas** de la sección 5 la fórmula real es:
+>
+> ```
+> net_hours = (salida − entrada) − 30 min
+> ```
+>
+> Fija, siempre. `actual_breaks` desaparece —los breaks ya no se ponchan ni se deducen— y `actual_lunch` **se mide pero no se descuenta**: alimenta el Indicador de Lunch Extendido, no el pago.
 
 ---
 

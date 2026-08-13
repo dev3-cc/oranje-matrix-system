@@ -290,7 +290,7 @@ Las únicas cuatro tablas que crecen sin techo:
 | Tabla | Crecimiento estimado | Qué hacer |
 |---|---|---|
 | `journal.journal` | Todo evento del sistema, más la auditoría de PII | **Particionar por mes desde la primera migración** |
-| `operations.punch_mark` | 3 marcas × 5,000 × 5 días ≈ **3.9 M filas/año** | Índice correcto. **Todavía no particionar** |
+| `operations.punch_mark` | hasta 4 marcas × 5,000 × 5 días ≈ **5.2 M filas/año** | Índice correcto. **Todavía no particionar**. Las 2 de lunch son opcionales, así que el volumen real estará entre 2.6 y 5.2 M |
 | `operations.schedule_entry` | Una fila por colaborador y día | Índice correcto |
 | `settlement.consolidation_detail` | Una fila por requisición y semana | Índice correcto |
 

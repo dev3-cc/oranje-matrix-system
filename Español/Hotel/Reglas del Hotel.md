@@ -106,22 +106,23 @@ Responsabilidades sobre los colaboradores asignados (todos los roles del hotel):
 
 - El colaborador poncha **desde su teléfono, dentro de la propiedad**, en el formulario de la app móvil.
 - Cada marca exige **ubicación GPS dentro del perímetro del hotel**; fuera de él, el ponche se bloquea.
-- Se registran **tres marcas por jornada**:
-  - **Entrada** — inicio de jornada, con foto
-  - **Comida** — hora de salida a comer
-  - **Salida** — fin de jornada, con foto
+- Se registran **cuatro marcas por jornada**, solo dos obligatorias:
+  - **Entrada** — inicio de jornada · **obligatoria** · con foto
+  - **Salida a lunch** — opcional
+  - **Regreso de lunch** — opcional
+  - **Salida** — fin de jornada · **obligatoria** · con foto
 - Los ponches **no son definitivos hasta que el [[Hotel/Manager de Área|Manager de Área]] (su departamento) o el [[Hotel/Manager General|Manager General]] (cualquiera) los aprueban**. El [[Hotel/Supervisor|Supervisor]] revisa antes, pero no aprueba. Ver [[Timesheet#Aprobación]].
 
 ### Deducción de Lunch
 
 > [!important] Esta regla aplica a **todos** los colaboradores sin excepción, en cada jornada.
 
-- Se deducen **30 minutos por jornada**, haya o no marca de Comida. La marca de Comida registra la hora de salida a comer, no su duración.
+- Se deducen **30 minutos por jornada, siempre**: haya o no marcas de lunch, y sin importar su duración real. El par de lunch alimenta el [[Timesheet#Indicador de Lunch Extendido|Indicador de Lunch Extendido]], no el pago.
 - **Horas brutas** = Salida − Entrada
 - **Horas netas** = Horas brutas − 30 min de lunch
 - Después de 6 horas continuas de trabajo, el colaborador debe tomar su lunch.
 
-> [!warning] Los **breaks** ya no se ponchan y por lo tanto no se deducen. Decisión pendiente en [[Reglas de Negocio#Deducción de Breaks]].
+> [!info] Los **breaks** ya no se ponchan y su deducción quedó **eliminada** (2026-08-13). Ver [[Reglas de Negocio#Deducción de Breaks]].
 
 ## Indicador de Lunch Extendido
 

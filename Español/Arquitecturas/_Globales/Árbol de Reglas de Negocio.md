@@ -233,7 +233,7 @@ COLABORADOR (ROL-C-01)  →  [[Arquitecturas/Colaborador/00 - Arquitectura Colab
 │
 ├── PRIMARIAS
 │   ├── Onboarding ............ Fase 2 (alta en app) y Fase 3 (datos de emergencia) — RR-06
-│   ├── Asistencia / Ponche ... 3 marcas por jornada con GPS y foto; aprueba el Manager de Área o el Manager General — RR-H-16
+│   ├── Asistencia / Ponche ... 4 marcas (2 obligatorias) con GPS y foto; aprueba el Manager de Área o el Manager General — RR-H-16
 │   ├── Disponibilidad ......... toggle Amarillo (disponible voluntario)
 │   └── Reportar Accidente ..... Escenario A del RR-H-19 → estado Gris (RR-H-20)
 │

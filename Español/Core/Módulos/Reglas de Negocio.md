@@ -291,10 +291,12 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 
 - El colaborador poncha **desde su teléfono, dentro de la propiedad**, en el formulario de la app móvil
 - El ponche exige **ubicación GPS dentro del perímetro del hotel**. Fuera de ese perímetro el sistema **bloquea** el ponche
-- Se registran **tres marcas por jornada**:
-  - **Entrada** — inicio de jornada · requiere foto
-  - **Comida** — salida a comer
-  - **Salida** — fin de jornada · requiere foto
+- Se registran **cuatro marcas por jornada**, de las cuales solo dos son obligatorias *(cambiado el 2026-08-13; antes eran tres y la de Comida no tenía regreso)*:
+  - **Entrada** — inicio de jornada · **obligatoria** · requiere foto
+  - **Salida a lunch** — opcional
+  - **Regreso de lunch** — opcional
+  - **Salida** — fin de jornada · **obligatoria** · requiere foto
+- El par de lunch es **opcional a propósito**: si el colaborador no lo poncha, no pasa nada — se le deducen los 30 minutos igual. Existe para **medir**, no para calcular la nómina
 - La foto se toma con la cámara en el momento del ponche; no se admite una imagen guardada
 - El ponche funciona **sin señal**: la marca se guarda en el teléfono y se envía cuando hay conexión
 - Cuando el ponche se captura sin señal, la validación del perímetro ocurre **al sincronizar**. Si el sistema lo rechaza, entra al calendario del [[Hotel/Supervisor|Supervisor]] como ponche anómalo
@@ -328,18 +330,22 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 
 > [!important] Esta regla aplica a **todos** los colaboradores sin excepción, en cada jornada.
 
-- El sistema deduce **30 minutos de lunch por jornada**, haya o no marca de Comida
-- La marca de **Comida** registra la hora a la que el colaborador salió a comer, no cuánto tardó
+- El sistema deduce **30 minutos de lunch por jornada**, **siempre**: haya o no marcas de lunch, y sin importar cuánto haya durado en realidad
+- El par de lunch **no toca la nómina**. Un colaborador que se toma 50 minutos cobra igual que uno que se toma 20: a los dos se les deducen 30
 - La deducción de lunch impacta directamente el cómputo de horas pagables en el [[Timesheet]]
 
-> [!warning] Cambio respecto al mecanismo anterior
-> Con seis ponches (pares Salida/Entrada de Lunch) el sistema deducía el **tiempo real** cuando superaba los 30 minutos. Con una sola marca de Comida esa duración ya no se captura y la deducción es fija. Pendiente de confirmar antes de calcular nómina con esta regla.
+> [!important] Por qué la deducción es fija aunque ya se capture la duración
+> Con el par de lunch **sí** se sabe cuánto duró, pero esa duración alimenta el **[[Timesheet#Indicador de Lunch Extendido|Indicador de Lunch Extendido]]** —una herramienta de supervisión interna de Oranje— y **no** el cálculo del pago. La decisión es deliberada: el indicador sirve para detectar un patrón y hablar con la persona, no para descontarle.
+>
+> Consecuencia asumida: quien se toma 90 minutos de lunch cobra 60 de ellos. El indicador lo marca; la nómina no lo corrige.
+>
+> Y un sesgo que conviene tener presente: al ser opcional, **solo ponchan los cumplidos** —justo los que no se pasan—, así que el indicador ve menos de lo que busca.
 
 ### Deducción de Breaks
 
-> [!warning] Regla sin origen de datos
-> Los breaks se deducían con el tiempo real del par **Salida Break / Entrada Break**, con cantidad y duración definidas por cada hotel. El mecanismo de tres marcas **no captura breaks**, así que hoy no hay tiempo de break que deducir.
-> Hay que elegir entre dos caminos: **eliminar** la deducción de breaks del cálculo, o **volver a capturarlos** como marcas propias. Mientras no se decida, el cálculo de horas pagables queda incompleto.
+**Eliminada** (2026-08-13). Los breaks ya no se ponchan y **no se deducen**.
+
+Se evaluó recuperar el par Salida Break / Entrada Break y se descartó: con la deducción de lunch fija, un par de marcas opcionales que no descuenta nada no aporta nada al cálculo y nadie lo ponchará. El cálculo de horas pagables queda cerrado sin él.
 
 ### Fórmula de horas pagables
 
