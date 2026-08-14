@@ -83,6 +83,34 @@ Usados exclusivamente para representar los 12 estados del [[Semáforo del Colabo
 
 Cinco reutilizan un token semántico existente en vez de duplicar el hex. Los otros siete son propios de la escala del semáforo.
 
+#### Tinte y tinta: la pareja de cada estado
+
+El color saturado de arriba **no sirve para un chip con texto dentro**. Medido: `--st-amarillo` con blanco da 1.4:1 y `--st-naranja` con `--ink` deja poco margen; y tres chips saturados en un mismo renglón de tabla compiten entre sí hasta volverse ilegibles. Por eso cada estado tiene **dos derivados**:
+
+| Token | `--st-*` | `--st-*-tint` | `--st-*-ink` | Contraste |
+|---|---|---|---|---|
+| Blanco | #FFFFFF | #FFFFFF | `--ink` | 18.6:1 |
+| Negro | #1A1108 | #E8E5E2 | `--ink` | 14.8:1 |
+| Verde manzana | #8CC63F | #F1F8E8 | #51791C | 4.7:1 |
+| Azul claro | #5BC0EB | #EBF7FD | #0976A4 | 4.7:1 |
+| Naranja | #F2711C | #FDEEE4 | #B74900 | 4.7:1 |
+| Rosa | #FF6FA5 | #FFEEF4 | #D50050 | 4.8:1 |
+| Morado | #7B2CBF | #EFE6F7 | #5C1D91 | 8.5:1 |
+| Rojo | #E11919 | #FBE3E3 | #B31212 | 5.7:1 |
+| Amarillo | #FFD500 | #FFFAE0 | #856F00 | 4.7:1 |
+| Verde | #1FA84A | #E4F5E9 | #0E7B31 | 4.8:1 |
+| Café | #8B5E34 | #F3EDE7 | #7A4F26 | 6.1:1 |
+| Gris | #9A9A9A | #F1F0EF | `--ink-2` | 9.0:1 |
+
+El tinte es el color mezclado al 12 % sobre blanco; la tinta, el mismo tono oscurecido hasta pasar AA sobre su tinte. **Los 12 pares están medidos y los 12 cumplen 4.5:1.** Blanco, Negro y Gris reutilizan `--ink` y `--ink-2` en vez de inventar una tinta café que no corresponde a su tono.
+
+> [!important] Regla de uso
+> **Saturado para el punto y las barras; tinte para cualquier chip que lleve texto.**
+>
+> Un chip de estado es `--st-X-tint` de fondo, un punto de 7px en `--st-X` y el texto en `--st-X-ink`. Así el color sigue significando lo mismo, pero deja de gritar.
+>
+> Y en una tabla, **un solo chip por renglón**. Cuando conviven varias dimensiones —cobertura, urgencia, estado— el mismo verde termina significando *cubierta*, *normal* y *autorizada* en la misma fila, que es exactamente lo que confunde. Las demás se codifican distinto: una razón como `4/6` va con barra de progreso, y una urgencia va con punto + texto, destacando **solo la excepción**.
+
 > [!important]
 > Esta escala **no se mapea a variables de shadcn/ui** (D-16). Se consume solo desde `SemaforoBadge`, y los mismos hex sirven a los demás semáforos que comparten nombre de color — Requisición (`APPLE_GREEN`, `GREEN`, `LIGHT_BLUE`, `RED`, `PURPLE`) y Onboarding (`GRAY`, `LIGHT_BLUE`, `GREEN`, `YELLOW`, `PINK`, `ORANGE`, `RED`, `BROWN`, `BLACK`). Un color se ve igual en todos los semáforos; lo que cambia es qué significa en cada uno.
 
