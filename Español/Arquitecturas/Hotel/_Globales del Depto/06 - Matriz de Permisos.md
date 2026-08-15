@@ -41,8 +41,10 @@ aliases:
 | | 📥 Exportar Schedule | Ver | Ver | Ver | — | ⏸️ |
 | **TIMESHEET** | 👁️ Ver Timesheet del depto | Ver | Ver | Ver | Auto | ⏸️ |
 | | 👁️ Ver Timesheet global del hotel | — | — | Ver | Auto | ⏸️ |
-| | 📷 Generar / Renovar QR | — | Crear | Crear | — | ⏸️ |
+| | 👁️ Revisar ponches y resolver anómalos | Revisar | Revisar | Revisar | Auto | ⏸️ |
+| | ✓ Aprobar horas trabajadas | — | Aprobar | Aprobar | — | ⏸️ |
 | | 📝 Corregir ponche | — | C · E | C · E | Auto | ⏸️ |
+| | ➕ Registrar ponche manual | Crear | Crear | Crear | — | ⏸️ |
 | | 🚦 Calcular Indicador de Cumplimiento | — | — | — | Auto | ⏸️ |
 | | ⏰ Ver Indicador de Lunch Extendido | — | — | — | Auto | ⏸️ |
 | | 📥 Exportar Timesheet | Ver | Ver | Ver | — | ⏸️ |
@@ -79,7 +81,8 @@ aliases:
 
 - **Crear requisición:** ahora pueden los **3 roles** (Supervisor, Manager de Área, Manager General).
 - **Autorización (RR-H-02):** Manager de Área **o** Manager General. El Supervisor NO puede autorizar.
-- **QR del Timesheet (RR-H-09):** Manager de Área **o** Manager General.
+- **Aprobación de horas (D-09):** el **Manager de Área** aprueba las de **su** departamento y el **Manager General** las de **cualquiera** — la misma pareja que autoriza requisiciones. El **Supervisor revisa y resuelve anómalos, pero no aprueba**: son dos pasos con responsables distintos. Sin aprobación, las horas **quedan en espera**: sin pago, sin factura, sin escalamiento y sin aprobación automática.
+- **Ponche manual:** los **3 roles** pueden registrarlo, para el caso en que el GPS rechace la ubicación.
 - **Reportar colaborador / Rojo (RR-H-10):** los **3 roles** pueden reportar (compartido).
 - **Stand-by / Rosa (RR-H-11):** compartido entre los **3 roles**.
 - **Reportar accidentes (RR-H-19):** los **3 roles** pueden reportar (Escenarios A y B).
