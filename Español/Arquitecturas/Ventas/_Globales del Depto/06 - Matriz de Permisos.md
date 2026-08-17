@@ -32,6 +32,7 @@ aliases:
 |                                      | 📝 Reactivar desde Café                | —           | C · E        | —                | ⏸️               |
 |                                      | 📝 Marcar cliente Negro                | —           | C · E        | —                | ⏸️               |
 |                                      | 📝 Reactivar desde Negro               | —           | C · E        | —                | ⏸️               |
+|                                      | 🗄️ Archivar ciclo comercial            | C · E       | C · E        | —                | ⏸️               |
 | **PROPUESTAS**                       | 👁️ Ver propuestas                     | Ver         | Ver          | Auto             | ⏸️               |
 |                                      | ➕ Elaborar Propuesta Personalizada     | Crear       | —            | —                | ⏸️               |
 |                                      | 📤 Enviar propuesta al hotel           | C · E       | —            | —                | ⏸️               |
@@ -71,4 +72,5 @@ aliases:
 - **Café y Negro (RR-V-04, RR-V-05):** exclusivos del BDC.
 - **Rojo (RR-V-06):** gestión por BD.
 - **Reactivaciones (RR-V-07):** siempre regresan a Azul Claro, no a Gris.
+- **Archivar ≠ marcar Rojo o Negro:** Rojo, Negro y Café son estados reactivables; archivar es el acto explícito que cierra el ciclo y libera al hotel para uno nuevo. Un hotel en Naranja no se archiva: es cliente activo.
 - **Post-Naranja (RR-V-12):** BD y BDC quedan como referentes comerciales sin permisos de operación en el módulo Hotel.

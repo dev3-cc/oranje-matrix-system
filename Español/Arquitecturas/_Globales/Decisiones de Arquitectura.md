@@ -809,6 +809,63 @@ El `CHECK` de la foto exceptúa a `is_manual`. Es justo el caso en que el colabo
 
 ---
 
+## D-22 · La propuesta se envía dentro de Verde, y el ciclo comercial se cierra a mano
+
+**Decisión (2026-08-17):** dos huecos que llevaban meses abiertos en `commercial` se cierran juntos, porque son el mismo problema — el semáforo avanzaba y se archivaba sin que nada lo respaldara.
+
+| | Endpoint | Permiso |
+|---|---|---|
+| Propuesta | `POST · PATCH · GET /prospects/:id/proposals` | `proposals:create` · `proposals:read` |
+| | `POST /prospects/:id/proposals/:proposalId/send` | `proposals:send` |
+| Archivo | `POST /prospects/:id/close` | `pipeline:close_cycle` |
+
+### El vault se contradecía sobre dónde vive la propuesta
+
+`commercial.proposal` existía desde el 2026-08-06 sin un solo endpoint que la escribiera. Al construirlos apareció el conflicto:
+
+| Documento | Qué dice |
+|---|---|
+| [[Core/Módulos/Reglas de Negocio\|Reglas de Negocio]] | "Se elabora **y envía** en Status Onboarding Verde" |
+| [[Ventas/Reglas de Ventas\|Reglas de Ventas]] | "Verde: Propuesta Personalizada elaborada y enviada" |
+| [[Core/Módulos/Semáforos/Semáforo Onboarding\|Semáforo Onboarding]] | "**al enviar** la propuesta, pasa a Verde" |
+
+Gana la fuente de verdad. La línea del semáforo se corrigió: se entra a Verde al **empezar a elaborarla**, no al enviarla.
+
+> [!important] La consecuencia técnica no es cosmética
+> La exigencia va al **salir** de Verde, no al entrar. De Verde no se avanza a Amarillo, Rojo ni Café sin una propuesta enviada — los tres suponen que el hotel ya la vio. Es `422 PROPOSAL_REQUIRED`.
+>
+> El nombre del status describe **cómo se sale de él**, no cómo se entra. Leerlo al revés es lo que produjo la primera implementación, que quedó invertida.
+
+Y la propuesta solo se trabaja donde la regla dice: **Verde o Café** (`422 PROPOSAL_STATE_INVALID`). Café es el puente de desbloqueo, donde la propuesta se ajusta o se retoma.
+
+### Una versión por envío, y el índice único es quien decide
+
+Cada `POST` crea una **versión nueva** en borrador. Solo puede haber **un borrador abierto** por ciclo, y lo enviado **no se edita**: si el hotel pide un cambio, se versiona.
+
+La versión se calcula dentro de la transacción, pero quien de verdad impide el empate es `ux_proposal_prospect_version`: dos BD guardando a la vez leerían el mismo máximo.
+
+Las tarifas viajan por la API como **cadena**, nunca como `number` de JavaScript — es la misma regla de [[Arquitecturas/_Globales/Estándares de Base de Datos|Estándares de Base de Datos]] sección 3, aplicada al transporte y no solo al cálculo.
+
+### Archivar no es marcar Rojo ni Negro
+
+Rojo, Negro y Café **son reactivables** hacia Azul Claro (RR-V-07). Si llegar ahí cerrara el ciclo, no habría nada que reactivar. Por eso cerrar es un acto aparte y deliberado: *este hotel ya no va*.
+
+- Motivo **obligatorio**, del catálogo del semáforo
+- Un hotel en **Naranja no se archiva**: es cliente activo (`409 PROSPECT_IS_CLIENT`). Primero pasa a Negro
+- Al cerrar, el hotel **queda libre** para abrir un ciclo nuevo — antes un prospecto rechazado lo bloqueaba para siempre
+- Se conserva el color con el que se archivó
+
+> [!warning] La Matriz de Permisos no tenía esta acción
+> `pipeline:close_cycle` (BD y BDC) **se agregó**. [[Ventas/Reglas de Ventas|Reglas de Ventas]] mencionaba *"decisión de reactivar o archivar"* en Rojo, pero la [[Arquitecturas/Ventas/_Globales del Depto/06 - Matriz de Permisos|Matriz de Ventas]] nunca la listó. Es el tercer hueco de la Matriz detectado al construir contra ella.
+
+### Lo que esto deja sin cerrar
+
+- **Rosa sigue sin fila que lo sustente.** Lo que se negocia ahí es el **Documento de T&C**, creado en Amarillo — otro documento, no la propuesta. Sigue sin modelarse desde el 2026-08-06, y la razón no cambió: sus campos son los de `settlement.contract`, y modelarlo antes de diseñar `settlement` es adivinar la forma del padre desde el hijo.
+- **`proposal_rate` sigue aplazada.** Las tarifas son globales y tentativas; la tarifa por posición llega como migración aditiva cuando el negocio la pida.
+- **El catálogo de motivos no sirve para archivar.** Los cuatro sembrados —`HOTEL_CLOSED`, `MANAGEMENT_CHANGE`, `OPERATION_PAUSED`, `COMMERCIAL_DISPUTE`— se pensaron para Negro y Café. Falta el motivo más común: *no hay interés* o *eligió otro proveedor*. Es aditivo: una fila de catálogo y una línea de seed.
+
+---
+
 ## Decisiones pendientes
 
 1. ~~**RR-05 — exclusividad absoluta o cobertura temporal.**~~ **RESUELTO** (2026-08-12 / 2026-08-13). Ni una ni otra: el criterio son las **horas**, no el hotel ni el tipo de asignación. La restricción vive en `operations.schedule_entry` — ver **D-20**.
@@ -824,13 +881,15 @@ El `CHECK` de la foto exceptúa a `is_manual`. Es justo el caso en que el colabo
 8. **Los días festivos.** [[Core/Módulos/Schedule|Schedule.md]] dice que se registran "como datos de la operación" para alimentar el módulo de **forecast**, que está sin definir. Y el Contrato pacta *"2x bill rate en días festivos"*, pero el [[Contabilidad/Consolidado Semanal del Colaborador|Consolidado]] admite que la regla de cálculo del recargo **aún no está definida**. Modelarlo ahora sería adivinar la forma de un cálculo que nadie escribió.
 9. **El ponche web contra el ponche móvil.** Ver la deuda de **D-21**.
 10. **La deuda de los `ROL-0N` viejos.** Siguen apareciendo en ~34 archivos del vault, y `Roles del Sistema.md` sigue vacío. Ver **D-18**.
-6. **La duración del turno.** `demand.position` guarda solo `start_time`. El dato del negocio es **8.5 horas brutas** (8 netas tras los 30 min de lunch) y **varía**, pero no está en [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]]. Falta decidir dónde vive —`position`, el Contrato o el Schedule— y asentarlo en la fuente de verdad. Sin ella `operations` no puede calcular la hora de salida ni comparar lo planeado contra lo ponchado.
-7. **El GH responsable frente a quien autoriza.** `demand.requisition` lleva `area_manager_user_id` y `authorized_by` como columnas distintas, porque un Manager General puede autorizar la requisición de un departamento cuyo GH es otro. Falta confirmarlo con el negocio; si siempre coinciden, sobra una columna.
-8. **La homoclave del número de requisición.** El formato es `AAAAMMDDHHMM` + 2 caracteres. Falta definir quién los genera y contra qué se verifica que no choquen: si es aleatoria, necesita reintento.
-9. **Nube definitiva.** GCP es defendible por Cloud Run y Firebase. La decisión debe basarse en qué domina el equipo, no en capacidades de mensajería —equivalentes en ambas nubes.
-10. **Número de marcas del ponche.** El diseño elegido captura tres (`CLOCK_IN`, `LUNCH`, `CLOCK_OUT`); [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] define seis. Cambia el cálculo de horas pagables. Ver [[Arquitecturas/_Globales/Modelo de Datos|Modelo de Datos]] sección 5.
-11. **Excepción al ponche bloqueado.** Falta la regla del ponche manual cuando el GPS falla dentro de la propiedad.
-12. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
+11. **El motivo de archivo del ciclo comercial.** El catálogo del Semáforo Onboarding no tiene *no hay interés* ni *eligió otro proveedor*, que son las razones más comunes de archivo. Ver **D-22**.
+12. **El Documento de T&C.** Rosa no tiene fila que lo respalde. Se resuelve al modelar `settlement`. Ver **D-22**.
+13. **La duración del turno.** `demand.position` guarda solo `start_time`. El dato del negocio es **8.5 horas brutas** (8 netas tras los 30 min de lunch) y **varía**, pero no está en [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]]. Falta decidir dónde vive —`position`, el Contrato o el Schedule— y asentarlo en la fuente de verdad. Sin ella `operations` no puede calcular la hora de salida ni comparar lo planeado contra lo ponchado.
+14. **El GH responsable frente a quien autoriza.** `demand.requisition` lleva `area_manager_user_id` y `authorized_by` como columnas distintas, porque un Manager General puede autorizar la requisición de un departamento cuyo GH es otro. Falta confirmarlo con el negocio; si siempre coinciden, sobra una columna.
+15. **La homoclave del número de requisición.** El formato es `AAAAMMDDHHMM` + 2 caracteres. Falta definir quién los genera y contra qué se verifica que no choquen: si es aleatoria, necesita reintento.
+16. **Nube definitiva.** GCP es defendible por Cloud Run y Firebase. La decisión debe basarse en qué domina el equipo, no en capacidades de mensajería —equivalentes en ambas nubes.
+17. ~~**Número de marcas del ponche.**~~ **RESUELTO** (2026-08-13). Son **cuatro**, dos obligatorias. Ver **D-21**.
+18. **Excepción al ponche bloqueado.** Falta la regla del ponche manual cuando el GPS falla dentro de la propiedad.
+19. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
 
 > [!note]
 > **Cerradas en esta ronda:** el idioma del esquema (D-11) y el nombre inglés del Colaborador, que es **`Worker`** desde el 2026-08-06.

@@ -58,7 +58,7 @@ El BD identifica el hotel dentro de su territorio como posible cliente.
 - Recopila datos: nombre del hotel, email, teléfono, nombre y cargo del contacto, necesidad del negocio.
 - Realiza visita en frío al hotel.
 
-**Avance →** al enviar la [[Propuesta Personalizada|propuesta]], pasa a [[#Verde — Propuesta enviada|Verde]].
+**Avance →** cuando termina la recopilación de datos y empieza a elaborar la [[Propuesta Personalizada|propuesta]], pasa a [[#Verde — Propuesta enviada|Verde]].
 
 > También se llega aquí por reactivación desde [[#Rojo — Rechazo o no interés|Rojo]], [[#Negro — Cliente pausado o inactivo|Negro]] o [[#Café — Renegociación / desbloqueo|Café]].
 
@@ -74,6 +74,11 @@ El BD identifica el hotel dentro de su territorio como posible cliente.
 - Adjunta y envía la propuesta al hotel.
 - Registra intentos de contacto y respuestas.
 - Hace seguimiento al hotel.
+
+> [!important] La propuesta se elabora **y** se envía dentro de este status
+> El nombre del status describe cómo se sale de él, no cómo se entra. De Verde no
+> se avanza a ningún lado sin haber enviado la propuesta: Amarillo, Rojo y Café
+> suponen que el hotel ya la vio.
 
 ### Decisión
 
