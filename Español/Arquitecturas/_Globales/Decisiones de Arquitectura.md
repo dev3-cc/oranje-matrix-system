@@ -866,6 +866,54 @@ Rojo, Negro y Café **son reactivables** hacia Azul Claro (RR-V-07). Si llegar a
 
 ---
 
+## D-23 · La Requisición y el modelo colaborativo: el semáforo lo mueven los hechos
+
+**Decisión (2026-08-17):** `demand` y `coverage` dejan de ser tablas sin consumidor. Las cuatro tablas de la Requisición llevaban desde el 11 de agosto sin un solo endpoint, y `coverage` desde el 12.
+
+| Endpoint | Quién |
+|---|---|
+| `POST · GET /requisitions` · `GET /requisitions/:id` | Supervisor, GH, GM |
+| `POST /requisitions/:id/authorize` | **Solo GM y GH** |
+| `POST · DELETE /requisitions/:id/participants` | Reclutadora, Líder |
+| `POST /assignments` · `DELETE /assignments/:id` | Reclutadora, Líder |
+
+### Ningún endpoint mueve el semáforo a mano
+
+No hay un `PATCH /state`. El estado es **consecuencia** de un hecho del negocio:
+
+| Hecho | Efecto |
+|---|---|
+| Se crea la requisición | VERDE MANZANA · cobertura DORADO |
+| El GM o GH autoriza | VERDE · cobertura NARANJA · **se calcula la urgencia** |
+| El primer reclutador toma | AMARILLO |
+| Se asigna un colaborador | La cobertura del renglón se recalcula |
+| Sale el último reclutador | Vuelve a VERDE (RR-15) |
+
+**La urgencia no existe en un borrador.** RR-H-05 la mide desde `authorized_at` contra `start_date`, así que antes de autorizar no hay desde dónde medir. Se calcula al autorizar, y ahí nacen los tres niveles: más de 120 h `STRONG_GREEN`, entre 72 y 120 `YELLOW`, menos de 72 `RED`.
+
+Los slots se generan solos, uno por unidad de `quantity` y numerados desde 1 — es el orden que el Self-Pick necesita para ocuparlos de forma determinista.
+
+> [!warning] El cierre en AZUL CLARO se implementó saltándose al Líder de Grupo
+> Hoy la requisición cierra **sola** al ocuparse el último slot. **RF-05 dice otra cosa:** la Reclutadora *marca* la requisición como cubierta, el sistema la deja en **"Pendiente de aprobación"**, y solo tras la aprobación del [[Reclutamiento/Líder de Grupo de Reclutadoras|Líder de Grupo]] pasa a Azul claro. Si el Líder rechaza, vuelve a Amarillo con motivo obligatorio.
+>
+> El estado *Pendiente de aprobación* **no existe** en el [[Core/Módulos/Semáforos/Semáforo de Requisición|Semáforo de Requisición]], que tiene seis. Es el mismo hueco que el pendiente 6 —el proponer→aprobar del Indicador de Calidad—, y ahora son **dos** los casos que lo piden. Ver el pendiente 20.
+
+### Azul claro y Rojo son terminales
+
+Las transiciones sembradas no tienen salida desde ninguno de los dos. Por eso liberar una asignación de una requisición cerrada responde `409` en vez de dejarla afirmando estar cubierta al 100% con un lugar vacío.
+
+### Tres cosas rotas que aparecieron al construir esto
+
+Ninguna se buscaba; las tres bloqueaban o falseaban el trabajo:
+
+1. **`app_user` no tenía `USAGE` sobre el esquema `personal`.** Nació el 2026-08-12 como el esquema 11 y quedó fuera de los `GRANT` que sí tienen los otros diez, así que la aplicación no podía leer un solo colaborador y toda asignación moría con `42501`. Lo delata que la misma migración ya hacía `GRANT SELECT ON personal.vw_worker TO app_user` — permiso **inerte** sin `USAGE` sobre el esquema que lo contiene.
+
+2. **`coverage.assignment.status` violaba su propio `CHECK`.** Nació con `DEFAULT 'active'` contra un `CHECK IN ('ACTIVE','CLOSED','CANCELLED')`: toda inserción por el camino normal fallaba. Y como `ux_slot_active_assignment` filtra por `status = 'ACTIVE'`, en minúsculas el índice tampoco habría impedido dos asignaciones activas sobre el mismo slot — **la garantía de no-doble-asignación no existía**. Verificado contra la instancia antes de tocarlo.
+
+3. **El `.gitignore` se comía el módulo.** `coverage/` sin anclar captura cualquier carpeta con ese nombre, incluida `apps/api/src/modules/coverage`, que es uno de los diez módulos de D-01. Habría desaparecido sin aviso al commitear.
+
+---
+
 ## Decisiones pendientes
 
 1. ~~**RR-05 — exclusividad absoluta o cobertura temporal.**~~ **RESUELTO** (2026-08-12 / 2026-08-13). Ni una ni otra: el criterio son las **horas**, no el hotel ni el tipo de asignación. La restricción vive en `operations.schedule_entry` — ver **D-20**.
@@ -889,7 +937,9 @@ Rojo, Negro y Café **son reactivables** hacia Azul Claro (RR-V-07). Si llegar a
 16. **Nube definitiva.** GCP es defendible por Cloud Run y Firebase. La decisión debe basarse en qué domina el equipo, no en capacidades de mensajería —equivalentes en ambas nubes.
 17. ~~**Número de marcas del ponche.**~~ **RESUELTO** (2026-08-13). Son **cuatro**, dos obligatorias. Ver **D-21**.
 18. **Excepción al ponche bloqueado.** Falta la regla del ponche manual cuando el GPS falla dentro de la propiedad.
-19. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
+20. **El estado *Pendiente de aprobación* de la Requisición.** RF-05 lo exige entre AMARILLO y AZUL CLARO: la Reclutadora marca, el Líder aprueba. El [[Core/Módulos/Semáforos/Semáforo de Requisición|Semáforo de Requisición]] no lo tiene, y hoy el API cierra solo. Es el **segundo** caso del mismo patrón proponer→aprobar (ver pendiente 6), así que la salida debería servir a los dos: un estado más, una tabla `state_change_request`, o una columna en la entidad. Ver **D-23**.
+21. **Quién cierra una requisición en ROJO, y cuándo.** El vault dice **qué significa** —cerró con al menos una posición en Amarillo o Rojo— pero no quién lo dispara ni en qué momento. RF-05 cubre solo el camino del 100%. Sin esa regla, una requisición a medias se queda en AMARILLO para siempre.
+22. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
 
 > [!note]
 > **Cerradas en esta ronda:** el idioma del esquema (D-11) y el nombre inglés del Colaborador, que es **`Worker`** desde el 2026-08-06.
