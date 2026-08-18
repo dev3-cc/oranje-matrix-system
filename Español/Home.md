@@ -89,6 +89,7 @@ Proceso: [[Contabilidad/Flujo de Nómina|Flujo de Nómina]]
 
 - [[Core/Módulos/Blacklist|Blacklist]] — registro de colaboradores bloqueados.
 - [[Core/Módulos/Accidente Laboral/Accidente Laboral|Accidente Laboral]] — gestión de incidentes en sitio. Ver [[Flujo de Accidente Laboral]].
+- [[Core/Módulos/Notificaciones/Catálogo de Notificaciones|Catálogo de Notificaciones]] — los 56 avisos del sistema: qué evento avisa a quién.
 - [[Reglas de Negocio]] — restricciones y condiciones operativas del sistema.
 
 ### Contabilidad
