@@ -992,6 +992,55 @@ Verificado contra la instancia: una semana de **40 horas netas a 20.00** da brut
 
 ---
 
+## D-26 · El Colaborador, el Contrato y la factura: el sistema completo de punta a punta
+
+**Decisión (2026-08-18):** las tres piezas que faltaban para que el recorrido cierre. Con ellas, de once tablas sin endpoint quedan cuatro.
+
+### El Colaborador entra por el estado incompleto
+
+`personal.worker` es la entidad central del sistema —así la define [[CLAUDE.md]]— y no tenía un solo endpoint. Había **dos colaboradores en la base, los dos insertados a mano**: todo lo construido encima corría sobre gente que nadie podía dar de alta.
+
+Nace en **BLANCO** y ahí se queda hasta que la Reclutadora lo valide (RF-08). Lo que decide si puede validarse **no es una regla del servicio**: es `is_profile_complete` de `personal.vw_worker`, los nueve campos que esa vista ya declaraba obligatorios desde el 2026-08-12.
+
+> [!note] Por qué las columnas no pueden ser `NOT NULL`
+> Los datos llegan en **tres fases** —entrevista, el propio colaborador, emergencia— y entre una y otra la fila existe a medias. **Eso ES el estado Blanco.** Una restricción `NOT NULL` haría imposible representarlo.
+
+`?onlyAvailable=true` reproduce `coverage.vw_pool`: VERDE FUERTE o AMARILLO y sin veto vigente. El matiz está en `lifted_at` — un veto **ya levantado** sí devuelve al colaborador al Pool.
+
+### El Contrato: tres guards que la base dejó por escrito
+
+La migración del 2026-08-13 los enunció como pendientes del servicio, y aquí se implementan:
+
+| Guard | Por qué la base no puede |
+|---|---|
+| Un contrato `ACTIVE` sin ninguna tarifa | Una FK no obliga a que existan hijos, y no hay restricción que lo exprese |
+| Un segundo contrato vigente por hotel | `ux_contract_active` sí lo impide, pero rebotaría como violación de único; el servicio contesta con el número del que estorba |
+| Tarifas fuera del borrador | Cambiar un rate bajo un contrato firmado reescribe lo que ya se facturó |
+
+Y los dos márgenes, que la base también verifica pero conviene explicar antes de llegar a ella: el `bill_rate` nunca por debajo del `pay_rate`, y el hotel nunca paga menos recargo que el colaborador. **Los dos errores cuestan dinero en cada hora trabajada y no lanzan excepción** — se descubren en el margen, tarde.
+
+### La factura y el Consolidado son ramas espejo que no se tocan
+
+| | Consolidado | Factura |
+|---|---|---|
+| Tarifa | `pay_rate` | `bill_rate` |
+| Recargo | `overtime_pay_multiplier` | `overtime_bill_multiplier` |
+| Rate interno | **Sí lo aplica** | **Nunca aparece** |
+
+Esa última fila es la decisión. El rate interno de la persona puede ser mayor al del contrato, y **esa diferencia la absorbe Oranje, no el hotel**. Mezclar las ramas sería facturarle al cliente un acuerdo del que no es parte.
+
+> [!success] El margen ya se puede medir
+> Verificado contra la instancia: 40 horas netas a `bill 35.00` son **1400.00** facturados; las mismas horas a `pay 20.00` son **800.00** pagados. Margen **600.00**.
+
+Si el hotel no tiene contrato vigente con tarifa para esas posiciones, el JOIN no encuentra nada y la factura **no se crea**: `422` en vez de una factura en cero.
+
+### Dos cosas que aparecieron
+
+1. **Inventé nueve valores de enum del Colaborador** en vez de leer los `CHECK`. Era `MALE`/`FEMALE` y no `F`/`M`, `ONE_TO_TWO` y no `SOME`, `O_POS` y no `O+`. Los DTO son ahora copia literal de la restricción. Es el mismo error que ya había costado una migración con `assignment.status`.
+2. **`worker_state_history` no tiene columna `note`**, a diferencia de `prospect_state_history`. La nota del cambio de estado va al journal. Dos historias que deberían tener la misma forma y no la tienen.
+
+---
+
 ## Decisiones pendientes
 
 1. ~~**RR-05 — exclusividad absoluta o cobertura temporal.**~~ **RESUELTO** (2026-08-12 / 2026-08-13). Ni una ni otra: el criterio son las **horas**, no el hotel ni el tipo de asignación. La restricción vive en `operations.schedule_entry` — ver **D-20**.
@@ -1019,9 +1068,11 @@ Verificado contra la instancia: una semana de **40 horas netas a 20.00** da brut
 21. **Quién cierra una requisición en ROJO, y cuándo.** El vault dice **qué significa** —cerró con al menos una posición en Amarillo o Rojo— pero no quién lo dispara ni en qué momento. RF-05 cubre solo el camino del 100%. Sin esa regla, una requisición a medias se queda en AMARILLO para siempre.
 22. **El overtime nunca se calcula.** `timesheet_day.overtime_minutes` existe y hoy siempre vale 0: nadie lo llena. D-10 dice que el umbral semanal es **por requisición** y por eso el Timesheet se rompe así, pero falta el paso que compara las horas de la semana contra el umbral y reparte el excedente entre los días. Sin eso, la nómina va a pagar tiempo normal por tiempo extra. Ver **D-24**.
 23. **La falta contra el descanso.** `is_absence` tampoco lo llena nadie. Distinguirlos necesita cruzar el turno **planeado** contra el ponchado —para eso existe `schedule_entry`—, y ese cruce todavía no se hace. Un colaborador sin ponche hoy simplemente no tiene día.
-24. **La factura al hotel.** `settlement.invoice` e `invoice_detail` siguen sin endpoint. Es la otra mitad de D-25 y la rama que sí usa el `bill_rate` y `overtime_bill_multiplier`. El margen de Oranje no se puede medir hasta que exista.
+24. ~~**La factura al hotel.**~~ **RESUELTO** (2026-08-18). Ver **D-26**: el margen ya se mide.
 25. **La Matriz de Permisos de Contabilidad.** Las seis filas de `payroll` salieron de `Flujo de Nómina`, no de una matriz. Ver **D-25**.
-26. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
+26. **La nota del cambio de estado del Colaborador.** `worker_state_history` no tiene columna `note` y `prospect_state_history` sí. Hoy va al journal. Ver **D-26**.
+27. **El expediente y el rate interno siguen sin endpoint.** `personal.worker_document` guarda SSN e ITIN cifrados y `personal.worker_rate` el pay rate personal — la nómina ya lo lee, pero nadie puede darlo de alta ni autorizar un aumento.
+28. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
 
 > [!note]
 > **Cerradas en esta ronda:** el idioma del esquema (D-11) y el nombre inglés del Colaborador, que es **`Worker`** desde el 2026-08-06.
