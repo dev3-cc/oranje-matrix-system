@@ -55,7 +55,7 @@ El BD identifica el hotel dentro de su territorio como posible cliente.
 ### Acciones durante este status
 
 - Crea el perfil del hotel en el sistema.
-- Recopila datos: nombre del hotel, email, teléfono, nombre y cargo del contacto, necesidad del negocio.
+- Recopila datos: nombre del hotel, email, teléfono, **dirección y ubicación en el mapa**, nombre y cargo del contacto, necesidad del negocio.
 - Realiza visita en frío al hotel.
 
 **Avance →** cuando termina la recopilación de datos y empieza a elaborar la [[Propuesta Personalizada|propuesta]], pasa a [[#Verde — Propuesta enviada|Verde]].

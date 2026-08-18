@@ -189,6 +189,11 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 
 ## Onboarding y Ventas
 
+### Datos del hotel
+- El [[Ventas/Roles/Business Developer|BD]] recopila en Status Onboarding Azul Claro: nombre del hotel, email, teléfono, **dirección**, nombre y cargo del contacto, y necesidad del negocio
+- La **ubicación** del hotel se guarda como coordenadas: es lo que delimita la geocerca del ponche y lo que pinta los pines de Mi Territorio
+- La dirección y la ubicación son datos distintos y ambos se conservan: las coordenadas no se leen ni se copian, y la dirección no delimita nada
+
 ### Habilitación del hotel
 - El hotel solo puede generar requisiciones cuando alcanza el Status Naranja en el [[Semáforo Onboarding]]
 - Antes de Naranja, el hotel es un prospecto comercial gestionado por [[Ventas/Ventas|Ventas]]

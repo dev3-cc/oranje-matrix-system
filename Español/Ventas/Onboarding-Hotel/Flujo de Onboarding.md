@@ -23,7 +23,7 @@ Proceso comercial paso a paso para incorporar un hotel como cliente activo de Or
 **Acciones durante este status:**
 
 - Crea el perfil del hotel en el sistema.
-- Recopila datos: nombre del hotel, email, teléfono, nombre y cargo del contacto, necesidad del negocio.
+- Recopila datos: nombre del hotel, email, teléfono, **dirección y ubicación en el mapa**, nombre y cargo del contacto, necesidad del negocio.
 - Realiza visita en frío al hotel.
 
 **Avance →** al enviar la propuesta, el status cambia a [[Semáforo Onboarding#Verde — Propuesta enviada|Verde]].
