@@ -914,6 +914,49 @@ Ninguna se buscaba; las tres bloqueaban o falseaban el trabajo:
 
 ---
 
+## D-24 · El turno planeado y el ponche: dos reglas que ahora sí se aplican
+
+**Decisión (2026-08-17):** `operations` estrena endpoints. Las cinco tablas —Schedule, turno planeado, Timesheet, día y marca— llevaban desde el 13 de agosto sin nada que insertara una fila, así que **RR-05 y la aprobación de horas estaban escritas pero no vigentes**.
+
+| Endpoint | Quién |
+|---|---|
+| `POST · GET /schedules` · `POST /schedules/:id/entries` | GM y GH |
+| `POST /punches` | El colaborador |
+| `POST /punches/manual` | El Supervisor |
+| `POST /timesheet-days/:id/review` · `/timesheets/:id/submit` | El Supervisor |
+| `POST /timesheets/:id/approve` | **Solo GM y GH** |
+
+### RR-05 la impone el motor, no la aplicación
+
+`no_shift_overlap` es un `EXCLUDE` sobre `(worker_id =, shift_range &&)`. El servicio no consulta si hay choque: intenta insertar y traduce el `23P01` a un `409` con nombre.
+
+La diferencia no es de estilo. Un `SELECT` previo seguido de un `INSERT` deja una ventana entre los dos, y dos peticiones simultáneas se cuelan por ahí. La restricción no tiene ventana.
+
+> [!note] Lo que la regla dice de verdad
+> Verificado contra la instancia con el **mismo colaborador en dos hoteles el mismo día**: `07:00–15:00` en el hotel A y `14:00–22:00` en el B **choca**; `16:00–23:00` en el B **pasa**.
+>
+> El criterio son las **horas**, no el hotel ni el día. Es exactamente lo que D-20 decidió al mover la restricción desde `coverage.assignment` —donde un `daterange` solo ve días— hasta aquí.
+
+El turno nocturno cae solo: si la hora de fin es menor o igual a la de inicio, el rango cruza a la madrugada siguiente. `22:00–06:00` son 480 minutos, sin caso especial.
+
+### La geocerca la calcula Postgres
+
+`ST_DWithin` contra el radio del hotel, siguiendo D-08. Un cliente que decide si está dentro es un cliente al que se le puede mentir.
+
+Estar fuera es `422` **con la salida** —pedir un ponche manual al Supervisor—, no un rechazo mudo. Y si el hotel no tiene coordenadas cargadas, `inside_geofence` queda nulo en vez de bloquear: el dato falta, el colaborador no tiene la culpa.
+
+La foto solo se exige en los extremos. El par de lunch es opcional y no la lleva; el ponche manual tampoco, porque es justo el caso en que el colaborador **no pudo** ponchar.
+
+### La deducción de lunch sigue fija, y el día a medias no avanza
+
+540 minutos brutos son **510 netos**, se haya comido 20 minutos o 90. La duración real se guarda y alimenta el Indicador de Lunch Extendido, pero no descuenta — es la consecuencia asumida en D-21.
+
+Un día con entrada pero **sin salida** queda marcado con anomalía y **bloquea el envío a revisión**. Sin eso, una jornada a medias llegaría a nómina como cero horas sin que nadie lo note, que es justo el tipo de error que D-07 advierte: no lanza excepción, paga mal y se descubre tres meses después.
+
+El reparto de D-09 quedó verificado: el Supervisor revisa, resuelve anomalías y manda a revisión, pero **aprobar le da `403`**. El Manager General aprueba cualquier departamento; el de Área, solo el suyo. Y un Timesheet aprobado ya no admite marcas.
+
+---
+
 ## Decisiones pendientes
 
 1. ~~**RR-05 — exclusividad absoluta o cobertura temporal.**~~ **RESUELTO** (2026-08-12 / 2026-08-13). Ni una ni otra: el criterio son las **horas**, no el hotel ni el tipo de asignación. La restricción vive en `operations.schedule_entry` — ver **D-20**.
@@ -939,7 +982,9 @@ Ninguna se buscaba; las tres bloqueaban o falseaban el trabajo:
 18. **Excepción al ponche bloqueado.** Falta la regla del ponche manual cuando el GPS falla dentro de la propiedad.
 20. **El estado *Pendiente de aprobación* de la Requisición.** RF-05 lo exige entre AMARILLO y AZUL CLARO: la Reclutadora marca, el Líder aprueba. El [[Core/Módulos/Semáforos/Semáforo de Requisición|Semáforo de Requisición]] no lo tiene, y hoy el API cierra solo. Es el **segundo** caso del mismo patrón proponer→aprobar (ver pendiente 6), así que la salida debería servir a los dos: un estado más, una tabla `state_change_request`, o una columna en la entidad. Ver **D-23**.
 21. **Quién cierra una requisición en ROJO, y cuándo.** El vault dice **qué significa** —cerró con al menos una posición en Amarillo o Rojo— pero no quién lo dispara ni en qué momento. RF-05 cubre solo el camino del 100%. Sin esa regla, una requisición a medias se queda en AMARILLO para siempre.
-22. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
+22. **El overtime nunca se calcula.** `timesheet_day.overtime_minutes` existe y hoy siempre vale 0: nadie lo llena. D-10 dice que el umbral semanal es **por requisición** y por eso el Timesheet se rompe así, pero falta el paso que compara las horas de la semana contra el umbral y reparte el excedente entre los días. Sin eso, la nómina va a pagar tiempo normal por tiempo extra. Ver **D-24**.
+23. **La falta contra el descanso.** `is_absence` tampoco lo llena nadie. Distinguirlos necesita cruzar el turno **planeado** contra el ponchado —para eso existe `schedule_entry`—, y ese cruce todavía no se hace. Un colaborador sin ponche hoy simplemente no tiene día.
+24. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
 
 > [!note]
 > **Cerradas en esta ronda:** el idioma del esquema (D-11) y el nombre inglés del Colaborador, que es **`Worker`** desde el 2026-08-06.
