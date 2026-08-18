@@ -957,6 +957,41 @@ El reparto de D-09 quedó verificado: el Supervisor revisa, resuelve anomalías 
 
 ---
 
+## D-25 · El Consolidado Semanal: el cálculo vive en SQL y lleva dos firmas
+
+**Decisión (2026-08-18):** `settlement` estrena endpoints y con eso el recorrido corre completo — prospecto, hotel cliente, requisición, asignación, turno, ponche, horas aprobadas y **pago**.
+
+### El cálculo entero corre en `numeric`, dentro de la base
+
+No es preferencia de estilo. [[Arquitecturas/_Globales/Estándares de Base de Datos|Estándares de Base de Datos]] sección 3 lo dice sin margen: toda aritmética sobre montos se hace en `numeric` y **nunca** en el `number` de JavaScript.
+
+Por eso la generación es **una sola sentencia** —CTEs encadenados que agrupan las horas, resuelven la tarifa y escriben cabecera y detalle— y no un `for` en TypeScript. Y por eso los montos salen de la API como **cadena**: convertirlos a `number` para transportarlos desharía en la orilla lo que se cuidó en el centro.
+
+### El rate se resuelve por prioridad, y queda congelado
+
+1. El **rate interno** de la persona (`personal.worker_rate`), si está vigente.
+2. Si no, el del **contrato** del hotel (`commercial.contract_rate`).
+
+`is_internal_rate` congela cuál se aplicó. Importa porque el interno **puede ser mayor** que el contractual y la diferencia la absorbe Oranje: la factura al hotel jamás lo refleja. Son dos ramas que no se mezclan, y por eso el consolidado usa `overtime_pay_multiplier` y nunca el de facturación.
+
+> [!note] Un consolidado por persona y semana
+> No por hotel. Si el colaborador trabajó en tres hoteles, son tres renglones de detalle y **un solo** cheque. Es lo que ya decía `ux_consolidation_worker_week`.
+
+### Las dos firmas del Flujo de Nómina
+
+La Contadora **valida**, el Manager de Contabilidad **autoriza**, y cada uno recibe `403` en el paso del otro. La base ya lo exigía con `ck_consolidation_signatures`; ahora también lo exige la aplicación, que es lo que hace que el error salga con nombre en vez de como violación de restricción.
+
+El neto **no se escribe**: se recalcula al aplicar cada deducción y `ck_consolidation_amounts` lo verifica. Tampoco puede quedar negativo — si las deducciones superan lo ganado, el sistema tiene que decidir qué hacer, no emitir una deuda.
+
+> [!warning] Contabilidad no tiene Matriz de Permisos
+> El departamento no tiene carpeta en `Arquitecturas/`, así que las seis filas del módulo `payroll` **se derivaron de [[Contabilidad/Flujo de Nómina|Flujo de Nómina]]**, que sí dice quién valida y quién autoriza. Coinciden con las dos firmas que la base ya exigía, pero quedan marcadas en el encabezado de `permissions.ts` para revisarse cuando su matriz exista.
+>
+> Es la primera vez que se siembran permisos de un departamento sin matriz. Los otros tres sin arquitectura —Inspección, QA y Customer Service— siguen sin una sola fila.
+
+Verificado contra la instancia: una semana de **40 horas netas a 20.00** da bruto **800.00**; con deducciones de 25.00 y 48.00, neto **727.00**.
+
+---
+
 ## Decisiones pendientes
 
 1. ~~**RR-05 — exclusividad absoluta o cobertura temporal.**~~ **RESUELTO** (2026-08-12 / 2026-08-13). Ni una ni otra: el criterio son las **horas**, no el hotel ni el tipo de asignación. La restricción vive en `operations.schedule_entry` — ver **D-20**.
@@ -984,7 +1019,9 @@ El reparto de D-09 quedó verificado: el Supervisor revisa, resuelve anomalías 
 21. **Quién cierra una requisición en ROJO, y cuándo.** El vault dice **qué significa** —cerró con al menos una posición en Amarillo o Rojo— pero no quién lo dispara ni en qué momento. RF-05 cubre solo el camino del 100%. Sin esa regla, una requisición a medias se queda en AMARILLO para siempre.
 22. **El overtime nunca se calcula.** `timesheet_day.overtime_minutes` existe y hoy siempre vale 0: nadie lo llena. D-10 dice que el umbral semanal es **por requisición** y por eso el Timesheet se rompe así, pero falta el paso que compara las horas de la semana contra el umbral y reparte el excedente entre los días. Sin eso, la nómina va a pagar tiempo normal por tiempo extra. Ver **D-24**.
 23. **La falta contra el descanso.** `is_absence` tampoco lo llena nadie. Distinguirlos necesita cruzar el turno **planeado** contra el ponchado —para eso existe `schedule_entry`—, y ese cruce todavía no se hace. Un colaborador sin ponche hoy simplemente no tiene día.
-24. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
+24. **La factura al hotel.** `settlement.invoice` e `invoice_detail` siguen sin endpoint. Es la otra mitad de D-25 y la rama que sí usa el `bill_rate` y `overtime_bill_multiplier`. El margen de Oranje no se puede medir hasta que exista.
+25. **La Matriz de Permisos de Contabilidad.** Las seis filas de `payroll` salieron de `Flujo de Nómina`, no de una matriz. Ver **D-25**.
+26. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
 
 > [!note]
 > **Cerradas en esta ronda:** el idioma del esquema (D-11) y el nombre inglés del Colaborador, que es **`Worker`** desde el 2026-08-06.
