@@ -265,6 +265,23 @@ Nunca en un solo despliegue. Cuatro pasos, en este orden:
 
 Entre el paso 3 y el 4 debe pasar al menos un ciclo completo de nómina. Si algo quedó leyendo la columna vieja, ahí aparece.
 
+### Lo que existe antes de la primera migración
+
+Una base vacía no basta: hay cosas que las migraciones **usan y no crean**.
+
+```bash
+pnpm -F @oranje/api db:bootstrap     # antes de `prisma migrate deploy`
+```
+
+`prisma/bootstrap.sql` crea el rol **`app_user`** y las tres extensiones —`postgis`, `btree_gist`, `pgcrypto`—. Es idempotente y se corre una vez por base nueva.
+
+> [!warning] Por qué esto no se notó antes
+> En Postgres los **roles son del clúster**, no de la base. Varias migraciones hacen `GRANT` a `app_user` y ninguna lo crea, pero en la instancia de desarrollo el rol existe desde el 2026-08-08 —creado a mano—, así que una base nueva *en esa misma instancia* replica sin problema.
+>
+> En un **clúster limpio** —el contenedor de CI, o una instancia nueva de producción— el replay muere con `role "app_user" does not exist`. El bootstrap es lo que lo cierra.
+
+El replay completo corre en CI en cada PR, contra `postgis/postgis:15-3.4`. Es la única forma de saber que el historial sigue siendo reproducible: en una base que ya tiene todo aplicado, un error de orden no se nota.
+
 ### Migraciones seguras bajo carga
 
 ```sql
