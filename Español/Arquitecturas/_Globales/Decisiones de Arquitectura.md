@@ -1041,6 +1041,57 @@ Si el hotel no tiene contrato vigente con tarifa para esas posiciones, el JOIN n
 
 ---
 
+## D-27 · Las pruebas que protegen lo que ya funciona, y el veto reversible
+
+**Decisión (2026-08-19):** antes de seguir sumando endpoints, escribir las dos pruebas que los [[Arquitecturas/_Globales/Estándares de Desarrollo|Estándares]] sección 8 exigen. Había **68 endpoints y ninguna prueba de negocio** — las cuatro que existían son de infraestructura.
+
+### El test que protege lo que Prisma borra
+
+Once índices y seis restricciones viven **solo en el SQL de las migraciones** porque Prisma no las sabe declarar: parciales, `EXCLUDE`, `GiST`, `NULLS NOT DISTINCT`. Su ausencia del datamodel **es** el problema: `migrate diff` los propone para `DROP` en cada migración siguiente.
+
+> [!warning] No es hipotético
+> El 2026-08-08 se llevó así el índice espacial de la geocerca y nadie lo notó hasta que el ponche dejó de validar ubicación. La migración de `coverage` ya lo advertía con esas palabras: *"lo que lo protege es el test"*. Hasta hoy ese test no existía.
+
+El mismo spec cubre las cuatro vistas y los `GRANT` sobre los once esquemas — el otro agujero de la semana, cuando `personal` quedó sin `USAGE` y ninguna asignación era posible.
+
+### Las carreras se prueban insertando el conflicto
+
+`concurrency.spec.ts` no consulta si hay choque: **inserta el conflicto a propósito** y espera el error del motor. Dos asignaciones activas sobre el mismo slot, y dos turnos encimados del mismo colaborador.
+
+El tercer caso del turno es el que dice qué significa RR-05 de verdad: uno **pegado sí entra**, porque el criterio son las horas y no el día.
+
+### El golden test de nómina
+
+Una semana fija contra un monto exacto: 40 horas netas más 2 de overtime dan **840.00** al colaborador, **1505.00** al hotel, margen **665.00**. El set se versiona y **no se ajusta para que el test pase**.
+
+Al escribirlo puse 1470 de margen sin calcularlo y el test lo atrapó. Es exactamente para lo que existe.
+
+> [!note] Deuda conocida
+> Corren con `pnpm test:db` y necesitan la instancia por el proxy. **CI no las corre**: el pipeline no tiene base. `pnpm test` sigue siendo solo unitario para que ningún PR falle por eso.
+
+### El veto es reversible, y el Gris protege
+
+`coverage.blacklist_entry` filtraba el Pool desde el 2026-08-13 y nadie podía vetar ni levantar un veto. Tres reglas del vault que estaban escritas y no se aplicaban:
+
+1. **El GRIS protege.** Un colaborador accidentado no se puede vetar.
+2. **Un solo veto vigente, historial completo.** La persona puede haber sido vetada varias veces; el registro nunca se borra, se marca como levantado con quién y por qué.
+3. **Al levantarlo vuelve a BLANCO**, no a disponible: reingresa por la validación de la Reclutadora. Mismo punto único de reingreso que usa el [[Core/Módulos/Semáforos/Semáforo Onboarding|Semáforo Onboarding]].
+
+Permiso nuevo `blacklist:lift`, **solo para `ROL-ADM-01`**. Es la tercera fila que se siembra sin matriz —tras `pipeline:close_cycle` y las seis de `payroll`— y sale de [[Core/Módulos/Blacklist|Blacklist]]: *"solo por un perfil de Administrador"*, cambiado el 2026-08-13. Coincide con la única transición `BLACK → WHITE` sembrada.
+
+### El expediente entra sin los campos cifrados
+
+Decisión del usuario: el cifrado de campo de la sección 12 no se aplica todavía en el back, así que `worker_document` guarda la **referencia** al archivo y su verificación, no el SSN ni el ITIN.
+
+Un documento verificado **no se borra** — deja rastro de quién lo revisó, que es lo que un expediente existe para conservar.
+
+> [!warning] La consecuencia, expuesta en la respuesta
+> `GET /workers/:id/documents` devuelve `meta.hasTaxId` y `meta.taxRetentionApplies`. Hoy salen `false` y `true` **aunque el documento de SSN/ITIN esté subido y verificado**, porque `has_tax_id` lee las columnas cifradas y esas siguen nulas.
+>
+> En la práctica: **la retención del 16% aplica a todos**. Subir el documento no la levanta. Se expone en el `meta` en vez de esconderse en una vista, para que quien consuma el API lo vea.
+
+---
+
 ## Decisiones pendientes
 
 1. ~~**RR-05 — exclusividad absoluta o cobertura temporal.**~~ **RESUELTO** (2026-08-12 / 2026-08-13). Ni una ni otra: el criterio son las **horas**, no el hotel ni el tipo de asignación. La restricción vive en `operations.schedule_entry` — ver **D-20**.
@@ -1071,8 +1122,10 @@ Si el hotel no tiene contrato vigente con tarifa para esas posiciones, el JOIN n
 24. ~~**La factura al hotel.**~~ **RESUELTO** (2026-08-18). Ver **D-26**: el margen ya se mide.
 25. **La Matriz de Permisos de Contabilidad.** Las seis filas de `payroll` salieron de `Flujo de Nómina`, no de una matriz. Ver **D-25**.
 26. **La nota del cambio de estado del Colaborador.** `worker_state_history` no tiene columna `note` y `prospect_state_history` sí. Hoy va al journal. Ver **D-26**.
-27. **El expediente y el rate interno siguen sin endpoint.** `personal.worker_document` guarda SSN e ITIN cifrados y `personal.worker_rate` el pay rate personal — la nómina ya lo lee, pero nadie puede darlo de alta ni autorizar un aumento.
-28. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
+27. **El rate interno sigue sin endpoint.** `personal.worker_rate` guarda el pay rate personal y la nómina ya lo lee, pero nadie puede autorizar un aumento. El expediente se resolvió en **D-27**.
+28. **CI no corre las pruebas de integración.** El pipeline no tiene base, así que las 34 de `pnpm test:db` solo corren a mano. Necesita un contenedor de Postgres con las migraciones aplicadas. Ver **D-27**.
+29. **El cifrado de campo y la retención del 16%.** Mientras `ssn_encrypted` e `itin_encrypted` sigan nulas, `has_tax_id` es siempre falso y la retención aplica a todos. El expediente ya existe; falta conectarlo. Ver **D-27**.
+30. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
 
 > [!note]
 > **Cerradas en esta ronda:** el idioma del esquema (D-11) y el nombre inglés del Colaborador, que es **`Worker`** desde el 2026-08-06.
