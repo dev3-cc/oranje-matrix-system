@@ -79,6 +79,7 @@ Lista consolidada de **qué evento avisa a quién**. Hasta ahora las notificacio
 | `REASSIGN_REQUESTED` | Se solicita reasignación | Manager | RF-17 |
 | `TEAM_CHANGED` | Cambia la relación Líder–Reclutadora | usuario y Líder afectado | RF-29 |
 | `REPORT_SENT` | El Líder envía su reporte | Manager | RF-25 |
+| `REQ_AUTO_ASSIGNED` | Una requisición lleva 24h sin tomarse y el sistema se la asigna | **la Reclutadora que la recibió** — el Manager NO | Reglas de Reclutamiento |
 
 ## Inspección y QA
 
@@ -167,7 +168,15 @@ La [[Reclutadora]] entra en la segunda porque el colaborador es suyo, y le da ma
 
 **c) `PUNCH_REMINDER` no tiene regla.** RF-C-09 lo lista con un *"si aplica"* entre paréntesis. Falta definir a qué hora se manda y con qué condición.
 
-**d) La auto-asignación a las 24 horas.** [[Reglas de Reclutamiento]] dice que una requisición sin tomar se asigna sola a la Reclutadora con menor carga. No dice si se le avisa — y es el caso donde más falta hace, porque le llegó trabajo que no pidió.
+**d)** ~~La auto-asignación a las 24 horas.~~ **RESUELTO** el 2026-08-19 con `REQ_AUTO_ASSIGNED`.
+
+[[Reclutamiento/Reglas de Reclutamiento|Reglas de Reclutamiento]] dice que si una requisición lleva más de 24 horas sin tomarse, el sistema la asigna sola a la Reclutadora con menor carga, y aclara: *"el Manager de Reclutamiento no recibe notificación; el proceso es transparente"*.
+
+Dice **quién no se entera**, pero nunca si la Reclutadora sí. Y es la que importa: normalmente ella **elige** de la bandeja, y aquí no eligió — le cayó trabajo que no pidió. Sin aviso se entera cuando abra la app, y puede pasar un día.
+
+Lo que decidió la lectura fue la palabra *"transparente"*, que admite dos sentidos: **invisible para todos**, o **sin fricción**. Se tomó el segundo, porque la frase habla del **Manager**: aclarar que él no recibe notificación solo tiene sentido si alguien más sí la recibe. Si nadie se enterara, la aclaración sobraría.
+
+El Manager queda fuera, tal como el vault pide.
 
 ## Relacionado
 
