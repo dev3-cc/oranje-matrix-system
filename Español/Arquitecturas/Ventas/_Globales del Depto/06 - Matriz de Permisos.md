@@ -12,6 +12,7 @@ aliases:
 
 > [!info]
 > El rol **Administrador (ROL-V-04)** se encuentra **en pausa** mientras se estabilizan las reglas de negocio.
+> **Única excepción confirmada (2026-08-19):** el CRUD de usuarios del sistema (`users:manage`), implementado en `identity` de `apps/api`. Gestionar cuentas es administración del sistema, no una regla del negocio; el resto de CONFIGURACIÓN sigue por confirmar.
 
 ---
 
@@ -46,6 +47,7 @@ aliases:
 |                                      | 🤖 Cambio automático a Naranja         | —           | —            | Auto             | ⏸️               |
 | **MI TERRITORIO** *(BD)*             | 👁️ Ver mi territorio / rutas          | Ver         | —            | Auto             | ⏸️               |
 |                                      | 👁️ Ver prospectos por ruta            | Ver         | Ver (todos)  | Auto             | ⏸️               |
+|                                      | 🗺️ Asignar territorio a un BD          | —           | Asignar      | —                | ⏸️               |
 | **MI EQUIPO** *(BDC)*                | 👁️ Ver BDs a cargo                    | —           | Ver          | —                | ⏸️               |
 |                                      | 👁️ Ver métricas individuales por BD   | —           | Ver          | Auto             | ⏸️               |
 |                                      | 📝 Comunicar con BD                    | —           | C · E        | —                | ⏸️               |
@@ -59,7 +61,7 @@ aliases:
 | **SISTEMA** *(transversal)*          | 👁️ Recibir notificación               | Ver         | Ver          | Auto             | ⏸️               |
 |                                      | ⚙️ Trazabilidad de cambios de status   | —           | —            | Auto             | ⏸️               |
 |                                      | ⚙️ Enviar notificación automática      | —           | —            | Auto             | ⏸️               |
-| **CONFIGURACIÓN** *(Admin EN PAUSA)* | ⏸️ CRUD usuarios                       | —           | —            | —                | ⏸️ Por confirmar |
+| **CONFIGURACIÓN** *(Admin EN PAUSA)* | 👥 CRUD de usuarios (`users:manage`)   | —           | —            | —                | Gestionar        |
 |                                      | ⏸️ Editar catálogos                    | —           | —            | —                | ⏸️ Por confirmar |
 
 ---
@@ -73,4 +75,5 @@ aliases:
 - **Rojo (RR-V-06):** gestión por BD.
 - **Reactivaciones (RR-V-07):** siempre regresan a Azul Claro, no a Gris.
 - **Archivar ≠ marcar Rojo o Negro:** Rojo, Negro y Café son estados reactivables; archivar es el acto explícito que cierra el ciclo y libera al hotel para uno nuevo. Un hotel en Naranja no se archiva: es cliente activo.
+- **Asignación de territorio (confirmado 2026-08-20):** la hace el **BDC**, no el Administrador. El vault decía que el BD tiene «su territorio asignado» y que el BDC «supervisa a los BD en su territorio y rutas asignadas», pero no decía quién lo asigna; queda cerrado a favor del BDC por ser su manager.
 - **Post-Naranja (RR-V-12):** BD y BDC quedan como referentes comerciales sin permisos de operación en el módulo Hotel.
