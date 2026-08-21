@@ -21,6 +21,7 @@ Capturada por la [[Reclutadora]] durante el primer contacto:
 | Género | Reclutadora |
 | Domicilio | Reclutadora |
 | Teléfono | Reclutadora |
+| Fotografía | Reclutadora |
 
 ### Fase 2 — Alta en la app
 Completada por el propio Colaborador:

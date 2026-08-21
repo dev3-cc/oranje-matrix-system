@@ -282,6 +282,17 @@ pnpm -F @oranje/api db:bootstrap     # antes de `prisma migrate deploy`
 
 El replay completo corre en CI en cada PR, contra `postgis/postgis:15-3.4`. Es la única forma de saber que el historial sigue siendo reproducible: en una base que ya tiene todo aplicado, un error de orden no se nota.
 
+### Agregar una columna que una vista debe ver
+
+Una vista declarada con `SELECT tabla.*` **congela su lista de columnas al crearse**: Postgres expande el `*` en ese momento y no vuelve a mirarlo.
+
+Agregar una columna a la tabla la deja existiendo y **a la vez invisible** para todo lo que lea la vista. Pasó con `personal.worker.photo_url` el 2026-08-21: la migración corrió limpia y el API siguió respondiendo `column w.photo_url does not exist`.
+
+`CREATE OR REPLACE VIEW` tampoco basta si la columna nueva no queda al final: cambia las posiciones ordinales y REPLACE no las mueve. Van `DROP` y `CREATE`, y las vistas dependientes primero.
+
+> [!important]
+> Toda migración que agregue una columna a una tabla con vista encima **recrea la vista en la misma migración**. Las tablas con vista hoy son `personal.worker` (`vw_worker`, y `coverage.vw_pool` encima), `operations.timesheet_day` (`vw_timesheet_day`) y `settlement.consolidation` (`vw_tax_retention_balance`).
+
 ### Migraciones seguras bajo carga
 
 ```sql

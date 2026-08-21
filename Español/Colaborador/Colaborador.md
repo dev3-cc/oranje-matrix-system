@@ -27,6 +27,7 @@ Capturada por la [[Reclutadora]] durante el primer contacto:
 | Género | Reclutadora |
 | Domicilio | Reclutadora |
 | Teléfono | Reclutadora |
+| Fotografía | Reclutadora |
 
 ### Fase 2 — Alta en la app
 
@@ -41,6 +42,16 @@ Completada por el propio Colaborador:
 | Nivel de experiencia | — |
 | Tipo de transporte | — |
 | Modalidad | [[Modalidades de Contratación]] |
+
+> [!info] La fotografía es del Pool, no del expediente
+> La captura la Reclutadora en la entrevista y sirve para identificar a la
+> persona en el [[Core/Módulos/Pool de Colaboradores|Pool]] y en la tarjeta que
+> ve quien asigna. Es **opcional**: no bloquea la validación.
+>
+> No confundir con las **fotos del ponche**, que se toman en el momento al
+> entrar y salir y son evidencia de presencia — una por marca y por jornada.
+> Tampoco es un documento del expediente: ahí van el SSN/ITIN, la
+> identificación y el comprobante de domicilio.
 
 > [!info]
 > SSN e ITIN son **opcionales**. Si el colaborador no proporciona ni SSN ni ITIN, el sistema activa automáticamente la **retención del 16%** sobre su pago (reembolsable). Ver [[Reglas del Colaborador]] y [[Deducciones]].
