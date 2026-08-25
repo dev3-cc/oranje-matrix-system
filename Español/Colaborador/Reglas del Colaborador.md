@@ -12,7 +12,7 @@ Consolidación de todas las reglas de negocio que aplican al Colaborador dentro 
 ## Captura de datos en 3 fases
 
 ### Fase 1 — Entrevista inicial
-Capturada por la [[Reclutadora]] durante el primer contacto:
+Capturada por la [[Reclutadora]] durante el primer contacto. Además de la identidad del candidato, define las decisiones de Oranje sobre su perfil laboral *(cambiado el 2026-08-22; Posición, Modalidad, Nivel de inglés y Nivel de experiencia dejaron de ser datos que el colaborador declara)*:
 
 | Campo | Capturado por |
 |---|---|
@@ -22,25 +22,34 @@ Capturada por la [[Reclutadora]] durante el primer contacto:
 | Domicilio | Reclutadora |
 | Teléfono | Reclutadora |
 | Fotografía | Reclutadora |
+| Posición ([[Posiciones]]) | Reclutadora |
+| Modalidad ([[Modalidades de Contratación]]) | Reclutadora |
+| Nivel de inglés ([[Niveles de Inglés]]) | Reclutadora |
+| Nivel de experiencia | Reclutadora |
 
-### Fase 2 — Alta en la app
+### Fase 2 — Alta en la plataforma (/empleado)
 Completada por el propio Colaborador:
 
 | Campo | Catálogo asociado |
 |---|---|
 | SSN | — |
 | ITIN | — |
-| Posición | [[Posiciones]] |
-| Nivel de inglés | [[Niveles de Inglés]] |
-| Nivel de experiencia | — |
 | Tipo de transporte | — |
-| Modalidad | [[Modalidades de Contratación]] |
 
 > [!info]
-> SSN e ITIN son **opcionales**. Si el colaborador no proporciona ni SSN ni ITIN, el sistema activa automáticamente la **retención del 16%** sobre su pago (reembolsable). Ver [[Deducciones]].
+> SSN e ITIN son **opcionales**. Si el colaborador no proporciona ni SSN ni ITIN, el sistema activa automáticamente la **retención del 16%** sobre su pago (reembolsable). Ver [[Deducciones]]. Tiene **3 días desde su alta** para cargarlo — ver *Plazo de SSN/ITIN* abajo.
+>
+> También puede subir, de forma **opcional**, su comprobante de domicilio como documento del expediente; no bloquea la validación *(decisión del 2026-08-22)*.
+
+### Plazo de SSN/ITIN
+
+- El colaborador tiene **3 días desde su alta** para cargar SSN o ITIN en `/empleado`, con recordatorio por notificación los días 1 a 3
+- **Día 4:** al entrar a `/empleado` se le muestra un aviso interceptor — ya debió cargarlo por temas fiscales; la retención del 16% sigue activa (reembolsable)
+- **Día 5:** su acceso a la plataforma **se suspende** hasta que contacte a Oranje ([[Customer Service/Customer Service|Customer Service]]); el desbloqueo lo hace Oranje tras verificar. La suspensión es solo de acceso: datos e historial no se pierden
+- La retención del 16% es independiente del plazo: aplica mientras no haya SSN/ITIN verificado
 
 ### Fase 3 — Datos de emergencia
-Completada por el propio Colaborador desde la app:
+Completada por el propio Colaborador desde `/empleado`:
 
 | Campo | Descripción |
 |---|---|
@@ -189,4 +198,5 @@ El [[Semáforo del Colaborador]] define 12 estados. A continuación se documenta
 - [[Hotel/Supervisor|Supervisor]]
 - [[Inspector]]
 - [[Inspección/Coordinador|Coordinador]]
+- [[Customer Service/Customer Service|Customer Service]]
 - [[Arquitecturas/Colaborador/00 - Arquitectura Colaborador|Arquitectura Colaborador]]

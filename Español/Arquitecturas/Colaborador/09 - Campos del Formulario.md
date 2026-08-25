@@ -12,21 +12,19 @@ aliases:
 
 ## A) Formulario de Alta — Fase 2 (RF-C-01)
 
-Completado por el propio Colaborador. Fuente: [[Colaborador#Fase 2 — Alta en la app]]
+Completado por el propio Colaborador desde `/empleado`. Fuente: [[Colaborador#Fase 2 — Alta en la plataforma (/empleado)]]
 
 | Campo                  | Tipo de Input | Obligatorio | Validación                                                                          | Descripción                                     |
 | ---------------------- | ------------- | ----------- | ----------------------------------------------------------------------------------- | ----------------------------------------------- |
 | SSN                    | Text          | No (opcional) | Formato XXX-XX-XXXX · Enmascarar tras ingreso · Cifrado en almacenamiento           | Número de Seguro Social                         |
 | ITIN                   | Text          | No (opcional) | Formato 9XX-XX-XXXX · Enmascarar tras ingreso · Cifrado en almacenamiento           | Individual Taxpayer Identification Number       |
-| Posición               | Select        | SÍ          | Catálogo de [[Posiciones]] (Housekeeper, Hoseman, Chef, Laundry, etc.)              | Puesto que desea ocupar                         |
-| Nivel de inglés        | Select        | SÍ          | Catálogo de [[Niveles de Inglés]] (Básico / Intermedio / Avanzado / Conversacional) | Competencia lingüística                         |
-| Nivel de experiencia   | Select        | SÍ          | Opciones: Sin experiencia / 1–2 años / 3–5 años / Más de 5 años                    | Años de experiencia en el puesto               |
 | Tipo de transporte     | Select        | SÍ          | Opciones: Propio / Transporte público / Otro                                        | Cómo se traslada al hotel                       |
-| Modalidad              | Select        | SÍ          | Catálogo de [[Modalidades de Contratación]] (Tiempo completo / Medio tiempo / Temporal / Según solicitud) | Tipo de contratación preferida |
 | Documento de SSN/ITIN  | File (JPG/PNG/PDF) | No (opcional · recomendado si hay SSN/ITIN) | Máx. 10 MB · Se habilita al ingresar SSN/ITIN · Almacenamiento seguro (RNF-C-03)   | Foto/escaneo de la tarjeta de SSN o documento ITIN |
 
 > [!note]
-> SSN e ITIN son opcionales. Si el colaborador no proporciona ninguno (ni SSN ni ITIN/TaxID), se activa automáticamente la **retención del 16%** sobre su pago (reembolsable) — ver [[Deducciones]]. Si proporciona ITIN, no se aplica la retención (ITIN es un TaxID).
+> SSN e ITIN son opcionales. Si el colaborador no proporciona ninguno (ni SSN ni ITIN/TaxID), se activa automáticamente la **retención del 16%** sobre su pago (reembolsable) — ver [[Deducciones]]. Si proporciona ITIN, no se aplica la retención (ITIN es un TaxID). Tiene **3 días desde su alta** para cargarlo — ver [[Reglas del Colaborador#Plazo de SSN/ITIN]].
+>
+> **Posición, Nivel de inglés, Nivel de experiencia y Modalidad se movieron a la Fase 1** *(cambiado el 2026-08-22)*: los define la [[Reclutadora]] en la entrevista, no el colaborador en este formulario.
 
 ---
 

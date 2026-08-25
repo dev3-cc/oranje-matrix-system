@@ -413,6 +413,16 @@ La imagen se construye **una vez**, al mergear a `staging`. El despliegue a prod
 - Cada despliegue a producción **taggea `main`** (`v1.2.0`). El tag es un **registro**, no un disparador: da puntos de rollback concretos (*"despliega `v1.1.3`"*) y ancla el changelog.
 - Todo despliegue debe poder revertirse. Las migraciones destructivas se separan del despliegue de código (sección 5).
 
+### La app móvil se publica, no se despliega
+
+`apps/mobile` (React Native, D-05) no sigue el ciclo de los ambientes de arriba: se **publica** en tiendas, y la versión vieja sigue instalada en los teléfonos — nadie puede forzar la actualización. De ahí salen tres reglas:
+
+| Regla | Por qué |
+|---|---|
+| Los cambios dentro de `/api/v1` que consume el móvil son **aditivos**; retirar un campo o endpoint exige ventana de deprecación | El web se redespliega junto con el API; la app de tiendas no |
+| **OTA solo para JS y assets**; cualquier cambio nativo (permisos, librerías con código nativo) es build de tienda | El OTA no puede tocar el binario |
+| Toda operación de las colas offline (marcas, fotos — [[Estructura de Proyecto y Nomenclatura]] sección 5) es **idempotente**: el reintento no duplica | Sin señal la app reintenta, y el servidor debe poder recibir dos veces lo mismo |
+
 ### Paridad de staging
 
 Staging es un **espejo de producción**, no un ambiente desechable: misma configuración, mismo tipo de infraestructura, volumen de datos realista —anonimizado, ver sección 8. Es lo que permite validar un **cierre de nómina de una semana completa** antes de que toque producción; con datos de juguete esa validación no prueba nada.

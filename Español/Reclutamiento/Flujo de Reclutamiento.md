@@ -20,31 +20,19 @@ No depende de un disparador externo — corre de forma permanente. Las requisici
 
 ## Fases
 
-### Fase 1 — Entrevista inicial (panel de reclutamiento)
+### Captura de datos del colaborador (Fase 1 — Fase 3)
 
-Captura de información inicial del colaborador:
-- Edad
-- Género
-- Nombre completo
-- Domicilio
-- Teléfono
+El alta del colaborador se captura en tres fases, definidas en [[Core/Módulos/Reglas de Negocio#Captura de datos en 3 fases|Reglas de Negocio]]:
 
-### Fase 2 — Alta en la app de Oranje (la completa el colaborador)
+- **Fase 1 — Entrevista inicial:** la [[Reclutadora]] captura los datos básicos del candidato y define Posición, Modalidad de contratación, Nivel de inglés y Nivel de experiencia.
+- **Fase 2 — Alta en la plataforma (`/empleado`):** el propio Colaborador completa Tipo de transporte; SSN e ITIN son opcionales (con plazo de 3 días); puede subir también, de forma opcional, el documento de SSN/ITIN y su comprobante de domicilio como documentos del expediente.
+- **Fase 3 — Datos de emergencia:** el Colaborador completa contacto de emergencia, tipo de sangre y alergias o condiciones médicas desde `/empleado`.
 
-- SSN
-- ITIN
-- Posición (ver [[Posiciones]])
-- Nivel de inglés (ver [[Niveles de Inglés]])
-- Nivel de experiencia
-- Tipo de transporte
-- Modalidad (ver [[Modalidades de Contratación]])
-- Comprobante de domicilio (Certificado de donde esta viviendo)
-
-### Fase 3 — Validación y aprobación
+### Fase 4 — Validación y aprobación
 
 [[Reclutamiento]] revisa la información capturada y aprueba o rechaza al colaborador.
 
-### Fase 4 — Habilitación de acceso
+### Fase 5 — Habilitación de acceso
 
 Al colaborador aprobado se le habilita el acceso a los paneles correspondientes.
 

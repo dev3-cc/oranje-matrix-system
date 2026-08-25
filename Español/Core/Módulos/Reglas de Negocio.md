@@ -18,9 +18,15 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 > [!tip] Para la referencia completa, ver [[Reglas del Colaborador]].
 
 ### Captura de datos en 3 fases
-- **Fase 1 — Entrevista inicial:** la [[Reclutadora]] captura los datos básicos del candidato: nombre completo, edad, género, domicilio y teléfono
-- **Fase 2 — Alta en la app:** el propio Colaborador completa su información personal (Posición, Nivel de inglés, Nivel de experiencia, Tipo de transporte, Modalidad — obligatorios); SSN, ITIN y el documento de SSN/ITIN son opcionales; si no proporciona SSN ni ITIN, se activa automáticamente la retención del 16% sobre su pago (reembolsable) — ver [[Deducciones]]
-- **Fase 3 — Datos de emergencia:** el Colaborador completa desde la app: contacto de emergencia (nombre, teléfono, parentesco), tipo de sangre y alergias o condiciones médicas
+- **Fase 1 — Entrevista inicial:** la [[Reclutadora]] captura los datos básicos del candidato (nombre completo, edad, género, domicilio y teléfono) y además define **Posición, Modalidad de contratación, Nivel de inglés y Nivel de experiencia** — son decisiones de Oranje, no del colaborador *(cambiado el 2026-08-22; antes los llenaba el colaborador en Fase 2)*
+- **Fase 2 — Alta en la plataforma (`/empleado`):** el propio Colaborador completa Tipo de transporte (obligatorio); SSN, ITIN y el documento de SSN/ITIN son opcionales; si no proporciona SSN ni ITIN, se activa automáticamente la retención del 16% sobre su pago (reembolsable) — ver [[Deducciones]]. Tiene **3 días desde su alta** para cargar SSN o ITIN (ver *Plazo de SSN/ITIN* abajo). También puede subir, de forma **opcional**, su comprobante de domicilio como documento del expediente; no bloquea la validación *(decisión del 2026-08-22)*
+- **Fase 3 — Datos de emergencia:** el Colaborador completa desde `/empleado`: contacto de emergencia (nombre, teléfono, parentesco), tipo de sangre y alergias o condiciones médicas (opcional)
+
+### Plazo de SSN/ITIN
+- El colaborador tiene **3 días desde su alta** para cargar SSN o ITIN en `/empleado`, con recordatorio por notificación los días 1 a 3
+- **Día 4:** al entrar a `/empleado` se le muestra un aviso interceptor — ya debió cargarlo por temas fiscales; la retención del 16% sigue activa (reembolsable)
+- **Día 5:** su acceso a la plataforma **se suspende** hasta que contacte a Oranje ([[Customer Service/Customer Service|Customer Service]]); el desbloqueo lo hace Oranje tras verificar. La suspensión es solo de acceso: datos e historial no se pierden
+- La retención del 16% es independiente del plazo: aplica mientras no haya SSN/ITIN verificado
 
 ### Progresión del colaborador (Semáforo)
 - **→ Blanco:** cuando el colaborador completa sus datos en la app (Fase 2 + Fase 3) y queda pendiente de validación por la Reclutadora. Sin accesos habilitados, sin asignación.

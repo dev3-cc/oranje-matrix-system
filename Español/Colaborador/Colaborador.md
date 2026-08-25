@@ -18,7 +18,7 @@ Los datos del colaborador se capturan en tres fases.
 
 ### Fase 1 — Entrevista inicial
 
-Capturada por la [[Reclutadora]] durante el primer contacto:
+Capturada por la [[Reclutadora]] durante el primer contacto. Además de la identidad del candidato, define las decisiones de Oranje sobre su perfil laboral *(cambiado el 2026-08-22; ver [[Reglas del Colaborador]])*:
 
 | Campo | Capturado por |
 |---|---|
@@ -28,8 +28,12 @@ Capturada por la [[Reclutadora]] durante el primer contacto:
 | Domicilio | Reclutadora |
 | Teléfono | Reclutadora |
 | Fotografía | Reclutadora |
+| Posición ([[Posiciones]]) | Reclutadora |
+| Modalidad ([[Modalidades de Contratación]]) | Reclutadora |
+| Nivel de inglés ([[Niveles de Inglés]]) | Reclutadora |
+| Nivel de experiencia | Reclutadora |
 
-### Fase 2 — Alta en la app
+### Fase 2 — Alta en la plataforma (/empleado)
 
 Completada por el propio Colaborador:
 
@@ -37,11 +41,10 @@ Completada por el propio Colaborador:
 |---|---|
 | SSN | — |
 | ITIN | — |
-| Posición | [[Posiciones]] |
-| Nivel de inglés | [[Niveles de Inglés]] |
-| Nivel de experiencia | — |
 | Tipo de transporte | — |
-| Modalidad | [[Modalidades de Contratación]] |
+
+> [!info] Plazo de SSN/ITIN
+> El colaborador tiene **3 días desde su alta** para cargar SSN o ITIN. Al día 4 se le muestra un aviso interceptor y al día 5 se le **suspende el acceso** hasta que contacte a Oranje. Detalle completo en [[Reglas del Colaborador#Plazo de SSN/ITIN]].
 
 > [!info] La fotografía es del Pool, no del expediente
 > La captura la Reclutadora en la entrevista y sirve para identificar a la
@@ -51,14 +54,14 @@ Completada por el propio Colaborador:
 > No confundir con las **fotos del ponche**, que se toman en el momento al
 > entrar y salir y son evidencia de presencia — una por marca y por jornada.
 > Tampoco es un documento del expediente: ahí van el SSN/ITIN, la
-> identificación y el comprobante de domicilio.
+> identificación y el comprobante de domicilio (opcional).
 
 > [!info]
 > SSN e ITIN son **opcionales**. Si el colaborador no proporciona ni SSN ni ITIN, el sistema activa automáticamente la **retención del 16%** sobre su pago (reembolsable). Ver [[Reglas del Colaborador]] y [[Deducciones]].
 
 ### Fase 3 — Datos de emergencia
 
-Completada por el propio Colaborador desde la app:
+Completada por el propio Colaborador desde `/empleado`:
 
 | Campo | Descripción |
 |---|---|

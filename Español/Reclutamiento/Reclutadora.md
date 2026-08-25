@@ -20,7 +20,12 @@ Rol operativo del módulo de [[Reclutamiento/Reclutamiento|Reclutamiento]]. Ejec
   - Nombre completo
   - Domicilio
   - Teléfono
-- Valida y aprueba al colaborador después de que completa su alta en la app.
+- Define en la entrevista las decisiones de Oranje sobre el perfil laboral del colaborador *(cambiado el 2026-08-22; antes las llenaba el propio colaborador en su alta)*:
+  - Posición ([[Posiciones]])
+  - Modalidad de contratación ([[Modalidades de Contratación]])
+  - Nivel de inglés ([[Niveles de Inglés]])
+  - Nivel de experiencia
+- Valida y aprueba al colaborador después de que completa su alta en `/empleado`.
 - Habilita el acceso del colaborador a los paneles.
 - Consulta el [[Core/Módulos/Schedule|Schedule]] del hotel para ver las posiciones pendientes de cubrir.
 - Asigna al colaborador al hotel y lo registra en su [[Core/Módulos/Schedule|Schedule]].
@@ -37,3 +42,6 @@ Rol operativo del módulo de [[Reclutamiento/Reclutamiento|Reclutamiento]]. Ejec
 - [[Core/Módulos/Schedule|Schedule]]
 - [[Semáforo del Colaborador]]
 - [[Colaborador/Colaborador|Colaborador]]
+- [[Posiciones]]
+- [[Modalidades de Contratación]]
+- [[Niveles de Inglés]]

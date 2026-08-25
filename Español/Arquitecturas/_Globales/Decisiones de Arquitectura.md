@@ -124,6 +124,13 @@ La autoridad de identidad es Firebase Auth; los **permisos** viven en Postgres (
 
 **Las fotos no pasan por Firestore.** Un documento de Firestore tope 1 MB. La imagen se guarda en el almacenamiento local del dispositivo y sube a **Cloud Storage con URL firmada** cuando hay señal; en Firestore solo viaja la marca con su referencia.
 
+> [!important] Enmienda del 2026-08-22 · `apps/mobile` queda pospuesta; el Colaborador opera en web
+> Esta decisión fijaba Firebase Auth + FCM + Firestore para **la app móvil** del Colaborador y del [[Inspector]]. Para el Colaborador esa app **no se construye por ahora**: su experiencia es la sección web `/empleado` (check de asistencia, datos, alta, notificaciones, accidente), no una app nativa React Native.
+>
+> Lo que sigue vigente sin cambio: Firebase Auth como autoridad de identidad, los permisos en Postgres (`identity.role_permission`), y todo lo descrito aquí para el **Inspector**, que sí conserva su app móvil.
+>
+> Lo que queda pendiente de diseñar para `/empleado`: el mecanismo de sincronización offline del ponche (GPS + foto) sin Firestore como buzón — un navegador no tiene el mismo control sobre almacenamiento local y cámara que una app nativa. Hasta que eso se resuelva, [[Core/Módulos/Reglas de Negocio#Mecanismo de ponchado|Mecanismo de ponchado]] sigue documentado en términos de app móvil y no se ha propagado el cambio a esa sección.
+
 ---
 
 ## D-06 · Un proyecto de GCP por ambiente
@@ -1092,6 +1099,203 @@ Un documento verificado **no se borra** — deja rastro de quién lo revisó, qu
 
 ---
 
+## D-28 · El front compone el contrato real; los endpoints agregadores esperan
+
+**Decisión (2026-08-21):** cuando una pantalla necesita datos que el backend reparte en varios recursos, el front los **compone en un `queryFn`** de RTK Query — no se inventa un endpoint que no existe ni se bloquea la pantalla esperando uno. La composición vive en la capa de API de la feature, detrás del mismo adaptador de siempre: la pantalla no sabe cuántas llamadas hubo.
+
+Pantallas que ya operan así: la **ficha del prospecto** (5 recursos), **Mi Territorio** (`/me` + zonas asignadas + `/hotels` + `/prospects`), el **Dashboard** (3 recursos), **Conversión** (4), **Clientes Activos** (3 + detalle de contratos) y **Documentos T&C** (2 + detalles).
+
+**Por qué así:** el contrato real es la única fuente; duplicar su lógica en un endpoint agregador prematuro son dos lugares que mantener. El costo es N+1 conocido y acotado (los detalles se piden en paralelo y las listas son cortas). **El camino de salida está pactado:** cuando el volumen lo pida, cada composición se muda a un endpoint del backend con la MISMA forma de respuesta — el adaptador es la frontera y la pantalla no se entera.
+
+**Regla derivada para los mocks:** los mocks responden la forma **cruda** de cada recurso real, nunca la forma compuesta. Las composiciones que cruzan features registran los mocks ajenos con un import explícitamente exceptuado de §4 (solo en archivos `*Mocks.ts`, que con mocks apagados son no-op).
+
+---
+
+## D-29 · La maqueta de Figma precede a toda pantalla del front
+
+**Decisión (2026-08-20, regla del usuario):** ninguna pantalla del front se **construye ni se conecta** al API sin su maqueta en Figma. Los wireframes de `Arquitecturas/` documentan el negocio pero **no sustituyen** la maqueta: la fuente visual es Figma.
+
+El archivo vigente de maquetas es **`Oranje` (fileKey `06ASqY3QUA17UQQLJSNjfm`)**, página *v1.0 · Ventas*, organizado por secciones de rol (Supervisor, Manager de Área, Reclutadora, BD, BDC, Colaborador móvil) — **37 pantallas** al 2026-08-21. El archivo anterior (`g1cYWZisiq6jbXvULvUVOw`) quedó reducido a la portada y ya no es fuente.
+
+**Consecuencia operativa:** el trabajo de front se ordena por disponibilidad de maqueta. Conectadas ya: Pipeline, Territorio, Propuestas, Dashboard, Conversión, Documentos T&C, Clientes Activos. Con maqueta esperando construcción: Requisiciones, Pool, Timesheet, Blacklist. Sin maqueta (bloqueadas): Alta de Colaborador, Nómina, Facturas, Mi Equipo, Schedule (vista semanal), Reportes, Accidentes, y el modal de vetar de Blacklist.
+
+---
+
+## D-30 · El bucket es privado y la imagen se comprime en el servidor
+
+**Decisión (2026-08-22):** los archivos del sistema —la foto del Colaborador, el documento del expediente y la foto del ponche— viven en un **bucket privado de Cloud Storage**, se suben por un endpoint propio (`POST /files`) y **el servidor los comprime antes de guardarlos**.
+
+**Por qué el servidor y no el cliente.** Comprimir en el front ahorra red, pero es una optimización que el cliente puede saltarse: basta llamar al API desde otro lado para meter un archivo de 12 MB. La compresión del servidor es la que **manda**, y el front puede hacer además una pasada previa para que la subida por datos móviles sea rápida. Comprimir en el servidor exige que los bytes pasen por el API, y por eso la subida es **multipart** y no una URL firmada de escritura: con una URL firmada el cliente sube directo, el servidor nunca ve el archivo y no hay dónde comprimir, verificar el tipo real ni quitar el EXIF.
+
+**Tres cosas que hace la compresión**, no una:
+
+| | |
+|---|---|
+| **Reduce** | 3000×2000 y 2.65 MB de JPEG quedaron en 512×341 y 2 KB de WebP, medido |
+| **Verifica** | el `mimetype` lo declara el cliente y puede mentir; que la librería abra el archivo es la comprobación real de que es una imagen |
+| **Borra el EXIF** | una foto de teléfono trae coordenadas y modelo de dispositivo. Se van al reescribir, y **no se pierde nada**: la ubicación del ponche la calcula el servidor (**D-08**), no el EXIF |
+
+Cada destino trae su perfil, su carpeta y **su permiso**: la foto del Colaborador y el documento exigen `recruitment:update_worker`; la foto del ponche, `timesheet:read_department`. El documento admite PDF —y entonces pasa sin tocarse— porque lo lee una persona para verificarlo.
+
+**La ruta se guarda, la URL se firma al leer.** El bucket es privado, así que lo que el API devuelve es una **URL firmada que caduca en una hora**. Guardarla en la base sería guardar una credencial vencida, de modo que la columna guarda la **ruta del objeto**. Por eso `personal.worker.photo_url` **pasa a `photo_path`** y las tres columnas del bucket se llaman ya igual: `worker.photo_path`, `worker_document.file_path` y `punch_mark.photo_path`. `commercial.hotel.photo_url` **no cambia**: ahí sí vive una URL de Google Places, externa y pública.
+
+**La ruta la manda el cliente, así que se valida el prefijo.** Sin eso, el alta de un colaborador podría apuntar la tarjeta del Pool a `workers/document/…` y exponer un documento fiscal en una lista que ve más gente. Un `CHECK` no sirve —la carpeta permitida depende de la columna, no de la tabla—, así que vive en el DTO de cada entidad.
+
+**Dos decisiones de operación:**
+
+1. **Las firmas se cachean.** Firmar en V4 sin llave privada es una llamada a la API de IAM, así que una lista de decenas de fotos serían decenas de llamadas. Se cachea por ruta, con margen para no entregar una URL a punto de vencer.
+2. **Si no se puede firmar, la foto va en `null` y la respuesta sigue.** Una foto es decoración de una tarjeta y no puede tumbar el listado entero de colaboradores. Se avisa en el log una vez por proceso, no por fila.
+
+**El costo local:** en Cloud Run la cuenta de servicio va adjunta y firma sola; con credenciales de usuario **no hay con qué firmar**. Por eso existe `STORAGE_SIGNER_SERVICE_ACCOUNT`, que se usa **solo para firmar** —subir y borrar van con las credenciales de siempre, para que la falta de ese permiso no tumbe también las escrituras—. Requiere una concesión de `roles/iam.serviceAccountTokenCreator` que se hace una vez por máquina.
+
+---
+
+## D-31 · El evento trae la regla, el consumidor resuelve las personas
+
+**Decisión (2026-08-22):** `notifications` es el **último de los once esquemas** en migrarse, y con él quedan los once. Tres tablas —`catalogs.notification_type` con los **56 tipos** del [[Core/Módulos/Notificaciones/Catálogo de Notificaciones|Catálogo de Notificaciones]], `notifications.notification` y `notifications.device`—, un consumidor de Pub/Sub y el envío por FCM.
+
+**El reparto que decidió el diseño.** El vault pide que el fan-out ocurra **al escribir**: guardar el rol y resolverlo al leer no funciona, porque un hotel tiene varios Managers de Área —uno por departamento— y porque `read_at` es de una persona, no de un puesto. Pero cargar al consumidor con las reglas de destinatario de los 56 tipos lo vuelve inmantenible, y ninguna de esas reglas existe todavía en código.
+
+La salida es partir la responsabilidad por lo que cada lado **sabe**:
+
+| | |
+|---|---|
+| **El publicador** sabe *quién debe enterarse*, y lo dice como regla: `ROLE_IN_HOTEL`, `PROSPECT_OWNER`, `REQUISITION_RECRUITERS`, `MANAGER_OF`… |
+| **El consumidor** sabe *cómo convertir esa regla en filas*, y crea una por persona |
+
+El evento **nunca trae una lista de usuarios**. Ocho reglas de audiencia cubren el catálogo; una que no resuelve a nadie no es un error —un colaborador en Fase 1 todavía no tiene cuenta— y dos reglas que caen en la misma persona producen **una sola fila**.
+
+**La idempotencia es del índice, no del código.** Pub/Sub entrega **al menos una vez**, así que el mismo evento llega dos veces. Lo absorbe el único parcial sobre `(user_id, tipo, entity_type, entity_id)`: el segundo intento choca contra el primero. Se resuelve con el error del motor y no con un `SELECT` previo, porque entre el `SELECT` y el `INSERT` cabe justamente el reintento. Es parcial porque los avisos genéricos sin entidad **sí** pueden repetirse. Verificado: el segundo envío del mismo evento devuelve `created: 0, duplicates: 1`.
+
+**El endpoint de eventos no lo llama una persona.** Es una suscripción *push* de Pub/Sub, así que salta el guard de sesión y lo que lo autentica es el **token OIDC** que firma Google, verificado contra su JWKS más la cuenta de servicio esperada — la firma sola probaría únicamente que el token es de Google. Y responde **200 a un evento mal formado**: un 500 hace que Pub/Sub reintente, y un evento que no se puede parsear se va a reintentar igual de mal hasta agotar la suscripción.
+
+**Sin `firebase-admin`.** El push va por la API HTTP v1 de FCM con un token de `google-auth-library`, igual que la verificación de identidad ya evita el SDK. Cuando FCM contesta `UNREGISTERED` o `INVALID_ARGUMENT`, **el dispositivo se revoca solo**: cualquier otro error es transitorio y no justifica desconectar a alguien. Verificado contra FCM real con un token falso.
+
+**El push falla y la notificación sigue.** `push_error` se guarda en la fila y `ck_notification_push` exige que si hubo error, hubo intento. El push es el aviso; **la lista es el registro**.
+
+**Y el Colaborador deja de tener cero permisos.** `ROL-C-01` era la entidad central del sistema con **ninguna fila** en `role_permission`: no podía ni ver sus propios avisos. Ahora tiene **once**, transcritas de `Arquitecturas/Colaborador/04 - Permisos Detallados.md` —que no es una Matriz de departamento, porque es un rol suelto, pero cumple la misma función—. Todo su alcance es `_own`: RR-C-01 dice que no ve datos de ningún otro colaborador. Dos desviaciones frente al documento, las dos por el ponche: dice *"Escanear QR y ponchar (6 ponches)"* cuando **D-21** dejó cuatro marcas con GPS y foto, y *"Generar QR"* no se transcribe porque ese permiso ya se revocó.
+
+**Lo que NO se particiona, y por qué el `journal` sí.** Se parecen —muchas filas, ordenadas por fecha— y se comportan al revés: el `journal` se retiene 24 meses y **nunca se borra**, así que hay que poder desprender una partición vieja de golpe. Aquí las leídas **sí se borran** a los 30 días, y un `DELETE` sobre el índice de `read_at` mantiene la tabla chica sola.
+
+---
+
+## D-32 · El Colaborador puede usar el sistema, y el accidente estrena `supervision`
+
+**Decisión (2026-08-22):** los once permisos que **D-31** le sembró al Colaborador tenían **una sola ruta que los pidiera**. Un permiso sin endpoint no es un error —la dirección es la segura, porque sin la fila el endpoint responde 403 el día que exista— pero es media función. Se cierran los diez que faltaban, y con ellos entra la primera tabla de `supervision`.
+
+**Lo que estaba mal, no incompleto.** `POST /punches` exigía `timesheet:read_department`, que es del Supervisor: el Colaborador tenía `timesheet:punch` y aun así recibía 403, y el Supervisor podía ponchar cuando lo suyo es el ponche **manual**, que es otro endpoint. Peor: la asignación llega en el cuerpo y **nadie verificaba de quién era** — un colaborador podía ponchar por otro cambiando un id. Ahora el guard es `timesheet:punch` y el servicio exige que la asignación sea propia.
+
+**Ninguna ruta de autoservicio lleva id en la URL.** `GET /workers/me`, `PATCH /workers/me`, `/schedules/me`, `/timesheets/me`, `/consolidations/me`: el colaborador sale del token. Es lo que hace cumplir **RR-C-01** —no ve datos de ningún otro— sin depender de que el cliente mande el suyo. Y el reparto de campos sigue al vault: `PATCH /workers/me/signup` completa las Fases 2 y 3, `PATCH /workers/me` solo edita contacto y emergencia; la posición, la zona y la modalidad no entran porque son decisiones de Reclutamiento, y el SSN/ITIN tampoco por sensible.
+
+**`/consolidations/me` filtra en la consulta, no en el servicio.** RR-C-05 dice que el colaborador ve los pagos liberados y **nunca el que está en curso**, así que el `status = 'PAID'` va dentro del SQL: no hay forma de llamar a ese método y recibir de más. Y devuelve un tipo propio —semana, hoteles, horas y neto— en vez del `ConsolidationEntity` recortado, para que el pay rate y las deducciones internas no puedan filtrarse por descuido.
+
+**Un hueco del vault que quedó abierto.** `04 - Permisos Detallados` del Colaborador dice que puede *"Desactivar Amarillo … volver a Verde fuerte"*, pero el [[Core/Módulos/Semáforos/Semáforo del Colaborador|Semáforo del Colaborador]] **no define esa transición**: describe las tres de entrada a Amarillo y ninguna de salida por decisión propia. Verificado contra la base: desde `YELLOW` solo hay `BROWN` y `BLACK`. Gana el semáforo (§5 de CLAUDE.md), así que `POST /workers/me/availability` **solo activa** y la vuelta no se inventa aquí.
+
+### La tarjeta de accidente
+
+Primera tabla de `supervision`, que existía vacío desde la migración de los esquemas. Una sola tabla, sin catálogo y sin historia propia: el status es lista cerrada y técnica, y su timeline va al `journal` porque **D-14** aplica a semáforos y el status de la tarjeta no lo es.
+
+**La tarjeta y el semáforo son dos hechos, y la relación es de causa.** La tarjeta no guarda el estado del colaborador ni el semáforo guarda la tarjeta: guardarlo en las dos sería tener dos fuentes que se contradicen a la primera corrección manual. Lo ejecuta el servicio en **una transacción**: crear la tarjeta mueve al colaborador a GRIS y escribe su fila de historia; cerrarla con alta médica lo devuelve a Verde fuerte. El cierre solo pisa el estado **si sigue en GRIS** — si alguien ya lo movió, la tarjeta se cierra sin tocarlo.
+
+**Quién cierra es más estrecho que el rol.** La transición `GRAY → STRONG_GREEN` está sembrada con `ROL-I-01`, pero el servicio exige además que sea **el `inspector_id` de la tarjeta**, no cualquier Inspector. Eso cruza filas y no cabe en la tabla de transiciones. El `inspector_id` se **congela al crear** desde la zona del hotel (RR-13): el Coordinador puede reasignar la zona mañana y la tarjeta debe conservar quién la atendió.
+
+**El escenario B en un solo paso.** Si el Supervisor reporta trayendo ya lo presencial, la tarjeta nace en `ON_SITE_CAPTURED` y se salta el paso intermedio. El CHECK no lo impide porque esas columnas son nulables, no prohibidas — una tarjeta a medias **es** un estado del flujo, igual que la fila a medias del worker es el estado Blanco.
+
+**Verificado de punta a punta:** el colaborador reporta y queda en GRIS; **el GRIS protege** —vetarlo responde `WORKER_PROTECTED`—; el Supervisor captura lo presencial pero cerrar le da 403; el Inspector registra el seguimiento y cierra con alta médica; el colaborador vuelve a Verde fuerte. Los cuatro códigos de status siguen siendo **propuesta**: el vault dice que la tarjeta tiene status y nunca los nombra.
+
+**Inspección tampoco tiene Matriz de Permisos**, así que las cinco filas de `accident` se derivaron del *Flujo de Accidente Laboral*. Es el tercer departamento sembrado sin matriz, tras `payroll` y `blacklist:lift`.
+
+---
+
+## D-33 · Las fases del alta cambian de dueño, y el plazo de SSN/ITIN se calcula al leer
+
+**Decisión (2026-08-22, cambio en la fuente de verdad):** [[Colaborador/Colaborador|Colaborador.md]] y [[Colaborador/Reglas del Colaborador|Reglas del Colaborador]] reparten las tres fases distinto, y el back seguía la versión anterior.
+
+| | Antes | Ahora |
+|---|---|---|
+| Posición · Modalidad · Inglés · Experiencia | Fase 2, el Colaborador | **Fase 1, la Reclutadora** |
+| Transporte | Fase 2 | Fase 2 |
+| SSN / ITIN | Fase 2, sin plazo | Fase 2, **plazo de 3 días** |
+| Emergencia · Sangre · Alergias | Fase 3 | Fase 3 |
+
+**Lo que el cambio corrige no es cosmético:** el Colaborador **podía elegirse su propia posición, modalidad y nivel de inglés** — se estaba autoasignando lo que decide Oranje. Ahora esos cuatro campos entran en `POST /workers`, que es de la Reclutadora, y desaparecen de `PATCH /workers/me/signup`. De la Fase 2 le queda **solo el transporte**.
+
+Los cuatro son **opcionales en el alta** a propósito: la fila nace a medias y eso **es** el estado Blanco. Quien decide si el alta está completa sigue siendo `is_profile_complete` de la vista, con sus nueve campos.
+
+**El plazo se calcula al leer, no lo escribe un job.** Un job que deja de correr suspende a nadie o suspende a todos; la fecha del alta ya dice todo lo que hace falta. `GET /workers/me` devuelve el plazo en la propia ficha, así que el **aviso interceptor del día 4** lo pinta el front sin una llamada aparte:
+
+| Día | Qué pasa |
+|---|---|
+| 1 – 3 | `OK` · recordatorio por notificación *(el job aún no existe — pendiente 34)* |
+| 4 | `NOTICE` · aviso interceptor, el acceso sigue |
+| 5 en adelante | `SUSPENDED` · un guard responde `TAX_ID_OVERDUE` a todo |
+
+Verificado moviendo la fecha de alta: día 3 pasa, día 4 avisa, día 5 bloquea, y **subir el documento lo levanta de inmediato**.
+
+**Lo que corre el plazo es CARGAR, lo que levanta la retención es VERIFICAR.** Son dos hechos distintos y el vault los separa: *"3 días para cargarlo"* frente a *"la retención aplica mientras no haya SSN/ITIN verificado"*. Por eso el plazo mira el documento del expediente —que ya existe— y la retención sigue leyendo `has_tax_id` de la vista. **Una sola fuente para la retención**: al escribir esto tuve dos por un rato, y dos definiciones de *"tiene SSN"* son dos respuestas distintas a si se le retiene el 16%. Consecuencia asumida: mientras el cifrado de campo no se conecte (**D-27**, pendiente 29), la retención aplica a todos aunque el documento esté cargado y verificado.
+
+**La suspensión no tiene endpoint que la levante.** El vault dice que el desbloqueo lo hace Oranje tras verificar, y en la práctica se levanta solo al cargar el documento. No se agregó un `POST /unsuspend` porque nadie lo pidió y sería una puerta más.
+
+**Alergias no es columna nueva:** el vault dice *"Alergias o condiciones médicas"*, que es exactamente lo que `medical_notes` guarda.
+
+---
+
+## D-34 · La foto del hotel se resuelve en el servidor, y se guarda la referencia, no la URL
+
+**Decisión (2026-08-24):** `commercial.hotel.photo_url` guardaba lo que devuelve `getUrl()` del SDK de Places en el navegador — una URL de `PhotoService.GetPhoto` con **token de sesión efímero**. Verificado contra dev: **las seis responden 403**. La columna pasa a `photo_ref`, y lo que se persiste es el **resource name** de la foto.
+
+**Es el mismo error que `photo_path` del Colaborador, y por eso importa que sea el segundo.** Las dos veces se guardó una credencial que caduca en lugar de una referencia estable. La regla que queda: **si el valor deja de servir con el tiempo, no es un dato, es una credencial — y las credenciales no se guardan.** Lo que persiste es lo estable (la ruta en nuestro bucket, el resource name de Places) y la URL se compone al leer.
+
+**Dónde sí acertó el diagnóstico y dónde no.** La causa y la salida eran correctas; dos de los cuatro pasos propuestos ya estaban hechos:
+
+| Propuesto | Estado real |
+|---|---|
+| Crear la columna `place_id` | **Ya existía**, columna y campo de Prisma |
+| El DTO tira `placeId` en silencio | **Falso**: siempre lo aceptó. El problema es que el front no lo mandaba — 21 de 22 filas lo tienen nulo |
+| Resolver en el servidor y guardar el resource name | Correcto, hecho |
+| Componer la URL de media al leer | Correcto, hecho |
+
+**Y una corrección de fondo sobre la política de Google.** El diagnóstico decía que la referencia de foto se puede guardar *indefinidamente*. No: el **`place_id` sí** está exento, pero el resto del contenido de Places tiene un tope de **30 días**. Por eso la tabla lleva `photo_ref_at`: no es rendimiento, es lo que permite refrescar la referencia antes de que ese permiso caduque. Guardarla para siempre habría sido incumplir el ToS sin darse cuenta.
+
+**Dos llaves distintas, a propósito.** La del **servidor** (`GOOGLE_PLACES_API_KEY`) pide el Place Details y nunca sale del back. La del **navegador** (`GOOGLE_MAPS_BROWSER_KEY`) va dentro de la URL de media, porque esa URL termina en un `<img>` del front — es la misma llave pública restringida por referrer de **D-17**, y usarla ahí es coherente con esa excepción. Meter la del servidor en la URL la publicaría.
+
+**Se resuelve al escribir, no al leer.** Una lista de veinte hoteles serían veinte llamadas facturables a Places por cada carga de pantalla. Se resuelve al crear el hotel, al cambiar su `placeId`, y cuando la referencia pasa de 30 días.
+
+**Sin llave, la foto va en `null` y todo lo demás sigue** — el mismo criterio que la firma de URLs en **D-30**: una foto es decoración de una tarjeta y no puede tumbar el alta ni el tablero.
+
+**Las filas viejas quedaron en `null`**, que es honesto: tenían URL muerta y ninguna trae `place_id`. Hay un script (`scripts/resolver-fotos-hotel.ts`) que las re-resuelve por nombre y dirección con Text Search; el que no case se queda sin foto.
+
+**Aprovisionado el 2026-08-24**, autorizado por el usuario: se habilitó **Places API (New)** en `oranjeapp-gcp`, se creó la llave de servidor `oranje-api-places` —**restringida solo a `places.googleapis.com`**, para que filtrarse no la vuelva útil en el resto del proyecto— y se le agregó `places.googleapis.com` a la llave del navegador, que traía la de Places **legacy** (`places-backend`) pero no la nueva: de ahí el `PERMISSION_DENIED` sobre `GetPhotoMedia`. El cambio fue aditivo, con el referrer intacto.
+
+El backfill resolvió **14 de 22** hoteles, 12 con foto. Los 8 restantes son hoteles de prueba con nombres inventados —*Hotel Nomina 095516*— que Text Search no encuentra, y se quedan sin foto: exactamente lo que debe pasar.
+
+**Los referrers quedaron alineados con dónde vive el front** (mismo día): `localhost:5173` (dev), `localhost:4173` (el preview de Vite) y **`oranjeapp-gcp.web.app` / `.firebaseapp.com`**, que es el sitio por defecto de Firebase Hosting del proyecto y a donde va staging. Aplicado a las **dos** llaves de navegador que el front trae en sus `.env`. Verificado uno por uno: los cuatro devuelven `200 · image/jpeg` y un dominio ajeno sigue en `403`.
+
+> [!warning] Producción necesita su propia llave
+> Las llaves son **por proyecto**, y `oranje-prod` no tiene ninguna todavía —ni servicio de Cloud Run desplegado—. Cuando exista, hay que repetir ahí los tres pasos: habilitar Places API (New), crear la llave de servidor restringida a `places.googleapis.com`, y una de navegador con el dominio real de producción.
+
+---
+
+## D-35 · Todo formulario dice la causa real, por una sola puerta
+
+**Decisión (2026-08-24):** en `apps/web`, el error de una mutación se convierte en texto **únicamente** vía `shared/lib/apiError.ts` (`apiErrorMessage`), y ningún formulario responde con un genérico cuando la API ya redactó la causa.
+
+**El problema que la motivó.** El mismo bug apareció dos veces en un día: subir un HEIC respondía *"inténtalo de nuevo"* cuando el back decía `UNSUPPORTED_FILE_TYPE`, y un alta con fecha de nacimiento futura respondía *"revisa los datos"* cuando el back decía `WORKER_UNDERAGE: tiene -1 años y el mínimo es 18`. La auditoría encontró **cinco helpers locales** que reinventaban la lectura de `{ error: { code, message, details } }` (§4 de [[Arquitecturas/_Globales/Estándares de Desarrollo|Estándares de Desarrollo]]) y **nueve mensajes genéricos** que escondían la causa.
+
+**El contrato del helper.** Prioridad de resolución: (1) override por `code` — para agregar el *qué hacer*, no solo el qué pasó—; (2) override por `status` — p. ej. el 409 de RR-15 se lee como *"otra reclutadora ganó el slot"*; (3) el `message` que el backend redactó, que ya viene en español; (4) los estatus comunes con su causa (403 permiso, 404, 413, sin red); (5) el `fallback` del formulario, único lugar donde se tolera un genérico. Los helpers con lógica propia (roles del 403 de transiciones, por ejemplo) se conservan pero **construyen sobre** `readApiError`, no repiten la extracción.
+
+**Controles de formulario — la convención hacia adelante:**
+
+| | |
+|---|---|
+| **Formulario nuevo** | `react-hook-form` + `zod`, con el mensaje **por campo** bajo el control que falla (el patrón del wizard de prospecto y de Nueva requisición) |
+| **Formulario a mano existente** | migración gradual; mientras tanto, el botón deshabilitado **dice qué falta** («El teléfono necesita al menos 7 dígitos») en vez de apagarse mudo |
+| **Restricciones que el back rechaza** | se anticipan en el control cuando se puede: el picker de nacimiento ya no ofrece fechas de menores de 18 |
+
+**Alcance del primer barrido (2026-08-24):** los cinco helpers migrados (login queda local: sus errores son de Firebase, no del sobre de la API), los nueve genéricos sustituidos, y pistas de «qué falta» en el alta de colaborador, las Fases 2-3 del Colaborador, Stand-by, la asignación de slot y el cambio de estado del Expediente. Quedan por migrar a RHF+zod los ocho formularios a mano.
+
+---
+
 ## Decisiones pendientes
 
 1. ~~**RR-05 — exclusividad absoluta o cobertura temporal.**~~ **RESUELTO** (2026-08-12 / 2026-08-13). Ni una ni otra: el criterio son las **horas**, no el hotel ni el tipo de asignación. La restricción vive en `operations.schedule_entry` — ver **D-20**.
@@ -1126,6 +1330,24 @@ Un documento verificado **no se borra** — deja rastro de quién lo revisó, qu
 28. **CI no corre las pruebas de integración.** El pipeline no tiene base, así que las 34 de `pnpm test:db` solo corren a mano. Necesita un contenedor de Postgres con las migraciones aplicadas. Ver **D-27**.
 29. **El cifrado de campo y la retención del 16%.** Mientras `ssn_encrypted` e `itin_encrypted` sigan nulas, `has_tax_id` es siempre falso y la retención aplica a todos. El expediente ya existe; falta conectarlo. Ver **D-27**.
 30. **Cobertura de react-native-reusables.** D-16 la elige para el móvil sin haber verificado su catálogo contra las pantallas del ponche. Se verifica antes de la primera pantalla de `apps/mobile`; si el hueco es grande, la alternativa es gluestack-ui v2 y eso reabre D-12.
+31. **La retención de los archivos del bucket.** [[Arquitecturas/_Globales/Estándares de Base de Datos|Estándares de Base de Datos]] ya registraba que la retención de las fotos del ponche no está definida, y ahora el bucket guarda además caras y documentos fiscales. Falta una regla de ciclo de vida: cuánto vive la foto de un ponche aprobado, y qué pasa con el expediente de un colaborador dado de baja. Sin ella el bucket solo crece. Ver **D-30**.
+32. **El objeto huérfano.** `POST /files` sube y devuelve la ruta; escribirla en la entidad es un segundo paso. Si el segundo no ocurre —el usuario cierra el modal— el objeto queda en el bucket sin dueño. Hoy nadie lo recoge. Ver **D-30**.
+33. ~~**La foto del ponche no se guarda.**~~ **ERA INCORRECTO** (corregido 2026-08-22): el endpoint del ponche sí la pide y sí la escribe, y además exige foto en Entrada y Salida. Lo que faltaba era validar el prefijo de la ruta, hecho en **D-32**.
+34. **Nadie publica eventos todavía.** El consumidor, el fan-out y el push funcionan y están probados, pero **ningún módulo publica**: las 56 filas del catálogo no tienen quien las dispare. Falta `infra/pubsub/` y la llamada en cada punto del negocio —autorizar una requisición, aprobar horas, liberar un pago—. Hasta entonces la tabla existe y sigue vacía. Ver **D-31**.
+35. **El job de retención no existe.** Postgres no tiene retención automática: las leídas se borran a los 30 días con un `DELETE` diario que nadie corre todavía. Si el job deja de correr, la tabla crece en silencio — conviene alerta por tamaño, no solo por error. Ver **D-31**.
+36. **`PUNCH_REMINDER` sigue sin regla de disparo.** RF-C-09 lo lista con un *"si aplica"* entre paréntesis y nada más. Falta la hora y la condición: ¿se manda si no ha ponchado 15 minutos después de su turno? ¿solo si tiene turno planeado? Es el único tipo del catálogo que **no se puede implementar** tal como está — quedó sembrado con la advertencia en su propia descripción. Ver **D-31**.
+37. **«Notifica a involucrados» sin lista.** Aparece en RF-30 y en *09 - Campos de formulario*; solo el primero aclara quiénes (*Líder, Reclutadora, Inspector, hotel*). Conviene confirmarla antes de que un publicador la codifique. Ver **D-31**.
+38. **El canal dice dos cosas.** [[Arquitecturas/_Globales/Estructura de Proyecto y Nomenclatura|Estructura de Proyecto]] describe el módulo como *"push FCM · **emails**"*, pero el canal se decidió como **solo push** el 2026-08-18. Hay que corregir ese renglón o decidir el correo. Ver **D-31**.
+39. **La desactivación de Amarillo no existe en el semáforo.** `04 - Permisos Detallados` del Colaborador se la da; el [[Core/Módulos/Semáforos/Semáforo del Colaborador|Semáforo del Colaborador]] no la define, y la base lo confirma: desde `YELLOW` solo hay `BROWN` y `BLACK`. O se agrega la transición al semáforo —y entonces se siembra— o se corrige el documento de permisos. Ver **D-32**.
+40. **Los cuatro estados de la tarjeta de accidente son propuesta.** `REPORTED`, `ON_SITE_CAPTURED`, `MEDICAL_FOLLOW_UP` y `CLOSED` salieron de las fases del flujo; **ninguna nota del vault los enumera**. En particular falta decidir si *presencial capturada* y *en seguimiento* son dos estados o uno. Ver **D-32**.
+41. **Un solo accidente abierto por colaborador.** El servicio lo impide de hecho —rechaza reportar sobre alguien ya en GRIS— pero **el vault no lo dice** y no hay restricción que lo sostenga. Si se confirma, es un UNIQUE parcial `(worker_id) WHERE status <> 'CLOSED'`. Ver **D-32**.
+42. **El vínculo del accidente con el turno.** La tarjeta documenta el Hotel; el vault no dice si debe apuntar a `coverage.assignment` o al `schedule_entry` del día. Es derivable y hoy no se guarda. Ver **D-32**.
+43. **Evidencia fotográfica del accidente.** El vault no la define, a diferencia del ponche y de la Blacklist. Con `POST /files` ya construido sería aditivo. Ver **D-32**.
+44. **Los recordatorios de los días 1 a 3 no se mandan.** El plazo de SSN/ITIN los pide y el tipo de notificación no existe en el catálogo: `PUNCH_REMINDER` es el único recordatorio sembrado. Hace falta un tipo nuevo y el job que lo dispare — que es el mismo hueco del pendiente 34: nadie publica eventos todavía. Ver **D-33**.
+45. **La suspensión del día 5 no deja rastro.** Se calcula al leer, así que no hay fila que diga *"a esta persona se le suspendió el acceso el día tal"*. Para una consecuencia que obliga a llamar a Customer Service, conviene una entrada de `journal` la primera vez que ocurre. Ver **D-33**.
+46. ~~**Places API (New) no está habilitada.**~~ **RESUELTO** (2026-08-24). API habilitada, llave de servidor creada y backfill corrido: 14 de 22 hoteles resueltos. Queda que **el referrer de la llave del navegador solo cubre `localhost:5173`** — al desplegar el front hay que agregar los dominios de staging y producción o las fotos dejan de cargar. Ver **D-34**.
+47. ~~**El front no manda `placeId`.**~~ **RESUELTO** (2026-08-24). El alta captura `place_id` del autocompletado y lo persiste en vez de la URL efímera de `getUrl()`; toda vista con foto guardada tiene fallback si la URL murió (commit `c63c12b` del front). Ver **D-34**.
+48. **El refresco de los 30 días no tiene quien lo dispare.** La referencia se revalida al escribir el hotel, pero un hotel que nadie edita en un mes se queda con una referencia vencida frente a la política de Google. Hace falta un job, o resolver también al leer cuando `photo_ref_at` esté vencido. Ver **D-34**.
 
 > [!note]
 > **Cerradas en esta ronda:** el idioma del esquema (D-11) y el nombre inglés del Colaborador, que es **`Worker`** desde el 2026-08-06.
