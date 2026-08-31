@@ -25,8 +25,8 @@ No depende de un disparador externo — corre de forma permanente. Las requisici
 El alta del colaborador se captura en tres fases, definidas en [[Core/Módulos/Reglas de Negocio#Captura de datos en 3 fases|Reglas de Negocio]]:
 
 - **Fase 1 — Entrevista inicial:** la [[Reclutadora]] captura los datos básicos del candidato y define Posición, Modalidad de contratación, Nivel de inglés y Nivel de experiencia.
-- **Fase 2 — Alta en la plataforma (`/empleado`):** el propio Colaborador completa Tipo de transporte; SSN e ITIN son opcionales (con plazo de 3 días); puede subir también, de forma opcional, el documento de SSN/ITIN y su comprobante de domicilio como documentos del expediente.
-- **Fase 3 — Datos de emergencia:** el Colaborador completa contacto de emergencia, tipo de sangre y alergias o condiciones médicas desde `/empleado`.
+- **Fase 2 — Alta en la plataforma (`/colaborador`):** el propio Colaborador completa Tipo de transporte; SSN e ITIN son opcionales (con plazo de 3 días); puede subir también, de forma opcional, el documento de SSN/ITIN y su comprobante de domicilio como documentos del expediente.
+- **Fase 3 — Datos de emergencia:** el Colaborador completa contacto de emergencia, tipo de sangre y alergias o condiciones médicas desde `/colaborador`.
 
 ### Fase 4 — Validación y aprobación
 

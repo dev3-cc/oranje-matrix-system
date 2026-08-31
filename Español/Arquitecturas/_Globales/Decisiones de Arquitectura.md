@@ -125,11 +125,11 @@ La autoridad de identidad es Firebase Auth; los **permisos** viven en Postgres (
 **Las fotos no pasan por Firestore.** Un documento de Firestore tope 1 MB. La imagen se guarda en el almacenamiento local del dispositivo y sube a **Cloud Storage con URL firmada** cuando hay señal; en Firestore solo viaja la marca con su referencia.
 
 > [!important] Enmienda del 2026-08-22 · `apps/mobile` queda pospuesta; el Colaborador opera en web
-> Esta decisión fijaba Firebase Auth + FCM + Firestore para **la app móvil** del Colaborador y del [[Inspector]]. Para el Colaborador esa app **no se construye por ahora**: su experiencia es la sección web `/empleado` (check de asistencia, datos, alta, notificaciones, accidente), no una app nativa React Native.
+> Esta decisión fijaba Firebase Auth + FCM + Firestore para **la app móvil** del Colaborador y del [[Inspector]]. Para el Colaborador esa app **no se construye por ahora**: su experiencia es la sección web `/colaborador` (check de asistencia, datos, alta, notificaciones, accidente), no una app nativa React Native.
 >
 > Lo que sigue vigente sin cambio: Firebase Auth como autoridad de identidad, los permisos en Postgres (`identity.role_permission`), y todo lo descrito aquí para el **Inspector**, que sí conserva su app móvil.
 >
-> Lo que queda pendiente de diseñar para `/empleado`: el mecanismo de sincronización offline del ponche (GPS + foto) sin Firestore como buzón — un navegador no tiene el mismo control sobre almacenamiento local y cámara que una app nativa. Hasta que eso se resuelva, [[Core/Módulos/Reglas de Negocio#Mecanismo de ponchado|Mecanismo de ponchado]] sigue documentado en términos de app móvil y no se ha propagado el cambio a esa sección.
+> Lo que queda pendiente de diseñar para `/colaborador`: el mecanismo de sincronización offline del ponche (GPS + foto) sin Firestore como buzón — un navegador no tiene el mismo control sobre almacenamiento local y cámara que una app nativa. Hasta que eso se resuelva, [[Core/Módulos/Reglas de Negocio#Mecanismo de ponchado|Mecanismo de ponchado]] sigue documentado en términos de app móvil y no se ha propagado el cambio a esa sección.
 
 ---
 
@@ -1348,6 +1348,7 @@ El backfill resolvió **14 de 22** hoteles, 12 con foto. Los 8 restantes son hot
 46. ~~**Places API (New) no está habilitada.**~~ **RESUELTO** (2026-08-24). API habilitada, llave de servidor creada y backfill corrido: 14 de 22 hoteles resueltos. Queda que **el referrer de la llave del navegador solo cubre `localhost:5173`** — al desplegar el front hay que agregar los dominios de staging y producción o las fotos dejan de cargar. Ver **D-34**.
 47. ~~**El front no manda `placeId`.**~~ **RESUELTO** (2026-08-24). El alta captura `place_id` del autocompletado y lo persiste en vez de la URL efímera de `getUrl()`; toda vista con foto guardada tiene fallback si la URL murió (commit `c63c12b` del front). Ver **D-34**.
 48. **El refresco de los 30 días no tiene quien lo dispare.** La referencia se revalida al escribir el hotel, pero un hotel que nadie edita en un mes se queda con una referencia vencida frente a la política de Google. Hace falta un job, o resolver también al leer cuando `photo_ref_at` esté vencido. Ver **D-34**.
+49. **La clave de idempotencia del ponche.** Para la cola offline del ponche web: `POST /punches` aceptaría un `clientPunchId` (uuid v7 generado en el dispositivo) con único por `(assignment_id, client_punch_id)`, y un reintento con la misma clave devolvería **200 con la marca original** en vez de duplicarla. `deviceAt` ya existe y es la hora real del hecho. Anotado el 2026-08-28 a petición de la sesión de front; **no se implementa todavía** porque la cola offline no existe.
 
 > [!note]
 > **Cerradas en esta ronda:** el idioma del esquema (D-11) y el nombre inglés del Colaborador, que es **`Worker`** desde el 2026-08-06.

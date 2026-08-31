@@ -25,7 +25,7 @@ Rol operativo del módulo de [[Reclutamiento/Reclutamiento|Reclutamiento]]. Ejec
   - Modalidad de contratación ([[Modalidades de Contratación]])
   - Nivel de inglés ([[Niveles de Inglés]])
   - Nivel de experiencia
-- Valida y aprueba al colaborador después de que completa su alta en `/empleado`.
+- Valida y aprueba al colaborador después de que completa su alta en `/colaborador`.
 - Habilita el acceso del colaborador a los paneles.
 - Consulta el [[Core/Módulos/Schedule|Schedule]] del hotel para ver las posiciones pendientes de cubrir.
 - Asigna al colaborador al hotel y lo registra en su [[Core/Módulos/Schedule|Schedule]].
