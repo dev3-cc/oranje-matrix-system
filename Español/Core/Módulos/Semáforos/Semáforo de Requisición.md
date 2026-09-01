@@ -36,7 +36,7 @@ Sistema de estados visuales que representa el ciclo de vida de una [[Requisició
 | Amarillo      | En proceso            | Reclutadores activos (varios)                               | En proceso de asignación de personal. |
 | Azul claro    | Cubierta totalmente   | Reclutadores activos (varios)                               | Requisición cubierta totalmente.      |
 | Rojo          | Cubierta parcialmente | Reclutadores activos (varios)                               | Requisición cubierta parcialmente.    |
-| Morado        | Eliminada             | —                                                           | Requisición eliminada físicamente.    |
+| Morado        | Eliminada             | Creador ([[Hotel/Manager General\|GM]], [[Hotel/Manager de Área\|GH]] o [[Hotel/Supervisor\|SUP]]) desde Verde manzana; [[Hotel/Manager de Área\|GH]] (su departamento) o [[Hotel/Manager General\|GM]] (cualquiera) desde Verde/Amarillo/Rojo | Requisición eliminada. No existe desde Azul claro. |
 
 ## Detalle por estado
 
@@ -94,8 +94,15 @@ La requisición cerró con al menos una posición en `Amarillo` o `Rojo` a nivel
 ---
 
 ### Morado — Eliminada
+**Responsable:** depende del estado de origen — ver reglas abajo.
 
-Estado transversal: se alcanza desde cualquier estado anterior cuando se elimina físicamente la requisición. El sistema registra journal.
+Estado transversal: se alcanza desde varios estados previos cuando se elimina la requisición. Eliminar es una **transición** a Morado con registro en journal — la fila nunca se borra físicamente. Cada posición de la requisición también pasa a `Morado` con journal individual.
+
+- **Desde [[#Verde manzana — En elaboración|Verde manzana]]:** la elimina **quien la creó** ([[Hotel/Manager General|GM]], [[Hotel/Manager de Área|GH]] o [[Hotel/Supervisor|SUP]]), **sin motivo obligatorio** — el borrador pudo crearse por error y [[Reclutamiento/Reclutamiento|Reclutamiento]] todavía no ve borradores.
+- **Desde [[#Verde — Autorizada|Verde]], [[#Amarillo — En proceso|Amarillo]] o [[#Rojo — Cubierta parcialmente|Rojo]]:** la elimina el [[Hotel/Manager de Área|GH]] (solo las de **su departamento**) o el [[Hotel/Manager General|GM]] (cualquiera del hotel), con **motivo obligatorio**, y únicamente si la requisición **no tiene asignaciones activas** — primero deben liberarse (ver [[Semáforo del Colaborador]]). Es el mismo reparto con que se aprueban las horas trabajadas (D-09): mismo alcance, misma pareja.
+- **Desde [[#Azul claro — Cubierta totalmente|Azul claro]]:** no se elimina — esta transición no existe.
+
+**Fin del ciclo** — no hay retorno desde Morado.
 
 ## Relacionado
 

@@ -28,7 +28,8 @@ aliases:
 | | ✓ Autorizar requisición | — | Aprobar | Aprobar | — | ⏸️ |
 | | ✗ Rechazar con observaciones | — | Rechazar | Rechazar | — | ⏸️ |
 | | 🗑️ Eliminar requisición vacía | Crear | Crear | Crear | Auto | ⏸️ |
-| | 🗑️ Eliminar requisición con posiciones | — | C · E | C · E | Auto | ⏸️ |
+| | 🗑️ Eliminar su borrador (con posiciones) | C · E | C · E | C · E | — | ⏸️ |
+| | 🗑️ Eliminar requisición Autorizada / En proceso / Cubierta parcial | — | C · E (su depto) | C · E (cualquiera) | Auto | ⏸️ |
 | | 🚦 Calcular Semáforo de Urgencia | — | — | — | Auto | ⏸️ |
 | | 🤖 Asignar Inspector por zona | — | — | — | Auto | ⏸️ |
 | | 💬 Comentar al expediente | — | — | C · E | — | ⏸️ |
@@ -81,6 +82,7 @@ aliases:
 
 - **Crear requisición:** ahora pueden los **3 roles** (Supervisor, Manager de Área, Manager General).
 - **Autorización (RR-H-02):** Manager de Área **o** Manager General. El Supervisor NO puede autorizar.
+- **Eliminar requisición (RR-H-08):** en Borrador (Verde manzana) la elimina **quien la creó** (cualquiera de los 3 roles), sin motivo. En Autorizada / En proceso / Cubierta parcial, la elimina el **Manager de Área** (solo las de su departamento) o el **Manager General** (cualquiera del hotel), con **motivo obligatorio** y solo sin asignaciones activas. Cubierta totalmente no se elimina.
 - **Aprobación de horas (D-09):** el **Manager de Área** aprueba las de **su** departamento y el **Manager General** las de **cualquiera** — la misma pareja que autoriza requisiciones. El **Supervisor revisa y resuelve anómalos, pero no aprueba**: son dos pasos con responsables distintos. Sin aprobación, las horas **quedan en espera**: sin pago, sin factura, sin escalamiento y sin aprobación automática.
 - **Ponche manual:** los **3 roles** pueden registrarlo, para el caso en que el GPS rechace la ubicación.
 - **Reportar colaborador / Rojo (RR-H-10):** los **3 roles** pueden reportar (compartido).

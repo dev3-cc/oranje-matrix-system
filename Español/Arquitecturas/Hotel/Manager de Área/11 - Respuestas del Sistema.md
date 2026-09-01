@@ -14,7 +14,8 @@ aliases:
 | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | Manager autoriza requisición                          | Cambia estado a Autorizada · Calcula urgencia · Asigna Inspector por zona · Refleja posiciones en Schedule · Envía a bandeja de Reclutamiento (Self-Pick) · Notifica al Supervisor |
 | Manager rechaza requisición                           | Cambia estado a En elaboración · Notifica al Supervisor con observaciones · Queda en bandeja del Supervisor para corrección |
-| Manager elimina requisición con posiciones            | Cada posición pasa a Morado con journal individual · Estado de la requisición a Morado · Mensaje: *"Al confirmar la eliminación de la requisición, las posiciones registradas y la requisición serán eliminadas físicamente"* |
+| Manager elimina su borrador (Verde manzana)           | Sin motivo obligatorio · Cada posición pasa a Morado con journal individual · Estado de la requisición a Morado |
+| Manager elimina requisición Autorizada / En proceso / Cubierta parcial (solo de su depto) | Requiere motivo y sin asignaciones activas · Cada posición pasa a Morado con journal individual · Estado de la requisición a Morado · Mensaje: *"Al confirmar la eliminación de la requisición, las posiciones registradas y la requisición serán eliminadas físicamente"* |
 | Sistema elimina físicamente requisición vacía         | Sin journal · Sin notificación (automático)                                                                          |
 | Manager genera / renueva QR                           | QR válido inmediatamente · Notifica a colaboradores asignados · Queda en log con fecha de generación                 |
 | Manager corrige ponche                                | Cambio aplicado · Log auditable con autor, fecha, motivo · Notifica al colaborador del cambio                        |

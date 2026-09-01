@@ -21,7 +21,7 @@ aliases:
 | **AC-H-07** | Al autorizar la requisición, las posiciones aparecen en el Schedule semanal del hotel en menos de 30s (RI-H-02).                               |
 | **AC-H-08** | La requisición autorizada llega a la bandeja de Reclutamiento (Self-Pick) en menos de 30s (RI-H-01).                                           |
 | **AC-H-09** | Si la requisición no tiene posiciones al salir del editor, se elimina físicamente sin journal (RR-H-07).                                       |
-| **AC-H-10** | Al eliminar una requisición con posiciones, cada posición pasa a estado Morado con journal individual (RR-H-08).                               |
+| **AC-H-10** | En Borrador, la elimina quien la creó, sin motivo. En Autorizada / En proceso / Cubierta parcial, la elimina el Manager de Área (su depto) o el Manager General (cualquiera del hotel), con motivo obligatorio y sin asignaciones activas. En Cubierta totalmente, no se elimina. Cada posición pasa a estado Morado con journal individual (RR-H-08).                               |
 | **AC-H-11** | Solo el Manager de Área puede generar / renovar el QR del Timesheet (RR-H-09).                                                                |
 | **AC-H-12** | El QR generado es válido inmediatamente; los colaboradores pueden ponchar al instante.                                                          |
 | **AC-H-13** | Solo el Manager de Área puede reportar a un colaborador (Rojo); la acción notifica al Inspector y inicia investigación (RR-H-10).            |

@@ -67,8 +67,11 @@ Al autorizar una requisición, el sistema ejecuta automáticamente:
 
 ## Eliminación de requisición
 
+- **Borrador (Verde manzana):** la elimina **quien la creó** ([[Hotel/Manager General|Manager General]], [[Hotel/Manager de Área|Manager de Área]] o [[Hotel/Supervisor|Supervisor]]), sin motivo obligatorio — pudo crearse por error y Reclutamiento no ve borradores.
+- **Autorizada, En proceso o Cubierta parcialmente (Verde, Amarillo, Rojo):** la elimina el [[Hotel/Manager de Área|Manager de Área]] (solo las de su departamento) o el [[Hotel/Manager General|Manager General]] (cualquiera del hotel), con **motivo obligatorio**, y solo si la requisición no tiene asignaciones activas (se liberan primero).
+- **Cubierta totalmente (Azul claro):** no se elimina.
 - Al confirmar la eliminación, el sistema muestra: **"Al confirmar la eliminación de la requisición, las posiciones registradas y la requisición serán eliminadas físicamente"**.
-- El estado **Morado** es transversal: se alcanza desde cualquier estado cuando se elimina la requisición.
+- El estado **Morado** es transversal: se alcanza desde cualquier estado cuando se elimina la requisición, con journal.
 - Si una requisición no tiene posiciones al salir del editor → **eliminación física automática**.
 - Al eliminar una requisición con posiciones → cada posición también pasa a Morado con journal individual.
 
@@ -175,6 +178,7 @@ El [[Hotel/Manager General|Manager General]] es la máxima autoridad del hotel y
 | Crear requisición | Sí | Sí | Sí |
 | Autorizar requisición | Sí | Sí | No |
 | Rechazar requisición | Sí | Sí | No |
+| Eliminar requisición | Sí — su borrador sin motivo; autorizada+ de cualquier depto con motivo | Sí — su borrador sin motivo; autorizada+ de su depto con motivo | Solo su borrador, sin motivo |
 | Revisar ponches y resolver anómalos | No | No | Sí |
 | **Aprobar horas** | Sí (cualquier departamento) | Sí (su departamento) | No |
 | Poner en Stand-by (Rosa) | Sí | Sí | Sí |

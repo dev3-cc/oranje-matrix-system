@@ -14,7 +14,8 @@ aliases:
 | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | Autorizar requisición                               | Estado pasa a Autorizada · Cálculo automático de urgencia · Asignación de Inspector · Reflejo en Schedule · Llega a bandeja de Reclutamiento |
 | Rechazar requisición con observaciones              | Estado vuelve a En elaboración con observaciones · Notifica al Supervisor                            |
-| Eliminar requisición con posiciones                 | Cada posición pasa a Morado con journal individual · Mensaje de confirmación                          |
+| Eliminar su borrador (Verde manzana)                 | Sin motivo obligatorio · Cada posición pasa a Morado con journal individual · Mensaje de confirmación |
+| Eliminar requisición Autorizada / En proceso / Cubierta parcial (solo de su depto) | Motivo obligatorio · Solo si no tiene asignaciones activas (se liberan primero) · Cada posición pasa a Morado con journal individual · Mensaje de confirmación |
 | Eliminar borrador / requisición vacía               | Eliminación física automática sin journal                                                            |
 | Generar / Renovar código QR del Timesheet           | QR válido inmediatamente · Notifica a colaboradores asignados                                        |
 | Editar Schedule semanal                             | Cambios persisten · Notifica al colaborador afectado                                                 |
