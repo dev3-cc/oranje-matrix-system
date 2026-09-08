@@ -26,6 +26,8 @@ aliases:
 |                                      | 👁️ Ver Pipeline global                | —           | Ver          | Auto             | ⏸️               |
 |                                      | ➕ Identificar prospecto (Gris)         | Crear       | Crear        | —                | ⏸️               |
 |                                      | 📝 Crear perfil del hotel (Azul Claro) | C · E       | C · E        | —                | ⏸️               |
+|                                      | 📥 Descargar e imprimir el QR de ponche del hotel | Ver | Ver | — | ⏸️ |
+|                                      | ➕ Regenerar el QR de ponche del hotel | Crear | Crear | — | ⏸️ |
 |                                      | ➕ Registrar visita en frío             | Crear       | Crear        | —                | ⏸️               |
 |                                      | ➕ Registrar intentos de contacto       | Crear       | Crear        | —                | ⏸️               |
 |                                      | 📝 Avanzar a Amarillo (interés)        | C · E       | C · E        | —                | ⏸️               |

@@ -121,10 +121,10 @@ El [[Semáforo del Colaborador]] define 12 estados. A continuación se documenta
 - El colaborador poncha **desde su teléfono, dentro de la propiedad**, en el formulario de la app móvil.
 - Cada marca exige **ubicación GPS dentro del perímetro del hotel**; fuera de él, el ponche se bloquea.
 - Se registran **cuatro marcas por jornada**, solo dos obligatorias:
-  - **Entrada** — inicio de jornada · **obligatoria** · con foto tomada en el momento
+  - **Entrada** — inicio de jornada · **obligatoria** · con evidencia de presencia
   - **Salida a lunch** — opcional
   - **Regreso de lunch** — opcional
-  - **Salida** — fin de jornada · **obligatoria** · con foto tomada en el momento
+  - **Salida** — fin de jornada · **obligatoria** · con evidencia de presencia: la selfie tomada en el momento, o el escaneo del QR del hotel cuando el hotel usa ese método (ver [[Core/Módulos/Reglas de Negocio#Método de ponche por hotel|Reglas de Negocio]])
 - El par de lunch es opcional: si no lo ponchas, se te deducen los 30 minutos igual. Sirve para medir, no para calcular tu pago
 - El ponche funciona **sin señal**: la marca se guarda en el teléfono y se envía al recuperar conexión.
 - Los ponches **no son definitivos hasta que el [[Hotel/Manager de Área|Manager de Área]] de su departamento o el [[Hotel/Manager General|Manager General]] los aprueban**; el [[Hotel/Supervisor|Supervisor]] los revisa antes. Ver [[Timesheet#Aprobación]].

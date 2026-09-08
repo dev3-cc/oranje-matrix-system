@@ -176,6 +176,9 @@ Así, *"solo el Manager General o el Manager de Área pueden autorizar"* (RR-H-0
 
 El ponche dejó de ser un escaneo de QR. Ahora el colaborador lo captura **desde su teléfono, en la propiedad**, con GPS y foto. Como de aquí sale la nómina y la factura, se modela como **evidencia probatoria**, no como una marca de tiempo.
 
+> [!info] Método de ponche por hotel (2026-09-07)
+> La foto es la evidencia del método **Selfie**, el de por defecto. Desde el 2026-09-07 el hotel puede optar por **QR del hotel**: un código secreto con versión, impreso en el acceso, que la app escanea y el servidor verifica junto con la geocerca. El método es un dato de `commercial.hotel` (`punch_method`, `punch_qr_secret`, `punch_qr_version`, `punch_qr_generated_at`) y la marca guarda **la versión del código escaneado** (`punch_mark.qr_version`), nunca el secreto — es la evidencia equivalente a `photo_path`, y `ck_punch_evidence` exige una de las dos en Entrada y Salida (o que la marca sea manual). Regla en [[Core/Módulos/Reglas de Negocio#Método de ponche por hotel|Reglas de Negocio]]; migración `20260907T1200_hotel_punch_method`.
+
 ### `operations.punch_mark`
 
 | Campo | Notas |

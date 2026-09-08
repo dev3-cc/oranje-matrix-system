@@ -199,6 +199,7 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 - El [[Ventas/Roles/Business Developer|BD]] recopila en Status Onboarding Azul Claro: nombre del hotel, email, teléfono, **dirección**, nombre y cargo del contacto, y necesidad del negocio
 - La **ubicación** del hotel se guarda como coordenadas: es lo que delimita la geocerca del ponche y lo que pinta los pines de Mi Territorio
 - La dirección y la ubicación son datos distintos y ambos se conservan: las coordenadas no se leen ni se copian, y la dirección no delimita nada
+- El **método de ponche** del hotel —Selfie o QR del hotel— se elige al darlo de alta y se puede cambiar en su ficha; aplica a todas sus requisiciones. Ver [[#Método de ponche por hotel]]
 
 ### Habilitación del hotel
 - El hotel solo puede generar requisiciones cuando alcanza el Status Naranja en el [[Semáforo Onboarding]]
@@ -303,12 +304,22 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 - El colaborador poncha **desde su teléfono, dentro de la propiedad**, en el formulario de la app móvil
 - El ponche exige **ubicación GPS dentro del perímetro del hotel**. Fuera de ese perímetro el sistema **bloquea** el ponche
 - Se registran **cuatro marcas por jornada**, de las cuales solo dos son obligatorias *(cambiado el 2026-08-13; antes eran tres y la de Comida no tenía regreso)*:
-  - **Entrada** — inicio de jornada · **obligatoria** · requiere foto
+  - **Entrada** — inicio de jornada · **obligatoria** · requiere evidencia de presencia
   - **Salida a lunch** — opcional
   - **Regreso de lunch** — opcional
-  - **Salida** — fin de jornada · **obligatoria** · requiere foto
+  - **Salida** — fin de jornada · **obligatoria** · requiere evidencia de presencia
 - El par de lunch es **opcional a propósito**: si el colaborador no lo poncha, no pasa nada — se le deducen los 30 minutos igual. Existe para **medir**, no para calcular la nómina
-- La foto se toma con la cámara en el momento del ponche; no se admite una imagen guardada
+- La **evidencia de presencia** de Entrada y Salida depende del **método de ponche del hotel** (ver abajo). La geocerca aplica siempre, con cualquier método
+
+#### Método de ponche por hotel *(autorizado el 2026-09-07)*
+
+- Cada hotel tiene **un método de ponche**, que aplica a **todas sus requisiciones**: **Selfie** (el método por defecto) o **QR del hotel**. Es un dato del hotel, no de la requisición: lo elige el [[Ventas/Roles/Business Developer|BD]] o el [[Ventas/Roles/Business Developer Coordinator|BDC]] al dar de alta el hotel en el Pipeline y se puede cambiar después en la ficha del hotel
+- **Selfie**: la foto se toma con la cámara en el momento del ponche; no se admite una imagen guardada
+- **QR del hotel**: el sistema genera un **código secreto del hotel, con versión**. Se descarga como PDF desde la ficha del hotel —por el BD, el BDC o cualquier rol del hotel con cuenta— y se imprime en el acceso donde se poncha. El hotel no genera nada por su cuenta: solo pega la hoja
+- **Regenerar** el QR invalida el anterior al instante y entrega el PDF nuevo. Se hace cuando la hoja se pierde, se fotografía o el hotel lo pide
+- Con QR, al ponchar la app envía el **código escaneado y la ubicación**; el servidor verifica que el código sea el **vigente del hotel de la asignación** y que la persona esté dentro de la geocerca. El QR **sustituye a la foto como evidencia**, no a la geocerca
+- Un ponche **sin código, con un código vencido o con el de otro hotel** entra como **ponche anómalo**, igual que uno sin foto en un hotel con Selfie
+- **Limitación asumida:** el QR impreso no impide que un compañero dentro del hotel escanee por otro; la Selfie sí. Un QR que cambia solo, en una pantalla del hotel, queda como mejora futura, no como parte del método
 - El ponche funciona **sin señal**: la marca se guarda en el teléfono y se envía cuando hay conexión
 - Cuando el ponche se captura sin señal, la validación del perímetro ocurre **al sincronizar**. Si el sistema lo rechaza, entra al calendario del [[Hotel/Supervisor|Supervisor]] como ponche anómalo
 - Esto contabiliza el tiempo trabajado del colaborador
@@ -321,7 +332,7 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 - Es la misma pareja de autoridad que ya rige la [[Core/Módulos/Requisicion/Requisición|requisición]]: quien puede autorizarla es quien puede aprobar las horas que genera
 - La aprobación cubre **todos los días de la requisición**: revisa las jornadas completas en el calendario de ponches
 - Solo los ponches aprobados alimentan el [[Timesheet]] y, por lo tanto, el [[Contabilidad/Consolidado Semanal del Colaborador|Consolidado Semanal]] y la facturación al hotel
-- El [[Hotel/Supervisor|Supervisor]] **revisa pero no aprueba**: resuelve los ponches anómalos —fuera del perímetro, sin foto, o con desfase entre la hora de captura y la de sincronización—, registra los manuales y deja la jornada lista para aprobación
+- El [[Hotel/Supervisor|Supervisor]] **revisa pero no aprueba**: resuelve los ponches anómalos —fuera del perímetro, sin evidencia de presencia (sin foto, o sin código QR válido), o con desfase entre la hora de captura y la de sincronización—, registra los manuales y deja la jornada lista para aprobación
 
 ### Horas sin aprobar
 

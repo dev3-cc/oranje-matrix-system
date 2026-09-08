@@ -110,10 +110,11 @@ Responsabilidades sobre los colaboradores asignados (todos los roles del hotel):
 - El colaborador poncha **desde su teléfono, dentro de la propiedad**, en el formulario de la app móvil.
 - Cada marca exige **ubicación GPS dentro del perímetro del hotel**; fuera de él, el ponche se bloquea.
 - Se registran **cuatro marcas por jornada**, solo dos obligatorias:
-  - **Entrada** — inicio de jornada · **obligatoria** · con foto
+  - **Entrada** — inicio de jornada · **obligatoria** · con evidencia de presencia
   - **Salida a lunch** — opcional
   - **Regreso de lunch** — opcional
-  - **Salida** — fin de jornada · **obligatoria** · con foto
+  - **Salida** — fin de jornada · **obligatoria** · con evidencia de presencia
+- La evidencia depende del **método de ponche del hotel**, que aplica a todas sus requisiciones: **Selfie** (por defecto) o **QR del hotel** — un código impreso en el acceso que la app escanea. El método se elige al dar de alta el hotel y se cambia en su ficha; el QR se descarga e imprime desde ahí y se puede regenerar. Ver [[Core/Módulos/Reglas de Negocio#Método de ponche por hotel|Reglas de Negocio]].
 - Los ponches **no son definitivos hasta que el [[Hotel/Manager de Área|Manager de Área]] (su departamento) o el [[Hotel/Manager General|Manager General]] (cualquiera) los aprueban**. El [[Hotel/Supervisor|Supervisor]] revisa antes, pero no aprueba. Ver [[Timesheet#Aprobación]].
 
 ### Deducción de Lunch
