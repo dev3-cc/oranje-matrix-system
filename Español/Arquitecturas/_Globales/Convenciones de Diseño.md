@@ -157,12 +157,13 @@ Se sirve desde el bundle como fuente variable (`@fontsource-variable/montserrat`
 
 Tres reglas que salen de medir la paleta, no de preferencia estética. Aplican al maquetado y a los componentes por igual.
 
-1. **Sobre `--o-500` el texto va en `--ink`, nunca blanco.** El naranja primario da **2.5:1** con blanco —reprueba AA— y **7.4:1** con `--ink`. Como el botón primario es naranja, esto toca todas las pantallas: la variable derivada de shadcn se declara `--primary-foreground: var(--ink)`. El Portfolio Oranje 2024 llega a la misma solución por su cuenta: el texto sobre naranja va en cafés oscuros (#824613, #8B4000), nunca en blanco.
+1. **Sobre `--o-500` el texto va en `--ink`, nunca blanco.** El naranja primario da **2.5:1** con blanco —reprueba AA— y **7.4:1** con `--ink`. Aplica a todo lo que se rellena con la marca: chips, anillos, avatares de iniciales, el día de hoy en el Timesheet. El Portfolio Oranje 2024 llega a la misma solución por su cuenta: el texto sobre naranja va en cafés oscuros (#824613, #8B4000), nunca en blanco.
+   **El botón primario ya no es `--o-500` (2026-09-05, ajustado el 2026-09-08).** El naranja pleno como relleno pesaba en todas las pantallas; el primer intento fue un pastel (`--o-200` #FFD9B3 con texto café) y se leía **apagado**. Queda en un **mango vivo**: relleno `--o-300` (#FFA64D), hover `--o-400` (#FF9933) y texto `--ink`, con sombra ligera para despegarlo del blanco. Medido: **9.6:1** en reposo y **8.7:1** en hover, AAA. `--o-200` se conserva como tinte suave (fondos, colas de degradado) y `--o-900` como café de texto disponible. Las variables derivadas de shadcn quedan `--primary: var(--o-300)` y `--primary-foreground: var(--ink)`. Los controles que se *marcan* (checkbox, slider) siguen en `--o-500`: en pastel se pierden contra el blanco (1.3:1).
 2. **`--st-naranja` (#F2711C) no es `--o-500` (#FF8000).** Si fueran el mismo hex, un chip de estado Naranja se leería como elemento de marca y se rompería *"un color = un significado por semáforo"*. La distancia perceptual entre ambos es **ΔE 11.0** — se distinguen sin esfuerzo, pero el margen se estrechó al corregir el primario (era ΔE 16.7 con #FF8E00). Si algún día se ajusta cualquiera de los dos, esta separación se vuelve a medir antes de aceptarlo.
 3. **Sobre `--yellow` y `--st-amarillo` el texto va en `--ink`.** Con blanco da **1.4:1**, ilegible.
 
 > [!note]
-> Los valores derivados que espera shadcn (`--background`, `--foreground`, `--primary`, `--ring`, `--radius`) se declaran en `tokens.css` apuntando a estos tokens — `--primary: var(--o-500)`, `--radius: var(--r-md)`. Ningún token Oranje se renombra ni se redefine (D-16).
+> Los valores derivados que espera shadcn (`--background`, `--foreground`, `--primary`, `--ring`, `--radius`) se declaran en `tokens.css` apuntando a estos tokens — `--primary: var(--o-300)`, `--radius: var(--r-md)`. Ningún token Oranje se renombra ni se redefine (D-16).
 
 ### Pendientes del sistema de diseño
 
