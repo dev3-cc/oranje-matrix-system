@@ -49,3 +49,5 @@ Rol de máxima autoridad dentro del hotel. Supervisa a los [[Hotel/Manager de Á
 - [[Timesheet]]
 - [[Requisición]]
 - [[Semáforo del Colaborador]]
+- [[Semáforo de Revisión del Día]]
+- [[Semáforo de Aprobación de la Semana]]

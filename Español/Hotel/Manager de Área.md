@@ -61,4 +61,6 @@ Rol operativo del módulo de [[Hotel/Hotel|Hotel]]. Responsable de aprobar o rec
 - [[Core/Módulos/Schedule|Schedule]]
 - [[Semáforo de Requisición]]
 - [[Semáforo del Colaborador]]
+- [[Semáforo de Revisión del Día]]
+- [[Semáforo de Aprobación de la Semana]]
 - [[Inspector]]

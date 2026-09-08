@@ -18,14 +18,14 @@ Registro de tiempo trabajado por un colaborador en un hotel. Se crea a partir de
 
 El colaborador poncha **desde su teléfono, dentro de la propiedad**, en el formulario de la app móvil. Se registran **cuatro marcas por jornada**, de las cuales solo dos son obligatorias:
 
-- **Entrada** — inicio de jornada · **obligatoria** · con foto
+- **Entrada** — inicio de jornada · **obligatoria** · con evidencia de presencia
 - **Salida a lunch** — opcional
 - **Regreso de lunch** — opcional
-- **Salida** — fin de jornada · **obligatoria** · con foto
+- **Salida** — fin de jornada · **obligatoria** · con evidencia de presencia
 
 El par de lunch es **opcional a propósito**: si no se poncha, se deducen los 30 minutos igual. Existe para **medir**, no para calcular el pago.
 
-Cada marca exige **ubicación GPS dentro del perímetro del hotel**; fuera de él, el ponche se bloquea. La foto se toma con la cámara en ese momento, no se admite una imagen guardada. El ponche funciona sin señal: se guarda en el teléfono y se envía al recuperar conexión, y la validación del perímetro ocurre al sincronizar.
+Cada marca exige **ubicación GPS dentro del perímetro del hotel**; fuera de él, el ponche se bloquea. La evidencia de presencia de Entrada y Salida depende del **método de ponche del hotel**: **Selfie** (foto tomada con la cámara en ese momento, sin imágenes guardadas) o **QR del hotel** (código impreso en el acceso que la app escanea; el servidor verifica que sea el vigente de ese hotel). El método lo define el hotel para todas sus requisiciones — ver [[Core/Módulos/Reglas de Negocio#Método de ponche por hotel|Reglas de Negocio]]. El ponche funciona sin señal: se guarda en el teléfono y se envía al recuperar conexión, y la validación del perímetro ocurre al sincronizar.
 
 Esto contabiliza el tiempo trabajado del colaborador.
 
@@ -37,7 +37,7 @@ Los ponches **no son definitivos hasta que el [[Hotel/Manager de Área|Manager d
 - Son los **dos únicos roles** que pueden aprobar horas
 - La aprobación cubre todos los días de la requisición
 - Solo los ponches aprobados alimentan este timesheet y, en consecuencia, el [[Contabilidad/Consolidado Semanal del Colaborador|Consolidado Semanal]] y la facturación
-- Antes de eso, el [[Hotel/Supervisor|Supervisor]] **revisa sin aprobar**: resuelve los ponches anómalos (fuera del perímetro, sin foto, o con desfase entre captura y sincronización) y registra los manuales
+- Antes de eso, el [[Hotel/Supervisor|Supervisor]] **revisa sin aprobar**: resuelve los días con anomalía —jornada incompleta (falta entrada o salida) o duración inválida— dejando una nota, y registra los manuales. Ver [[Semáforo de Revisión del Día]]. Fuera del perímetro y el desfase entre captura y sincronización se muestran como dato de cada marca, pero hoy no son lo que dispara la anomalía
 - Si nadie aprueba antes del cierre semanal, las horas **quedan en espera de aprobación**: no se pagan ni se facturan, y no hay aprobación automática
 
 ## Overtime
@@ -89,6 +89,9 @@ El sistema marca automáticamente a los colaboradores cuyo lunch excede 30 minut
 
 ## Relacionado
 
+- [[Semáforo de Revisión del Día]]
+- [[Semáforo de Aprobación de la Semana]]
+- [[Indicador de Cumplimiento del Timesheet]]
 - [[Core/Módulos/Schedule|Schedule]]
 - [[Core/Módulos/Requisicion/Requisición|Requisición]]
 - [[Hotel/Supervisor|Supervisor]]

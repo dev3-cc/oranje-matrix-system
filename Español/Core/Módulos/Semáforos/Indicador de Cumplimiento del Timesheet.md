@@ -67,6 +67,8 @@ Si el colaborador inicia a media semana, el sistema **prorratea automáticamente
 ## Relacionado
 
 - [[Timesheet]]
+- [[Semáforo de Revisión del Día]]
+- [[Semáforo de Aprobación de la Semana]]
 - [[Core/Módulos/Contrato|Contrato]]
 - [[Core/Módulos/Schedule|Schedule]]
 - [[Semáforo del Colaborador]]
