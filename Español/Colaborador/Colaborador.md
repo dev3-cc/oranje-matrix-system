@@ -86,6 +86,7 @@ El estado del Colaborador se gestiona a través del [[Semáforo del Colaborador]
 
 - Su asignación semanal se registra en el [[Core/Módulos/Schedule|Schedule]].
 - Sus horas trabajadas se registran en el [[Timesheet]] mediante tres ponches por jornada desde su teléfono, con GPS dentro del perímetro del hotel y foto en Entrada y Salida: Entrada, Comida, Salida. Los revisa el [[Hotel/Supervisor|Supervisor]] y los aprueba el [[Hotel/Manager de Área|Manager de Área]] de su departamento o el [[Hotel/Manager General|Manager General]].
+- Su presentación personal es evaluada semanalmente por el [[Hotel/Supervisor|Supervisor]] mediante la [[Auditoría de Presentación y Ambiente]]; el score de su última auditoría se muestra en su perfil.
 
 ## Relacionado
 
@@ -98,4 +99,5 @@ El estado del Colaborador se gestiona a través del [[Semáforo del Colaborador]
 - [[Reclutamiento/Flujo de Reclutamiento|Flujo de Reclutamiento]]
 - [[Core/Módulos/Requisicion/Requisición|Requisición]]
 - [[Core/Módulos/Accidente Laboral/Accidente Laboral|Accidente Laboral]]
+- [[Auditoría de Presentación y Ambiente]]
 - [[Arquitecturas/Colaborador/00 - Arquitectura Colaborador|Arquitectura Colaborador]]

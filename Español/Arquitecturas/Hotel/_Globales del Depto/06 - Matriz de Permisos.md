@@ -40,12 +40,17 @@ aliases:
 | | 🔄 Reflejar posiciones autorizadas | — | — | — | Auto | ⏸️ |
 | | 🔔 Sugerir refuerzo de personal | Crear | Crear | — | — | ⏸️ |
 | | 📥 Exportar Schedule | Ver | Ver | Ver | — | ⏸️ |
+| **AUDITORÍAS** | ✅ Auditar presentación o ambiente de mi hotel | Crear | — | — | — | ⏸️ |
+| | ✏️ Corregir una auditoría ya guardada | C · E | — | — | — | ⏸️ |
+| | 👁️ Ver auditorías de mi hotel | Ver | Ver | Ver | Auto | ⏸️ |
 | **TIMESHEET** | 👁️ Ver Timesheet del depto | Ver | Ver | Ver | Auto | ⏸️ |
 | | 👁️ Ver Timesheet global del hotel | — | — | Ver | Auto | ⏸️ |
 | | 👁️ Revisar ponches y resolver anómalos | Revisar | Revisar | Revisar | Auto | ⏸️ |
 | | ✓ Aprobar horas trabajadas | — | Aprobar | Aprobar | — | ⏸️ |
 | | 📝 Corregir ponche | — | C · E | C · E | Auto | ⏸️ |
 | | ➕ Registrar ponche manual | Crear | Crear | Crear | — | ⏸️ |
+| | 📥 Descargar e imprimir el QR de ponche (su hotel) | Ver | Ver | Ver | — | ⏸️ |
+| | ➕ Regenerar el QR de ponche (su hotel) | Crear | Crear | Crear | — | ⏸️ |
 | | 🚦 Calcular Indicador de Cumplimiento | — | — | — | Auto | ⏸️ |
 | | ⏰ Ver Indicador de Lunch Extendido | — | — | — | Auto | ⏸️ |
 | | 📥 Exportar Timesheet | Ver | Ver | Ver | — | ⏸️ |

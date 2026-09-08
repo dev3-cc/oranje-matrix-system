@@ -25,7 +25,7 @@ Operación diaria y gestión de personal en hoteles clientes.
 
 - [[Hotel/Manager General|Manager General]] — máxima autoridad en hoteles con jerarquía extendida. Aprueba horas de cualquier departamento.
 - [[Hotel/Manager de Área|Manager de Área]] — aprueba requisiciones, **aprueba las horas trabajadas** y gestiona el schedule semanal. También llamado Hotel Manager; en jerarquía extendida: Gerente de Departamento.
-- [[Hotel/Supervisor|Supervisor]] — crea requisiciones de personal, revisa ponches y reporta accidentes laborales.
+- [[Hotel/Supervisor|Supervisor]] — crea requisiciones de personal, revisa ponches, reporta accidentes laborales y audita presentación del personal y ambiente del hotel.
 
 ### [[Inspección/Inspección|Inspección]]
 
@@ -82,13 +82,14 @@ Proceso: [[Contabilidad/Flujo de Nómina|Flujo de Nómina]]
 ### Operación
 
 - [[Core/Módulos/Schedule|Schedule]] — asignación semanal de colaboradores a hoteles.
-- [[Timesheet]] — registro de horas trabajadas mediante ponches con GPS y foto, aprobados por el [[Hotel/Manager de Área|Manager de Área]] o el [[Hotel/Manager General|Manager General]].
+- [[Timesheet]] — registro de horas trabajadas mediante ponches con GPS y evidencia de presencia (selfie o QR del hotel), aprobados por el [[Hotel/Manager de Área|Manager de Área]] o el [[Hotel/Manager General|Manager General]].
 - [[Pool de Colaboradores]] — repositorio de colaboradores disponibles para asignación.
 
 ### Control
 
 - [[Core/Módulos/Blacklist|Blacklist]] — registro de colaboradores bloqueados.
 - [[Core/Módulos/Accidente Laboral/Accidente Laboral|Accidente Laboral]] — gestión de incidentes en sitio. Ver [[Flujo de Accidente Laboral]].
+- [[Auditoría de Presentación y Ambiente]] — auditorías semanales del Supervisor sobre presentación del personal y condiciones del hotel; registro sin consecuencia en semáforos.
 - [[Core/Módulos/Notificaciones/Catálogo de Notificaciones|Catálogo de Notificaciones]] — los 57 avisos del sistema: qué evento avisa a quién.
 - [[Reglas de Negocio]] — restricciones y condiciones operativas del sistema.
 
@@ -106,6 +107,7 @@ Proceso: [[Contabilidad/Flujo de Nómina|Flujo de Nómina]]
 - [[Niveles de Inglés]] — escala de competencia lingüística de colaboradores.
 - [[Departamentos del Hotel]] — áreas operativas internas del hotel.
 - [[Modalidades de Contratación]] — formas de contrato disponibles.
+- [[Reactivos de Auditoría]] — reactivos de las auditorías de presentación personal y ambiente.
 
 ## Semáforos
 
@@ -118,6 +120,8 @@ Indicadores de estado que reflejan la situación operativa de cada entidad en ti
 - [[Semáforo Onboarding]] — estado de la negociación con un hotel prospecto.
 - [[Indicador de Calidad]] — nivel de desempeño de un área supervisada por QA.
 - [[Indicador de Cumplimiento del Timesheet]] — comparación entre horas trabajadas y horas contractuales del colaborador.
+- [[Semáforo de Revisión del Día]] — si un día del timesheet ya fue revisado por el Supervisor.
+- [[Semáforo de Aprobación de la Semana]] — ciclo de aprobación de un timesheet semanal completo.
 
 ## Simulaciones
 

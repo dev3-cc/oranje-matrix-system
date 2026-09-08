@@ -46,6 +46,12 @@ Rol operativo del módulo de [[Hotel/Hotel|Hotel]], subordinado del [[Hotel/Mana
 - Reporta [[Core/Módulos/Accidente Laboral/Accidente Laboral|accidentes laborales]] detectados en la propiedad (ver [[Core/Módulos/Accidente Laboral/Flujo de Accidente Laboral|Flujo de Accidente Laboral]]).
 - Acude físicamente al lugar del incidente y captura la información presencial en la tarjeta de accidente: ubicación exacta, circunstancias, testigos y atención inmediata brindada.
 
+### Auditorías
+
+- Realiza la [[Auditoría de Presentación y Ambiente|Auditoría de Presentación Personal y la Percepción de Ambiente y Recursos]] de su hotel asignado (uno solo — mismo alcance que sus requisiciones), con periodicidad semanal.
+- Elige a qué colaboradores auditar esa semana; no está obligado a cubrir a todos.
+- Es un registro sin consecuencia: no mueve ningún semáforo.
+
 ## Relacionado
 
 - [[Hotel/Manager de Área|Manager de Área]]
@@ -56,5 +62,8 @@ Rol operativo del módulo de [[Hotel/Hotel|Hotel]], subordinado del [[Hotel/Mana
 - [[Timesheet]]
 - [[Semáforo de Requisición]]
 - [[Semáforo del Colaborador]]
+- [[Semáforo de Revisión del Día]]
+- [[Semáforo de Aprobación de la Semana]]
 - [[Core/Módulos/Accidente Laboral/Accidente Laboral|Accidente Laboral]]
 - [[Core/Módulos/Accidente Laboral/Flujo de Accidente Laboral|Flujo de Accidente Laboral]]
+- [[Auditoría de Presentación y Ambiente]]
