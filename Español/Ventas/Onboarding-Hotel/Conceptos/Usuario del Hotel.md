@@ -15,6 +15,7 @@ Cuenta del hotel en el sistema Oranje. Se crea al aprobarse la conversión en [[
 - **Responsable de la aprobación:** [[Business Developer Coordinator]].
 - **Momento:** al cerrarse el acuerdo en [[Semáforo Onboarding|Status Onboarding Rosa]].
 - **Efecto inmediato:** dispara el [[Trigger Automático de Conversión]].
+- **Es solo la primera cuenta:** el Usuario del Hotel es el primer [[Hotel/Manager General|Manager General]] del hotel. Los [[Hotel/Supervisor|Supervisores]], [[Hotel/Manager de Área|Managers de Área]] y Managers Generales adicionales los da de alta el Administrador desde Usuarios (o el BDC desde la ficha del hotel). Ver [[Core/Módulos/Reglas de Negocio#Cuentas del hotel|Cuentas del hotel]].
 
 ## Qué habilita
 

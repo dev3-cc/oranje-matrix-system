@@ -192,7 +192,7 @@ Solo existen 2 archivos. El Inspector ejecuta transiciones críticas del [[Semá
 | [[Arquitecturas/_Globales/Estructura General App\|Estructura General App]] | Estructura de la aplicación |
 | [[Arquitecturas/_Globales/Plan de Implementación - Base de Datos\|Plan de Implementación - Base de Datos]] | Las 28 tareas para llegar a la primera migración, en 4 fases. Camino crítico: `catalogs` e `identity`, no Ventas |
 | [[Arquitecturas/_Globales/README\|README]] | Notas de la carpeta `_Globales` |
-| [[Arquitecturas/_Globales/Roles del Sistema\|Roles del Sistema]] | **Archivo vacío** |
+| [[Arquitecturas/_Globales/Roles del Sistema\|Roles del Sistema]] | Directorio de los 19 roles: a quién reportan, en quién delegan o quién los respalda, y qué hace cada uno |
 
 ---
 
@@ -209,7 +209,7 @@ Diferencias reales entre lo que existe y lo que exige el [[Arquitecturas/_GUIA -
 | **`RF-24` con dos significados** | La [[Arquitecturas/Reclutamiento/_Globales del Depto/03 - Tabla de Requerimientos\|Tabla de Requerimientos]] define RF-24 como *"Generar reporte del grupo"* (Líder). El Manager usa el mismo ID para *"Generar reporte global"*, que no está en la tabla maestra. Uno de los dos necesita ID propio. |
 | **IDs sin letra de depto** | Reclutamiento numera `RF-04`, `RF-05`, `ROL-01`…; Hotel y Ventas usan `RF-H-NN` / `RF-V-NN` y `ROL-H-NN` / `ROL-V-NN`. El `_GUIA` exige la letra del depto. |
 | **Carpeta sin acento** | `Lider de Grupo de Reclutadoras` — el rol se escribe *Líder* en toda la documentación. |
-| **`Roles del Sistema` vacío** | Existe el archivo, no el contenido. |
+| ~~**`Roles del Sistema` vacío**~~ | Resuelto el 2026-09-09: directorio de roles con línea de reporte, delegación y trabajo. |
 
 > [!note] Lo que no es desviación
 > **`RF-05` aparece en dos roles con nombres distintos** (*Marcar requisición como cubierta* en Reclutadora, *Aprobar cierre de cobertura* en Líder) y eso es **correcto**: la Tabla de Requerimientos define RF-05 como un solo requerimiento de dos mitades — cualquier participante solicita el cierre, el Líder lo aprueba. Igual pasa con `RF-23`, `RF-27`, `RF-39`, `RF-40` y `RF-41`, compartidos entre Reclutadora y Líder con el mismo nombre.

@@ -213,6 +213,14 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
   - Sistema notifica al Business Developer asignado
   - Hotel desaparece de la lista de prospectos
 
+### Cuentas del hotel
+- El **primer** [[Hotel/Manager General|Manager General]] de cada hotel nace con la conversión: es el [[Ventas/Onboarding-Hotel/Conceptos/Usuario del Hotel|Usuario del Hotel]] que el BDC crea antes de aprobar
+- El resto de las cuentas del hotel —[[Hotel/Supervisor|Supervisores]], [[Hotel/Manager de Área|Managers de Área]] y Managers Generales adicionales— las da de alta, edita y da de baja el **Administrador** desde Usuarios; el BDC conserva su alta desde la ficha del hotel
+- Toda cuenta del hotel pertenece a **un solo hotel** y el hotel es obligatorio; ningún rol del hotel existe sin hotel
+- El **departamento** es opcional para el Supervisor y el Manager de Área: con departamento, su alcance queda acotado a ese departamento (jerarquía extendida); sin él, cubre todo el hotel (jerarquía simple — [[Hotel/Hotel|Hotel]]). El Manager General nunca lleva departamento, en ninguna jerarquía (su alcance es siempre el hotel completo)
+- «Reporta a» se elige dentro del mismo hotel: el Supervisor a un Manager de Área de su departamento o al Manager General; el Manager de Área al Manager General; el Manager General a nadie
+- Las atribuciones y el respaldo vienen del rol ([[Arquitecturas/_Globales/Roles del Sistema|Roles del Sistema]]), no de la cuenta: dar de alta no delega nada
+
 ### Documento de Términos y Condiciones
 - Se crea en Status Onboarding Amarillo por el BD o el BDC
 - Se negocia en Status Onboarding Rosa

@@ -252,6 +252,44 @@ pago y factura con el de facturación — jamás los cruza.
 - QA-OT-05 ⚠ Contratos con semanas de nómina distintas (A lunes–domingo, B miércoles–martes) → el corte semanal de cada consolidado respeta SU contrato; las horas no se mezclan entre cortes.
 - QA-OT-06 📋 Horas aprobadas DESPUÉS del cierre semanal: ¿reabren el consolidado o entran a la siguiente semana? Pendiente abierto desde 2026-08-04 — la respuesta cambia el umbral de OT.
 
+### E2E del ponche por QR — del alta del hotel a la marca (cambio 2026-09-07)
+
+El método de ponche es un dato del **hotel** (Selfie por defecto, QR opcional),
+se elige al alta en el Pipeline y aplica a todas sus requisiciones. El QR
+sustituye a la **foto** como evidencia, nunca a la **geocerca** (D-08). Flujo
+por etapas — A y B por UI (Playwright); C y D por API con el token del
+Colaborador (el escaneo con cámara real queda como prueba manual: automatizarlo
+exige video falso de Chromium y no paga lo que cuesta).
+
+**Etapa A — Alta del hotel con su método (BD, Pipeline)**
+- QA-QR-01 ✅ Alta de prospecto eligiendo **QR** en el radio → `punch_method = QR`; sin tocar el radio queda **Selfie** (el default).
+- QA-QR-02 ✅ Un hotel en Selfie que se EDITA a QR genera su **primer código** en ese momento (versión 0 → 1).
+
+**Etapa B — Gestión del QR (tarjeta «Ponche»)**
+- QA-QR-03 ✅ `GET /hotels/:id/punch-qr` con `hotel:punch_qr` (BD, BDC, Supervisor y Managers). Negativa: un rol del hotel pide el QR de **OTRO** hotel → **403** (solo el suyo).
+- QA-QR-04 ✅ Hoja imprimible `/hoteles/:id/qr-ponche` (fuera del shell): el QR se pinta y el **secreto NO aparece como texto** en el DOM.
+- QA-QR-05 ✅ **Regenerar** (doble toque): versión 1 → 2, evento `HOTEL_PUNCH_QR_REGENERATED` en el journal, y el impreso anterior queda muerto — se comprueba en la Etapa D.
+
+**Etapa C — El Colaborador poncha**
+- QA-QR-06 ✅ `/schedules/me` trae `hotelPunchMethod = QR` → la app muestra el **lector**, no la cámara de selfie.
+- QA-QR-07 ✅ CLOCK_IN con el QR vigente y dentro de geocerca → marca creada **sin foto**, con `qr_version` guardada (la 2, tras regenerar); `ck_punch_evidence` se satisface por el código.
+- QA-QR-08 ✅ CLOCK_OUT igual; el día completo llega a la revisión del Supervisor mostrando la versión del QR como evidencia, no una foto.
+
+**Etapa D — Negativas (por API)**
+- QA-QR-09 🚫 Hotel QR, marca sin `qrCode` → **422 `QR_REQUIRED`**.
+- QA-QR-10 🚫 QR de la versión ANTERIOR (el impreso viejo tras regenerar) → **422 `QR_INVALID`** — y el mensaje da salida: el impreso actual o el ponche manual del Supervisor, no un rechazo mudo.
+- QA-QR-11 🚫 QR de **otro hotel** (el payload trae hotel + secreto y ambos deben coincidir con la asignación) → `QR_INVALID`.
+- QA-QR-12 ✅ Fuera de geocerca CON QR válido → el QR no sustituye la geocerca (D-08): se ofrece el ponche manual.
+- QA-QR-13 🚫 Ponchar la asignación de OTRO con un QR válido → **403 `NOT_YOUR_ASSIGNMENT`** — el QR no debilita D-32.
+
+**Etapa E — Regresión del camino Selfie**
+- QA-QR-14 ✅ Hotel en Selfie: marca sin foto → **422 `PHOTO_REQUIRED`**; un `qrCode` enviado ahí se ignora. QA-AR-07 sigue vigente tal cual para estos hoteles.
+- QA-QR-15 📋 Limitación **asumida por escrito** (no es bug): el QR impreso no impide que un compañero escanee por otro — el candado real es geocerca + asignación propia; el QR dinámico en pantalla es mejora futura.
+
+> [!note] Carga
+> Un hotel en QR poncha **sin subir foto**: K6-07 (compresión WebP) aplica solo
+> a hoteles Selfie; K6-06 gana una variante con mezcla de hoteles QR y Selfie.
+
 ### Eliminar vs archivar — casi nada se borra
 
 Filosofía del sistema (Estándares de BD, D-14, D-22): lo que tiene historia
@@ -321,7 +359,7 @@ de hotel que NO se suben (vienen de Places, D-34).
 - QA-AR-04 ✅ La URL firmada **caduca en 1 h** y jamás se persiste (se guarda el path): la respuesta trae URL con expiración; una nueva petición firma de nuevo. (La lección de `photo_path`/`photo_ref`: si deja de servir con el tiempo, es credencial, no dato.)
 - QA-AR-05 ✅ Resiliencia: si no se puede firmar, la foto va en `null` **y el listado responde completo** — una foto no tumba la lista.
 - QA-AR-06 ✅ El documento fiscal corre el negocio: SUBIR el SSN/ITIN levanta la suspensión del día 5 (QA-C-03); **cargar ≠ verificar** — la retención del 16% la levanta la VERIFICACIÓN, no la carga (y por D-27, mientras el cifrado no se conecte, aplica a todos).
-- QA-AR-07 ✅ Foto del ponche: **obligatoria en Entrada y Salida**, no en LUNCH ni en el ponche manual (D-32).
+- QA-AR-07 ✅ Foto del ponche: **obligatoria en Entrada y Salida** en hoteles con método **Selfie**, no en LUNCH ni en el ponche manual (D-32). En hoteles con método **QR** la evidencia es el código, no la foto (ver el E2E del ponche por QR).
 - QA-AR-08 🚫 Evidencia de Blacklist: obligatoria cuando `source = MANUAL` (`ck_blacklist_evidence`); sin archivo, el veto no entra.
 - QA-AR-09 ⚠ Límite de tamaño: archivo enorme → rechazo limpio con mensaje, nunca un 500. Documentar el límite real (hoy no está asentado en ningún estándar).
 - QA-AR-10 🚫 Fotos de hotel NO se suben: el DTO ya no acepta `photoUrl` del cliente (D-34) — mandarla debe ignorarse/rechazarse; la foto la resuelve el servidor vía Places.

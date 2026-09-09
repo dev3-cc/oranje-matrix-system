@@ -68,6 +68,7 @@ aliases:
 |                                      | ⚙️ Trazabilidad de cambios de status   | —           | —            | Auto             | ⏸️               |
 |                                      | ⚙️ Enviar notificación automática      | —           | —            | Auto             | ⏸️               |
 | **CONFIGURACIÓN** *(Admin EN PAUSA)* | 👥 CRUD de usuarios (`users:manage`)   | —           | —            | —                | Gestionar        |
+|                                      | 🏨 Cuentas del hotel (`users:manage_hotel`) | —      | Crear (ficha del hotel) | — | Gestionar        |
 |                                      | ⏸️ Editar catálogos                    | —           | —            | —                | ⏸️ Por confirmar |
 
 ---
