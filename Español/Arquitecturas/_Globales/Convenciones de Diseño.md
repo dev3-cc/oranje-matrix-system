@@ -206,6 +206,16 @@ Tres reglas que salen de medir la paleta, no de preferencia estética. Aplican a
 
 ---
 
+## Idioma e interruptor de idioma
+
+La interfaz es bilingüe (español por defecto, inglés como segundo idioma) desde [[Decisiones de Arquitectura#D-36 · La interfaz habla el idioma de la persona: español por defecto, inglés como segundo idioma|D-36]]. Reglas de la pantalla:
+
+- El interruptor vive **junto a la cuenta**, nunca en la navegación principal: tarjeta inferior del login, tarjeta de perfil del pie del sidebar y menú del avatar del Colaborador.
+- Se escribe **«Español · English»**, cada idioma en su propio idioma, como control segmentado de dos opciones con `aria-pressed`. **Sin banderas**: una bandera es un país, no un idioma.
+- El cambio es inmediato y sin recargar; `<html lang>` cambia con él.
+- Fechas, horas y números se formatean con `Intl` y el locale activo; ningún formato fijo en el código.
+- La terminología en inglés es la del glosario de D-36, tomado del vault en inglés: no se traduce «a oído».
+
 ## Principios de diseño
 
 > [!important]

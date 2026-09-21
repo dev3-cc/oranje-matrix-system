@@ -72,7 +72,7 @@ MÓDULOS / SIDEBAR
 - Hoteles prospecto por nombre / ciudad / zona
 - Hoteles cliente activos
 - Propuestas enviadas
-- Documentos T&C
+- Contratos
 
 **Cómo funciona**
 - Resultados en vivo agrupados por tipo
@@ -103,7 +103,7 @@ SIDEBAR
    ├─ PIPELINE             (Mis prospectos por status)
    ├─ MI TERRITORIO        (rutas + zonas + mapa)
    ├─ PROPUESTAS           (Propuesta Personalizada)
-   ├─ DOCUMENTOS T&C       (creación con BDC)
+   ├─ CONTRATOS            (creación con BDC)
    └─ CLIENTES ACTIVOS     (referente comercial post-Naranja)
 ```
 
@@ -285,7 +285,7 @@ Cuando un prospecto está listo (Azul Claro con perfil completo y contactos prev
 
 ---
 
-## 📄 Módulo DOCUMENTOS T&C
+## 📄 Módulo CONTRATOS
 
 ### Sub-vistas
 - ✏️ **Borradores** — T&C en construcción
@@ -422,7 +422,7 @@ Después de que el BDC aprueba la conversión (Rosa → Naranja), el prospecto d
 │ 📋 Pipeline  │  Mis prospectos por status                    │
 │ 🗺️ Territorio│  Mapa · Rutas · Pines por status              │
 │ 📝 Propuesta │  Borradores · Enviadas · Histórico            │
-│ 📄 T&C       │  Borradores · Validación BDC                  │
+│ 📄 Contratos │  Borradores · Validación BDC                  │
 │ 🏨 Clientes  │  Activos (referente comercial)                │
 └──────────────┴───────────────────────────────────────────────┘
 ```

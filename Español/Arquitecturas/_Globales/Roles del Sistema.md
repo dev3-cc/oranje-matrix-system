@@ -16,12 +16,15 @@ Los 19 roles de la plataforma (catálogo de [[Decisiones de Arquitectura#D-18 ·
 > [!info] Cómo leer «Delega en / respaldo»
 > **Delega en** es a quién le pasa la siguiente acción del proceso. **Respaldo** es quién puede hacer lo suyo si él no está. Ambos salen de [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] y de las Matrices de Permisos; ninguna delegación es automática por plazo — el respaldo siempre actúa a mano (D-09).
 
+> [!info] Herencia por jerarquía (2026-09-14)
+> Dentro de Ventas, Reclutamiento, Hotel e Inspección, **quien tiene subordinados hereda todas sus atribuciones** (permisos y transiciones): el BDC hace lo del BD, el Líder lo de la Reclutadora, el Manager de Reclutamiento lo de ambos, el Manager de Área lo del Supervisor, el Manager General lo de los dos, y el Coordinador lo del Inspector. El alcance no se hereda (D-09) y las exclusividades escritas se conservan (conversión del BDC, veto del Administrador, cierre de accidente por el Inspector asignado, D-32). Auditorías (solo el Supervisor), Contabilidad, QA, Customer Service y el Colaborador quedan fuera. Regla en [[Core/Módulos/Reglas de Negocio#Herencia por jerarquía|Reglas de Negocio · Herencia por jerarquía]].
+
 ## Hotel
 
 | Código | Rol | Reporta a | Delega en / respaldo | Qué hace |
 |---|---|---|---|---|
 | `ROL-H-01` | [[Hotel/Supervisor\|Supervisor]] | Manager de Área | Envía la requisición al Manager de Área para su firma; el Stand-by (Rosa) lo comparte con él | Crea requisiciones (quedan en Borrador); revisa los ponches de su hotel y resuelve los anómalos; registra ponches manuales con motivo; deja la semana lista y la envía a aprobación; manda a Stand-by; audita presentación del personal y ambiente del hotel; reporta accidentes |
-| `ROL-H-02` | [[Hotel/Manager de Área\|Manager de Área]] (alias *Hotel Manager*) | Manager General | Respaldado por el Manager General en todo lo suyo | Crea y **autoriza** requisiciones de su departamento (o las devuelve con observaciones); **aprueba las horas** de su departamento; elimina requisiciones autorizadas de su departamento con motivo; reporta y manda a Stand-by |
+| `ROL-H-02` | [[Hotel/Manager de Área\|Manager de Área]] (alias *Hotel Manager*) | Manager General | Hace todo lo de un Supervisor de su departamento (herencia); respaldado por el Manager General en todo lo suyo | Crea y **autoriza** requisiciones de su departamento (o las devuelve con observaciones); **aprueba las horas** de su departamento; elimina requisiciones autorizadas de su departamento con motivo; reporta y manda a Stand-by |
 | `ROL-H-03` | [[Hotel/Manager General\|Manager General]] | — (máxima autoridad del hotel) | Es el **respaldo manual** del Manager de Área: aprueba horas y autoriza o elimina requisiciones de cualquier departamento; en jerarquía simple es la misma persona con dos roles | Todo lo del Manager de Área, sin límite de departamento; ve el Timesheet global del hotel |
 
 ## Reclutamiento
@@ -30,21 +33,21 @@ Los 19 roles de la plataforma (catálogo de [[Decisiones de Arquitectura#D-18 ·
 |---|---|---|---|---|
 | `ROL-R-01` | [[Reclutamiento/Reclutadora\|Reclutadora]] | Líder de Grupo | Escala al Líder cuando el Self-Pick vence según la urgencia; **marca** la cobertura y el Líder la aprueba | Toma requisiciones de la bandeja (Self-Pick); busca en el Pool; consulta la Blacklist antes de reclutar; entrevista y da de alta al colaborador (Fase 1: posición, modalidad, inglés, experiencia); valida su alta y lo mueve a Disponible; asigna fijos y temporales; agrega a Blacklist |
 | `ROL-R-02` | [[Reclutamiento/Líder de Grupo de Reclutadoras\|Líder de Grupo de Reclutadoras]] | Manager de Reclutamiento | Hace todo lo de una Reclutadora; es su respaldo | **Aprueba o rechaza el cierre** de cobertura que marca la Reclutadora (RF-05); reasigna requisiciones dentro de su grupo (RF-37); supervisa a su grupo y su cobertura por zona |
-| `ROL-R-03` | [[Reclutamiento/Manager de Reclutamiento\|Manager de Reclutamiento]] | — (dirección de Reclutamiento) | Interviene solo en excepciones: balanceo entre grupos, Líder ausente, correcciones | Supervisa a los Líderes; gestiona Mi Equipo (altas, movimientos, bajas lógicas); revisa casos de Blacklist (no levanta vetos: eso es del Administrador); Dashboard global del departamento |
+| `ROL-R-03` | [[Reclutamiento/Manager de Reclutamiento\|Manager de Reclutamiento]] | — (dirección de Reclutamiento) | Hace todo lo de un Líder y de una Reclutadora (herencia): toma requisiciones, asigna, valida; además balanceo entre grupos, Líder ausente, correcciones | Supervisa a los Líderes; gestiona Mi Equipo (altas, movimientos, bajas lógicas); revisa casos de Blacklist (no levanta vetos: eso es del Administrador); Dashboard global del departamento |
 
 ## Ventas
 
 | Código | Rol | Reporta a | Delega en / respaldo | Qué hace |
 |---|---|---|---|---|
 | `ROL-V-01` | [[Ventas/Roles/Business Developer\|Business Developer (BD)]] | BDC | Cuando el ciclo llega a Rosa, **la conversión es del BDC**; no reactiva Café ni Negro, no asigna territorio | Identifica prospectos en su territorio; da de alta el hotel (incluido su método de ponche: selfie o QR); visita en frío; registra intentos de contacto; elabora y envía la Propuesta Personalizada; negocia y mueve el Semáforo Onboarding hasta Rosa; archiva el ciclo |
-| `ROL-V-02` | [[Ventas/Roles/Business Developer Coordinator\|Business Developer Coordinator (BDC)]] | — (dirección de Ventas) | Respalda a sus BD en estancamientos y renegociación; comparte `territory:assign` con el Administrador | **Convierte** el hotel Rosa → Naranja (RR-V-01, exclusiva) creando el Usuario del Hotel; valida y activa el Documento de T&C; supervisa territorios y rutas; gestiona relaciones pausadas; ve Mi Equipo, Conversión, Clientes Activos y Reportes |
+| `ROL-V-02` | [[Ventas/Roles/Business Developer Coordinator\|Business Developer Coordinator (BDC)]] | — (dirección de Ventas) | Hace todo lo de un BD (herencia): identifica, perfila, propone y mueve el ciclo hasta Rosa; respalda a sus BD en estancamientos y renegociación; comparte `territory:assign` con el Administrador | **Convierte** el hotel Rosa → Naranja (RR-V-01, exclusiva) creando el Usuario del Hotel; valida y activa el Documento de T&C; supervisa territorios y rutas; gestiona relaciones pausadas; ve Mi Equipo, Conversión, Clientes Activos y Reportes |
 
 ## Inspección
 
 | Código | Rol | Reporta a | Delega en / respaldo | Qué hace |
 |---|---|---|---|---|
 | `ROL-I-01` | [[Inspección/Inspector\|Inspector]] | Coordinador | Cierra un accidente **solo si es el `inspector_id` de la tarjeta** (más estrecho que el rol, D-32); decide las disputas sin escalar | Verifica la llegada del colaborador el Día 1; entrega el uniforme al Día 3+; supervisa en sitio; investiga los Rojo y resuelve (Negro o Disponible); da seguimiento médico y cierra accidentes con alta médica |
-| `ROL-I-02` | [[Inspección/Coordinador\|Coordinador de Inspección]] | — (dirección de Inspección) | Escala lo que requiere atención especial; enlace con Reclutamiento y Hotel | Asigna inspectores a zonas; supervisa el trabajo en campo; ve el Indicador de Lunch Extendido por zona |
+| `ROL-I-02` | [[Inspección/Coordinador\|Coordinador de Inspección]] | — (dirección de Inspección) | Hace todo lo de un Inspector (herencia), salvo cerrar un accidente que no tenga asignado (D-32); escala lo que requiere atención especial; enlace con Reclutamiento y Hotel | Asigna inspectores a zonas; supervisa el trabajo en campo; ve el Indicador de Lunch Extendido por zona |
 
 ## QA
 

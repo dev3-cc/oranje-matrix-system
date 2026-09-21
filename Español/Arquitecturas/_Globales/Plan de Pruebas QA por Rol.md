@@ -290,6 +290,184 @@ exige video falso de Chromium y no paga lo que cuesta).
 > Un hotel en QR poncha **sin subir foto**: K6-07 (compresión WebP) aplica solo
 > a hoteles Selfie; K6-06 gana una variante con mezcla de hoteles QR y Selfie.
 
+### Cuentas del hotel, alcance por departamento y sesión en staging (cambio 2026-09-09)
+
+Tres PR de la misma ronda (#38 API, #39 front, #40 API), ya en staging. Usuarios de
+prueba: `admin@` (Administrador), `bdc@` (BDC), `hugo@` (BD), `supervisor-xcaret@` y
+`mgr-area-xcaret@` (Hotel Xcaret, **Housekeeping**), `mgr-general-xcaret@` (ojo:
+es el Manager General de **Hotel Xcaret México**, no de Xcaret). Contraseñas en
+`~/Desktop/oranje-credenciales/credenciales.md`. Cada bloque va de la UI a la API:
+lo que la pantalla ya no ofrece se prueba **también por API**, porque el 403 tiene
+que venir del servidor, no solo del botón oculto.
+
+**Etapa A — Cuentas del hotel las administra el Administrador** ([[Core/Módulos/Reglas de Negocio#Cuentas del hotel|Reglas de Negocio · Cuentas del hotel]])
+- QA-CH-01 ✅ `admin@` → Usuarios → pestaña **Personal de hoteles** (`?ambito=hoteles`): lista con hotel, rol · departamento, jefe y estado de cuenta; filtros por hotel y rol y la búsqueda (nombre, correo u hotel) funcionan; «Quitar filtros» regresa a todos; Activos/Inactivos con conteo.
+- QA-CH-02 ✅ Alta de un **Supervisor** en Hotel Xcaret, departamento Housekeeping: «Reporta a» solo ofrece a Paola (Manager de Área de Housekeeping) y al Manager General del hotel — nunca a un Supervisor ni a gente de otro hotel; con un solo candidato se propone solo. Al crear: panel «Invitación enviada a: correo», la fila aparece con chip **Invitación enviada**.
+- QA-CH-03 ✅ Alta de un **Manager General** adicional: el campo Departamento **no aparece** y «Reporta a» dice «Nadie — la punta de la jerarquía del hotel».
+- QA-CH-04 ✅ Alta de un **Manager de Área**: exige departamento; «Reporta a» solo ofrece Managers Generales del hotel.
+- QA-CH-05 ✅ Editar: hotel, rol y correo **bloqueados**; nombre, departamento y jefe editables; **Reenviar invitación** visible solo mientras no haya entrado; «Dar de baja» en dos toques → pasa a Inactivos y ya no entra al sistema.
+- QA-CH-06 ✅ El correo de invitación llega (Firebase); la persona establece contraseña, entra y su fila cambia a **Ya entró** (`hasAccount`).
+- QA-CH-07 ✅ El BDC conserva su alta: `POST /hotels/:id/users` con `bdc@` sigue creando el primer Manager General en la Conversión (RR-V-02 intacta) y ahora también manda la invitación.
+- QA-CH-08 🚫 Mismo correo dos veces → **409 `EMAIL_TAKEN`** con mensaje en español; Manager General con `departmentId` → **422 `DEPARTMENT_NOT_ALLOWED`**; Supervisor sin departamento → **422 `DEPARTMENT_REQUIRED`**.
+- QA-CH-09 🚫 Por API, «Reporta a» fuera de regla: Supervisor → Manager de Área de OTRO departamento → **422 `REPORTS_TO_OTHER_DEPARTMENT`**; Manager de Área → Supervisor → **422 `REPORTS_TO_NOT_ALLOWED`**; jefe de otro hotel → **422 `SUPERVISOR_NOT_IN_HOTEL`**.
+- QA-CH-10 🚫 `hugo@` (BD) o `supervisor-xcaret@` llaman `GET /hotel-users` o `PATCH /hotels/:id/users/:userId` → **403** (`users:manage_hotel` es solo del Administrador; el BDC solo crea).
+- QA-CH-11 ✅ En **Personal Oranje** (la pestaña de siempre) no aparece ningún rol de hotel ni Colaborador, y el alta de personal sigue rechazando roles de hotel hacia su pestaña (`USE_HOTEL_USERS`).
+- QA-CH-12 ✅ `admin@` ya puede listar hoteles (`GET /hotels`) para el selector; `GET /hotels/:id` de un hotel ajeno sigue en **403** para un rol de hotel.
+
+**Etapa B — Alcance por departamento (D-09)** — Supervisor y Manager de Área solo tocan su departamento; el Manager General, todo el hotel
+- QA-DEP-01 ✅ `supervisor-xcaret@` → Crear requisición: el departamento aparece **fijo en Housekeeping** (solo lectura, con la nota de que las de otro departamento las crea su Manager de Área o el General); las posiciones son las de Housekeeping; la requisición se crea.
+- QA-DEP-02 ✅ `mgr-general-xcaret@` → Crear requisición: **elige** departamento; los que no tienen posiciones en el catálogo se ven apagados con «· sin posiciones en el catálogo» y no se pueden elegir.
+- QA-DEP-03 🚫 Por API, `supervisor-xcaret@` crea con una posición de Alimentos → **403 `DEPARTMENT_OUT_OF_SCOPE`** y el mensaje dice «Solo puedes pedir posiciones de tu departamento», **no** «tu rol no puede crear».
+- QA-DEP-04 ✅ Cola de autorización de `mgr-area-xcaret@`: solo requisiciones de Housekeeping; autoriza una → pasa a Autorizada.
+- QA-DEP-05 🚫 `mgr-area-xcaret@` autoriza por API (`POST /requisitions/:id/authorize`) una requisición de Alimentos del mismo hotel → **403 `DEPARTMENT_OUT_OF_SCOPE`**; abrirla por URL (`/requisiciones/:id`) → la ficha dice que es de otro departamento, no «reintenta».
+- QA-DEP-06 ✅ La misma requisición la autoriza el Manager General de ese hotel (respaldo D-09).
+- QA-DEP-07 ✅ Schedule: `supervisor-xcaret@` y `mgr-area-xcaret@` ven solo turnos de Housekeeping (`GET /schedules/:id/entries`); el Manager General ve los de todo el hotel.
+- QA-DEP-08 🚫 `mgr-area-xcaret@` planea un turno (`POST /schedules/:id/entries`) sobre una asignación de otro departamento → **403 `DEPARTMENT_OUT_OF_SCOPE`**; quitar uno ajeno → **403**; los propios sí.
+- QA-DEP-09 ✅ Regresión: QA-H2-02/H2-03 (aprobar horas por departamento) y el eliminar de requisiciones por departamento siguen igual.
+
+**Etapa C — Catálogos: departamentos y posiciones en una vista** (Administrador)
+- QA-CAT-01 ✅ `/catalogos`: **Posiciones ya no es pestaña**; «Departamentos y posiciones» muestra cada departamento como sección con su conteo; el enlace viejo `?tab=positions` cae en la fusionada.
+- QA-CAT-02 ✅ «Agregar posición» desde una sección abre el alta con ese departamento **ya elegido**; la posición nueva aparece en su sección y se ofrece en el alta de requisición de ese departamento.
+- QA-CAT-03 ✅ La búsqueda entra por los dos lados: escribir el nombre de un departamento muestra su sección completa; escribir el de una posición muestra solo esa dentro de su sección.
+- QA-CAT-04 ✅ Un departamento sin posiciones muestra su vacío con el porqué («mientras no tenga, nadie puede pedir personal de este departamento»); en el alta de requisición ese departamento se ve apagado (QA-DEP-02).
+- QA-CAT-05 🚫 Eliminar un departamento con posiciones o una posición en uso → **409 `CATALOG_IN_USE`** con mensaje en español; renombrar sí.
+
+**Etapa D — Sesión en staging** (`oranjeapp-gcp.web.app` contra el API en Cloud Run)
+- QA-SES-01 ✅ Login → recargar la página (F5) en cualquier ruta: **sigue dentro**, en la misma ruta, sin pasar por `/login`. En DevTools → Application → Cookies del API: `oranje_refresh` con `SameSite=None`, `Secure`, `HttpOnly`, expira en 7 días.
+- QA-SES-02 ✅ Cerrar la pestaña, abrir otra y entrar a la app → sigue dentro (la cookie es de 7 días, no de sesión del navegador).
+- QA-SES-03 ✅ Dejar la app abierta más de 15 min y hacer una acción → sigue funcionando sin pedir login (el access token se renueva solo con un `POST /auth/refresh` → 200).
+- QA-SES-04 ✅ Cerrar sesión → recargar → **sí** va a `/login` (la cookie se borró).
+- QA-SES-05 ✅ En local (`localhost:5173`) todo lo anterior sigue igual con la cookie `Strict` (mismo sitio por el proxy de Vite).
+- QA-SES-06 ✅ Entrar a la app mientras corren las suites de integración del API en dev: la app carga y no aparece la pantalla de error (antes: `Too many database connections`; la instancia pasó de 25 a 40 conexiones y los pools locales bajaron a 3).
+- QA-SES-07 📋 Ruido conocido, no bug: el Administrador recibe **403 en `GET /notifications`** (su rol no tiene `system:receive_notification`); la campana lo tolera y no rompe nada.
+
+**Etapa E — Contadores honestos** (cambio de la otra sesión en el #39)
+- QA-CNT-01 ✅ Con más de 100 filas reales, los contadores de Cartera de Clientes, Mi Equipo, Mi Territorio, Requisiciones, Autorización, Propuestas, Self-Pick y Mi Personal coinciden con la base (`meta.total`), no con «cuántas cupieron en una página».
+
+> [!note] Automatización
+> A, B y C ya tienen su red en código: `hotel-users.spec.ts` (7), `schedule-departamento.spec.ts`,
+> `requisicion-eliminar.spec.ts` (autorizar por departamento) y `UsersPage.spec.tsx` (10). Lo que
+> este plan agrega es el recorrido humano por UI y las negativas por API con tokens reales.
+> D no se automatiza en CI (necesita el dominio de Hosting): es un recorrido manual en staging
+> después de cada deploy del API que toque `auth`.
+
+### Alta de requisición al reabrir, calendario en diálogo y login del Colaborador (cambio 2026-09-10)
+
+Tres correcciones del front en la misma tanda (sin PR todavía; probar en local o
+cuando lleguen a staging). Usuarios de prueba: `supervisor-xcaret@` (Hotel Xcaret,
+**Housekeeping**), `mgr-general-xcaret@` (elige departamento), `reclutadora@`
+(Rocío, la que llena los slots) y `colaborador@` (Juan, ROL-C-01). Contraseñas en
+`~/Desktop/oranje-credenciales/credenciales.md`.
+
+**Etapa A — El departamento del paso 1 baja a las posiciones, también al reabrir**
+- QA-REQ-01 ✅ `supervisor-xcaret@` → Crear requisición → Continuar (departamento fijo en Housekeeping) → llenar la posición → Continuar → **Cancelar**. Volver a Crear requisición y repetir: el paso 2 **no** dice «Falta el departamento»; se llega a la revisión y se guarda. Antes fallaba justo en el segundo pedido del día.
+- QA-REQ-02 ✅ Con «Agregar otra posición», cada fila nueva nace con el departamento; la revisión (paso 3) muestra el departamento una sola vez, arriba de las posiciones.
+- QA-REQ-03 ✅ `mgr-general-xcaret@` elige Housekeeping, avanza, regresa con **Atrás** y cambia a Alimentos: las posiciones de la fila se limpian y el selector ofrece solo las de Alimentos; al guardar, la requisición queda en Alimentos.
+- QA-REQ-04 ✅ Lo guardado llega a quien llena los slots: `reclutadora@` → Self-Pick ve la requisición **solo después de autorizada** (Manager de Área o General), con «N slots libres», y asigna colaborador slot por slot en `/self-pick/:requisición/:posición`; la ficha de la requisición muestra el slot como ocupado y a quién.
+
+**Etapa B — Calendario de shadcn en el alta (Popover + Calendar, `DateField`)**
+- QA-CAL-01 ✅ En el paso 2, clic en **Inicio**: abre un calendario en el idioma activo (español: «septiembre 2026», semana empieza en lunes) **y se queda abierto** hasta elegir un día o hacer clic fuera. Antes el selector nativo se cerraba solo dentro del diálogo.
+- QA-CAL-02 ✅ Elegir un día: el calendario se cierra, el campo muestra la fecha legible («18 sep 2026»; en inglés «Sep 18, 2026») y el diálogo sigue abierto en el paso 2. La requisición se guarda con esa fecha de inicio (`start_date`).
+- QA-CAL-03 ✅ Sin fecha, Continuar marca el campo en rojo con «Falta la fecha de inicio»; con el campo marcado, el borde del botón de fecha se ve en rojo (aria-invalid).
+- QA-CAL-04 ✅ Teclado: Tab llega al campo, Enter o Espacio abren el calendario, flechas mueven el día, Enter elige, Esc cierra el calendario **sin** cerrar el diálogo.
+- QA-CAL-05 ✅ Cambiar el idioma a English desde el sidebar y volver a abrir: el calendario sale en inglés (meses y días) y la fecha elegida se relee en inglés.
+- QA-CAL-06 📋 Pendiente conocido: los otros cinco diálogos con fecha (turno del Schedule, contrato T&C, alta de colaborador, asignación de slot, marca manual) siguen con el selector nativo y pueden reproducir el cierre solo. Se cambian al mismo campo en la siguiente tanda.
+
+**Etapa C — Login del Colaborador (`/colaborador/login`)**
+- QA-LOG-01 ✅ Abrir `/colaborador/login` sin sesión: misma tarjeta con «Entra a Oranje», «Tu turno, tu ponche y tus datos, en tu celular», el aviso «Tu Reclutadora te da de alta…» y el enlace «¿Trabajas en Oranje o en un hotel? Entra por aquí» → lleva a `/login`.
+- QA-LOG-02 ✅ `/login` conserva sus textos de staff y gana el enlace «¿Eres colaborador? Entra por aquí» → `/colaborador/login`.
+- QA-LOG-03 ✅ Sin sesión, abrir `/collaborator` o `/colaborador/ponchar` → redirige a **`/colaborador/login`** (no a `/login`); tras entrar con `colaborador@`, regresa a la ruta que pedía.
+- QA-LOG-04 ✅ `colaborador@` entra por `/login` (la puerta del staff) → aterriza igual en `/collaborator`; `supervisor-xcaret@` entra por `/colaborador/login` → aterriza en su Dashboard. La puerta no decide el destino, el rol sí.
+- QA-LOG-05 ✅ Cerrar sesión desde el menú del avatar del Colaborador → vuelve a `/colaborador/login` con sus textos, no a la puerta del staff.
+- QA-LOG-06 ✅ En 390 px: la tarjeta ocupa el ancho, el collage se oculta, los campos abren el teclado de correo (`type=email`, `autocomplete=email`) y el navegador ofrece autollenar la contraseña.
+- QA-LOG-07 ✅ En inglés (navegador en `en` o interruptor al pie): «Sign in to Oranje», «Your shift, your punches and your details, on your phone.», «No access yet? Your Recruiter sets you up…», «Do you work at Oranje or at a hotel? Sign in here».
+- QA-LOG-08 🚫 Credenciales malas en `/colaborador/login` → el mismo mensaje único que en el staff («El correo o la contraseña no coinciden…»); no se revela qué mitad falló.
+
+> [!note] Automatización
+> A tiene red en código: `NewRequisitionDialog.department.spec.tsx` (reapertura con el
+> departamento fijado por la sesión) y `NewRequisitionDialog.spec.tsx` ya eligen el día en el
+> calendario nuevo. C no tiene spec propio todavía: es recorrido manual, verificado con
+> Playwright en local el 2026-09-10.
+
+### Alta de prospecto, semáforo del BDC y alta de usuario en staging (cambio 2026-09-11)
+
+Reportes de Hugo probando staging. Usuarios: `bd@` (BD), `bdc@` (BDC), `admin@`.
+El cuarto bloque es un pendiente de infraestructura, no del front.
+
+**Etapa A — Alta de prospecto: el hotel se escribe una sola vez**
+- QA-PRO-01 ✅ `bd@` → Pipeline → Nuevo prospecto → paso 1 «El edificio»: lo primero es **Busca el hotel en Google**; al elegir uno, nombre, dirección, teléfono, pin y foto se llenan solos y el campo «Nombre del hotel» queda editable con la nota «si lo llenó Google, puedes corregirlo».
+- QA-PRO-02 ✅ Un hotel que no está en Google: se escribe el nombre a mano en el paso 1; en el paso 2 el mapa pide marcar el punto y «Continuar» no avanza sin pin (mensaje «Falta la ubicación» o equivalente en rojo).
+- QA-PRO-03 ✅ Paso 2 «Ubicación» ya **no tiene buscador**: solo el mapa y la geocerca, con el texto «Sigue siendo {hotel}. Arrastra el mapa para dejar el pin en la entrada…». Arrastrar el mapa mueve el pin, el resumen dice «Pin ajustado a mano» y el nombre del hotel no cambia.
+- QA-PRO-04 ✅ Con «Hotel ya registrado» el buscador de Google no aparece (el hotel ya tiene sus datos) y el nombre viene bloqueado.
+- QA-PRO-05 ✅ **Ningún modal se cierra solo**: en el paso 3, doble clic rápido en «Continuar» → se llega al paso 4 con «Crear prospecto» apagado unos instantes y **no se crea nada** (cero `POST /prospects`); el botón se habilita solo y el diálogo sigue abierto hasta que la persona lo pulsa o cancela.
+- QA-PRO-06 ✅ Enter dentro de un campo de los pasos 1–3 avanza de paso, nunca guarda; en el paso 4, Enter en «Qué necesita» **no guarda nunca**: el prospecto se crea solo con el botón «Crear prospecto».
+
+**Etapa B — Quién mueve el Semáforo Onboarding** ([[Semáforo Onboarding]])
+- QA-SEM-01 ✅ `bdc@` abre un prospecto en Gris, Azul claro, Verde o Amarillo → «Cambiar estado»: el diálogo no ofrece pasos y dice **quién sí** («Desde Gris tu rol no mueve el prospecto: lo mueve el BD»). No es un error: los primeros estados son del BD.
+- QA-SEM-02 ✅ `bdc@` en Verde ve un único paso: Café (renegociación), con motivo obligatorio.
+- QA-SEM-03 ✅ `bdc@` en Rosa: el diálogo explica que la conversión a Naranja se aprueba desde Conversión (QA-BDC-02); en Naranja puede pausar a Negro; en Café y Negro puede reactivar a Azul claro.
+- QA-SEM-04 🚫 Por API, `bdc@` intenta `POST /prospects/:id/transitions` de Gris a Azul claro → **403/422** (la transición no está sembrada para su rol).
+
+**Etapa C — Alta de usuario en staging (pendiente de infraestructura, no del front)**
+- QA-USR-01 ✅ `admin@` → Usuarios → Crear en **staging**: responde 201, el panel dice «Invitación enviada a: correo» y la fila aparece con «Invitación enviada». (Hasta el 2026-09-11 respondía 503 «Firebase no respondió»: a Cloud Run le faltaba `FIREBASE_PROJECT_ID` y a `oranje-api@` el rol de Firebase Auth; corregido con el PR #46.)
+- QA-USR-02 ✅ La persona recibe el correo de Firebase, establece su contraseña y entra; su fila cambia a «Ya entró».
+- QA-USR-03 ✅ Cuentas del hotel en staging: `admin@` → Usuarios → Personal de hoteles → alta de un Manager General → la fila nace con «Invitación enviada» y el correo llega; «Reenviar invitación» responde 200. (Las creadas antes del PR #46 nacieron sin correo: reenviarles la invitación desde la fila lo resuelve.)
+
+**Etapa D — Inspección entra a lo suyo**
+- QA-INS-01 ✅ `inspector@` inicia sesión → aterriza en **Accidentes** (no en el dashboard de Ventas) y el menú lateral muestra **solo Accidentes**; ningún 403 salvo el ruido conocido de notificaciones.
+- QA-INS-02 ✅ `coordinador-inspeccion@` igual: solo Accidentes. Mientras el módulo esté «en construcción», la pantalla lo dice; no hay otra cosa que el rol pueda hacer todavía (cero permisos sembrados).
+- QA-INS-03 ✅ `admin@` → Usuarios → Crear con rol Inspector: «Reporta a» ofrece solo Coordinadores de Inspección; con rol Coordinador, solo al Administrador. Nunca Managers de hotel ([[Inspección/Inspector|Inspector]] reporta al Coordinador).
+
+> [!note] Automatización
+> A tiene red en `ProspectFormDialog.spec.tsx` (el buscador solo en el paso 1 y el botón de guardar
+> armado); B en `ChangeStatusDialog` por mocks. C se prueba a mano en staging tras el deploy.
+
+### Ponche del Colaborador: 15 minutos entre marcas, orden y éxito en verde (cambio 2026-09-12)
+
+Usuario: `jdavid@oranjepeople.com` (Juan David, asignado en Fairfield con turno planeado; ver `credenciales.txt`).
+La regla nueva está en [[Core/Módulos/Reglas de Negocio#Mecanismo de ponchado|Reglas de Negocio · Mecanismo de ponchado]].
+
+- QA-PON-01 ✅ Tras ponchar la Entrada, la pantalla Ponchar deja el botón apagado **sin decir desde qué hora** (la espera no es un cronómetro); a los 15 minutos se habilita solo, sin recargar. Igual entre cada par de marcas.
+- QA-PON-02 🚫 Por API, `POST /punches` con la siguiente marca antes de 15 minutos → **422 `PUNCH_TOO_SOON`** «Aún no puedes registrar la siguiente marca», sin hora ni cuenta regresiva; la app lo muestra igual. La primera marca del día no tiene espera.
+- QA-PON-03 ✅ Cada marca se registra una sola vez por jornada y en orden (Entrada → Salida a lunch → Regreso de lunch → Salida); repetir una responde **409 `PUNCH_ALREADY_REGISTERED`** y la app no la ofrece. Al completar las cuatro, «Jornada completa».
+- QA-PON-04 ✅ El Lottie de éxito (Entrada y Salida) es **verde** (`--green`); los de «registrando» y «verificando» siguen en naranja: el éxito se distingue del proceso.
+- QA-PON-05 ✅ En un hotel con método QR, la marca pide escanear el código impreso; con el QR vigente se registra y guarda su versión; con uno viejo → **422 `QR_INVALID`**.
+- QA-PON-06 ✅ La hoja imprimible del QR (ficha del hotel → Ponche → Imprimir) lleva una **liga** a `/colaborador/ponchar?qr=…` con el dominio del ambiente: escaneada con la cámara del teléfono abre la app en Ponchar (login del Colaborador si no hay sesión) y el botón dice «con el QR del acceso ya leído»; al tocar Ponchar se registra sin abrir el lector.
+- QA-PON-07 ✅ El lector dentro de la app acepta la liga nueva y también una hoja vieja con el código pelón. Si el QR de la liga ya fue regenerado → **422 `QR_INVALID`** y el siguiente toque abre el lector para escanear la hoja vigente.
+
+### La propuesta se cotiza por puesto, se imprime y se manda por correo (cambio 2026-09-14)
+
+Regla en [[Core/Módulos/Reglas de Negocio#Propuesta Personalizada|Reglas de Negocio · Propuesta Personalizada]]. Cuentas: `bd@` y `bdc@`; el hotel debe estar en Verde o Café.
+
+- QA-PRP-01 ✅ El editor pide un renglón por puesto (puesto del catálogo, pay y bill). «Agregar puesto» suma renglones y el basurero los quita.
+- QA-PRP-02 🚫 Un renglón con bill por debajo del pay no deja guardar ni enviar, y lo dice en el renglón; por API, **422 `RATE_MARGIN_NEGATIVE`**. Bill igual a pay sí pasa (margen cero es válido).
+- QA-PRP-03 🚫 Dos renglones del mismo puesto → el formulario lo marca; por API, **422 `RATE_DUPLICATED`**. Una tarifa en cero → **422 `RATE_NOT_POSITIVE`**.
+- QA-PRP-04 🚫 Enviar sin ningún puesto cotizado → **422 `PROPOSAL_WITHOUT_RATES`**.
+- QA-PRP-05 ✅ Guardar reemplaza el cuadro completo (quitar, cambiar y agregar en la misma edición quedan como se dejaron). Un PATCH que solo manda la nota de servicios **no** borra el cuadro.
+- QA-PRP-06 ✅ Al abrir una versión nueva, el cuadro llega con los renglones de la anterior.
+- QA-PRP-07 ✅ Sin puestos en el catálogo, el editor lo dice y remite al Administrador en Catálogos · Departamentos y posiciones, en vez de mostrar un selector vacío.
+- QA-PRP-08 ✅ El icono de PDF abre la vista previa con el **acuerdo de servicio completo**: encabezado con las dos partes, las veinte cláusulas (Term, Duties, Service Fee, Early Termination, Restricted Activities, Proprietary Rights… hasta Entire Agreement), Notices, y el Exhibit «A» con el texto fijo y el cuadro de tarifas. «Imprimir o guardar como PDF» produce el documento entero, no solo lo que cabe en pantalla, y el Exhibit arranca en hoja nueva.
+- QA-PRP-08b ✅ **Sale sin firmas**: las cuatro líneas (dos en el acuerdo, dos en el Exhibit) van en blanco, con el rótulo debajo. La app no firma ni guarda firmas.
+- QA-PRP-09 ✅ «Enviar por correo» abre el cliente de correo de la persona con el destinatario (contacto principal del hotel), el asunto y el cuerpo con las tarifas ya escritos. El PDF lo adjunta quien envía: un `mailto` no lleva adjuntos. El semáforo lo sigue moviendo «Enviar propuesta», no el correo.
+- QA-PRP-10 ✅ El historial resume cada versión como «N puestos · desde $X el bill»; las versiones anteriores al cuadro siguen mostrando su tarifa global.
+- QA-PRP-11 ✅ En el alta de contrato, «Vigente desde» y «Vigente hasta» abren el calendario de shadcn dentro del diálogo y **no se cierra** al elegir el día; cada posición de tarifas va en su tarjeta con «Pago por hora» y «Factura por hora» etiquetados.
+
+### Herencia por jerarquía: el jefe hace todo lo del subordinado (cambio 2026-09-14)
+
+Regla en [[Core/Módulos/Reglas de Negocio#Herencia por jerarquía|Reglas de Negocio · Herencia por jerarquía]]. Cuentas: `bdc@`, `lider-reclutadoras@`, `mgr-reclutamiento@`, `mgr-area-fairfield@`, `mgr-general-xcaret@`, `coordinador-inspeccion@` (ver `credenciales.txt`). Cada caso se prueba en pantalla y por API; la negativa (el subordinado NO gana lo del jefe) también por API.
+
+- QA-HER-01 ✅ El **BDC** identifica un prospecto (Gris), lo perfila (Azul claro), registra intentos, abre y envía una Propuesta Personalizada y mueve el Semáforo Onboarding en los estados del BD (Gris, Azul claro, Verde, Amarillo, Rojo) desde el Pipeline y el editor de propuestas; el diálogo de estado ya no le dice «lo mueve el BD» sino «lo mueve el BD o el BDC».
+- QA-HER-02 🚫 El **BD** sigue sin convertir (Rosa → Naranja), sin Café, Naranja ni Negro: por API **403** y el diálogo dice que es del BDC. La herencia no sube.
+- QA-HER-03 ✅ El **Líder de Grupo** y el **Manager de Reclutamiento** ven Self-Pick en el menú, toman una requisición de la bandeja, se unen a una tomada, asignan al slot y validan un colaborador en Blanco (Verde fuerte); el expediente dice «lo valida Reclutamiento (la Reclutadora, su Líder de Grupo o el Manager)».
+- QA-HER-04 📋 El cierre de cobertura (RF-05) no cambia con la herencia: la Reclutadora solicita, el Líder aprueba; el sistema sigue sin exigir esa aprobación (hueco de D-23 ya documentado en QA-R1-06).
+- QA-HER-05 ✅ El **Manager de Área** de Fairfield revisa los ponches de su departamento, registra una marca manual, envía la semana a aprobación; el **Manager General** lo mismo en cualquier departamento.
+- QA-HER-05b 🚫 **Auditorías queda fuera de la herencia**: el Manager de Área y el Manager General no ven «Auditorías» en el menú, `/auditorias` no les muestra nada, `GET/POST/PATCH /audits` responde **403**, y en Mi Personal no se les pinta «Presentación Personal» (el tablero carga igual). Solo el Supervisor audita, corrige y ve.
+- QA-HER-06 🚫 El alcance no se hereda: el Manager de Área revisando o creando fuera de su departamento → **403 `DEPARTMENT_OUT_OF_SCOPE`**, igual que antes; el Supervisor sigue sin autorizar ni aprobar horas.
+- QA-HER-07 ✅ El **Coordinador de Inspección** ve Accidentes, captura y da seguimiento médico como un Inspector.
+- QA-HER-08 🚫 El Coordinador cierra un accidente **solo si es el Inspector asignado** a la tarjeta (D-32): en una tarjeta ajena → **403**, aunque tenga el permiso.
+- QA-HER-09 🚫 Nada se hereda hacia Contabilidad ni del Colaborador: el Manager de Contabilidad sigue sin validar la nómina (firma de la Contadora) y ningún jefe puede ponchar por nadie (`POST /punches` resuelve el turno del token).
+- QA-HER-10 ✅ Por base: tras sembrar, cada permiso de un subordinado existe también para su jefe (`identity.role_permission`), y cada transición sembrada para la Reclutadora, el Supervisor, el BD o el Inspector existe para su cadena; ninguna transición nueva aparece para el BD, la Reclutadora, el Supervisor o el Inspector.
+
 ### Eliminar vs archivar — casi nada se borra
 
 Filosofía del sistema (Estándares de BD, D-14, D-22): lo que tiene historia
@@ -413,6 +591,7 @@ se usa el canje de sesión mock o un pool de tokens pre-emitidos.
 ## Relacionado
 
 - [[Core/Módulos/Reglas de Negocio|Reglas de Negocio]] — fuente de verdad
+- [[Core/Módulos/Reglas de Negocio#Cuentas del hotel|Reglas de Negocio · Cuentas del hotel]] — la regla detrás de QA-CH-*
 - [[Español/Arquitecturas/_Globales/Decisiones de Arquitectura|Decisiones de Arquitectura]] — D-09, D-18, D-22, D-23, D-27, D-32, D-33
 - [[Español/Arquitecturas/_Globales/Estándares de Desarrollo|Estándares de Desarrollo]] — §8 pruebas y datos sin PII
 - [[Español/Arquitecturas/_Globales/Roles del Sistema|Roles del Sistema]]

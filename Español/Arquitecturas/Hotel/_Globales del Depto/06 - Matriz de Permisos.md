@@ -16,6 +16,9 @@ aliases:
 > [!note]
 > El **Manager General (ROL-H-03)** existe **siempre** (jerarquía simple y extendida). En jerarquía simple, opera también como Manager de Área (misma persona, dos roles).
 
+> [!info] Herencia por jerarquía (2026-09-14)
+> El **Manager de Área** hereda todo lo del **Supervisor** (acotado a su departamento) y el **Manager General** hereda lo de ambos (todo el hotel): revisar ponches, marcas manuales, enviar la semana, reportar accidentes. **AUDITORÍAS queda fuera de la herencia**: solo el Supervisor audita, corrige y ve; sus Managers no la ven (decisión de Hugo, 2026-09-14). Las celdas con «—» para el jefe donde el subordinado sí tiene la acción quedan **superadas por la herencia**: el jefe la tiene, con su propio alcance (D-09). Regla en [[Core/Módulos/Reglas de Negocio#Herencia por jerarquía|Reglas de Negocio · Herencia por jerarquía]]; la tabla de herencia vive junto a los permisos en `apps/api/prisma/permissions.ts`.
+
 ---
 
 | Módulo | Funcionalidad / Acción | ROL-H-01 Supervisor | ROL-H-02 Manager de Área | ROL-H-03 Manager General | ROL-H-04 Sistema | ROL-H-05 Admin |
@@ -42,7 +45,7 @@ aliases:
 | | 📥 Exportar Schedule | Ver | Ver | Ver | — | ⏸️ |
 | **AUDITORÍAS** | ✅ Auditar presentación o ambiente de mi hotel | Crear | — | — | — | ⏸️ |
 | | ✏️ Corregir una auditoría ya guardada | C · E | — | — | — | ⏸️ |
-| | 👁️ Ver auditorías de mi hotel | Ver | Ver | Ver | Auto | ⏸️ |
+| | 👁️ Ver auditorías de mi hotel | Ver | — | — | Auto | ⏸️ |
 | **TIMESHEET** | 👁️ Ver Timesheet del depto | Ver | Ver | Ver | Auto | ⏸️ |
 | | 👁️ Ver Timesheet global del hotel | — | — | Ver | Auto | ⏸️ |
 | | 👁️ Revisar ponches y resolver anómalos | Revisar | Revisar | Revisar | Auto | ⏸️ |

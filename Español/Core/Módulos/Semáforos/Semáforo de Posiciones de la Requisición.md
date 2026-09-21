@@ -39,6 +39,9 @@ Estado visual del porcentaje de cobertura de cada posición dentro de una [[Requ
 | Rojo     | Más de 25% faltante | [[Reclutadora]]                                                       | Más del 25% de personal faltante.                                                                   |
 | Morado   | Eliminada           | —                                                                     | Posición eliminada físicamente.                                                                     |
 
+> [!info] Herencia por jerarquía
+> El [[Hotel/Manager de Área|GH]] hereda las atribuciones del [[Hotel/Supervisor|SUP]], y el [[Hotel/Manager General|GM]] hereda las de ambos — por eso donde el SUP prepara la posición, también puede el GH y el GM, y donde el GH autoriza, también puede el GM. El alcance no se hereda, se conserva (D-09). Ver [[Core/Módulos/Reglas de Negocio#Herencia por jerarquía|Reglas de Negocio · Herencia por jerarquía]].
+
 ## Detalle por estado
 
 ### Dorado — En preparación

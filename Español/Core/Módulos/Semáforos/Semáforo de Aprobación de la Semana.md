@@ -23,14 +23,17 @@ Ciclo de aprobación de un [[Timesheet]] semanal completo: una semana de un cola
 
 | Color   | Estado                | Responsable                                                                        | Descripción                                                                                                     |
 | ------- | ---------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| Gris    | Abierta                | [[Hotel/Supervisor\|Supervisor]]                                                     | Neutral: nadie ha actuado todavía. Acepta marcas manuales; el Supervisor puede seguir revisando días ([[Semáforo de Revisión del Día]]). |
-| Naranja | Enviada a aprobación   | [[Hotel/Supervisor\|Supervisor]]                                                     | El Supervisor la envió. Queda a la espera de un Manager. Ya no admite marcas manuales ni más revisiones de día.    |
+| Gris    | Abierta                | [[Hotel/Supervisor\|Supervisor]] (+ [[Hotel/Manager de Área\|GH]]/[[Hotel/Manager General\|GM]], herencia) | Neutral: nadie ha actuado todavía. Acepta marcas manuales; el Supervisor puede seguir revisando días ([[Semáforo de Revisión del Día]]). |
+| Naranja | Enviada a aprobación   | [[Hotel/Supervisor\|Supervisor]] (+ [[Hotel/Manager de Área\|GH]]/[[Hotel/Manager General\|GM]], herencia)                                                     | El Supervisor la envió. Queda a la espera de un Manager. Ya no admite marcas manuales ni más revisiones de día.    |
 | Verde   | Aprobada                | [[Hotel/Manager de Área\|Manager de Área]] o [[Hotel/Manager General\|Manager General]] | Éxito. Mismo significado que "Autorizada" en el [[Semáforo de Requisición]]. Las horas quedan definitivas y alimentan el [[Contabilidad/Consolidado Semanal del Colaborador\|Consolidado Semanal]] y la facturación. |
+
+> [!info] Herencia por jerarquía
+> El [[Hotel/Manager de Área|Manager de Área]] hereda las atribuciones del [[Hotel/Supervisor|Supervisor]], y el [[Hotel/Manager General|Manager General]] hereda las de ambos, así que también pueden abrir marcas manuales y enviar la semana a aprobación. La **aprobación** (Naranja → Verde) no se hereda del Supervisor porque nunca fue suya: es una atribución exclusiva del Manager de Área y el Manager General, asentada aparte. Ver [[Core/Módulos/Reglas de Negocio#Herencia por jerarquía|Reglas de Negocio · Herencia por jerarquía]].
 
 ## Detalle por estado
 
 ### Gris — Abierta
-**Responsable:** [[Hotel/Supervisor|Supervisor]]
+**Responsable:** [[Hotel/Supervisor|Supervisor]] (también el [[Hotel/Manager de Área|Manager de Área]] o el [[Hotel/Manager General|Manager General]], por herencia)
 
 Estado inicial del timesheet semanal. Admite marcas manuales del Supervisor y días en cualquier estado del [[Semáforo de Revisión del Día]] (Pendiente, Observado o Revisado).
 
@@ -42,7 +45,7 @@ Estado inicial del timesheet semanal. Admite marcas manuales del Supervisor y d�
 ---
 
 ### Naranja — Enviada a aprobación
-**Responsable:** [[Hotel/Supervisor|Supervisor]] (quien la envía); queda a la espera de [[Hotel/Manager de Área|Manager de Área]] o [[Hotel/Manager General|Manager General]].
+**Responsable:** [[Hotel/Supervisor|Supervisor]] (quien la envía, también el [[Hotel/Manager de Área|Manager de Área]] o el [[Hotel/Manager General|Manager General]] por herencia); queda a la espera de [[Hotel/Manager de Área|Manager de Área]] o [[Hotel/Manager General|Manager General]] para aprobarla.
 
 Ya no admite marcas manuales ni más revisiones de día.
 

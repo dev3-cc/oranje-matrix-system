@@ -75,7 +75,7 @@ MÓDULOS / SIDEBAR
 - Hoteles prospecto / cliente activos
 - BDs supervisados
 - Propuestas
-- Documentos T&C
+- Contratos
 - Casos Café / Negro
 
 **Cómo funciona**
@@ -104,7 +104,7 @@ MÓDULOS / SIDEBAR
 SIDEBAR
    ├─ DASHBOARD
    ├─ PIPELINE             (vista global del territorio)
-   ├─ DOCUMENTOS T&C       (validación final)
+   ├─ CONTRATOS            (validación final)
    ├─ CONVERSIÓN           (Crear Usuario + Aprobar)
    ├─ MI EQUIPO            (BDs a cargo)
    ├─ CLIENTES ACTIVOS     (referente comercial)
@@ -166,7 +166,7 @@ SIDEBAR
 
 ---
 
-## 📄 Módulo DOCUMENTOS T&C
+## 📄 Módulo CONTRATOS
 
 ### Sub-vistas
 - ⏳ **Pendientes de validación** (badge rojo si lleva >24h)
@@ -393,7 +393,7 @@ PROSPECTO EN ROSA + T&C VALIDADO
 │              │                                               │
 │ 📊 Dashboard │  Embudo · Heatmap · Ranking BDs · Casos       │
 │ 📋 Pipeline  │  Vista global · Filtros por BD/zona/status    │
-│ 📄 T&C       │  Validar · Rechazar · Histórico               │
+│ 📄 Contratos │  Validar · Rechazar · Histórico               │
 │ ✅ Conversión│  Crear Usuario Hotel · Aprobar conversión     │
 │ 👥 Mi Equipo │  BDs a cargo · Métricas individuales          │
 │ 🏨 Clientes  │  Activos + Negro · Reactivar                  │

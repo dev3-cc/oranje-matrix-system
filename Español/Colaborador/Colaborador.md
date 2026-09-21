@@ -33,7 +33,7 @@ Capturada por la [[Reclutadora]] durante el primer contacto. Además de la ident
 | Nivel de inglés ([[Niveles de Inglés]]) | Reclutadora |
 | Nivel de experiencia | Reclutadora |
 
-### Fase 2 — Alta en la plataforma (/colaborador)
+### Fase 2 — Alta en la plataforma (/collaborator)
 
 Completada por el propio Colaborador:
 
@@ -61,7 +61,7 @@ Completada por el propio Colaborador:
 
 ### Fase 3 — Datos de emergencia
 
-Completada por el propio Colaborador desde `/colaborador`:
+Completada por el propio Colaborador desde `/collaborator`:
 
 | Campo | Descripción |
 |---|---|

@@ -27,7 +27,7 @@ Capturada por la [[Reclutadora]] durante el primer contacto. Además de la ident
 | Nivel de inglés ([[Niveles de Inglés]]) | Reclutadora |
 | Nivel de experiencia | Reclutadora |
 
-### Fase 2 — Alta en la plataforma (/colaborador)
+### Fase 2 — Alta en la plataforma (/collaborator)
 Completada por el propio Colaborador:
 
 | Campo | Catálogo asociado |
@@ -41,15 +41,21 @@ Completada por el propio Colaborador:
 >
 > También puede subir, de forma **opcional**, su comprobante de domicilio como documento del expediente; no bloquea la validación *(decisión del 2026-08-22)*.
 
+### Acceso a la app y correo corporativo
+
+- El acceso a `/collaborator` y el buzón `@oranjepeople.com` los crea la [[Reclutadora]] desde el alta, con **una contraseña temporal** que el sistema genera y que se le **entrega en mano** (se muestra una sola vez; nada viaja por correo)
+- Tiene **3 días** para cambiarla desde su app. Vencido el plazo, su acceso **se bloquea** hasta que la cambie; cambiarla es lo único que se le permite y levanta el bloqueo al instante. Datos e historial no se pierden
+- Los datos de las Fases 2 y 3 también los puede capturar la Reclutadora en la entrevista si ya los tiene; el colaborador los puede corregir después. Ver [[Reglas de Negocio#Acceso del Colaborador]] *(decisión del 2026-09-17)*
+
 ### Plazo de SSN/ITIN
 
-- El colaborador tiene **3 días desde su alta** para cargar SSN o ITIN en `/colaborador`, con recordatorio por notificación los días 1 a 3
-- **Día 4:** al entrar a `/colaborador` se le muestra un aviso interceptor — ya debió cargarlo por temas fiscales; la retención del 16% sigue activa (reembolsable)
+- El colaborador tiene **3 días desde su alta** para cargar SSN o ITIN en `/collaborator`, con recordatorio por notificación los días 1 a 3
+- **Día 4:** al entrar a `/collaborator` se le muestra un aviso interceptor — ya debió cargarlo por temas fiscales; la retención del 16% sigue activa (reembolsable)
 - **Día 5:** su acceso a la plataforma **se suspende** hasta que contacte a Oranje ([[Customer Service/Customer Service|Customer Service]]); el desbloqueo lo hace Oranje tras verificar. La suspensión es solo de acceso: datos e historial no se pierden
 - La retención del 16% es independiente del plazo: aplica mientras no haya SSN/ITIN verificado
 
 ### Fase 3 — Datos de emergencia
-Completada por el propio Colaborador desde `/colaborador`:
+Completada por el propio Colaborador desde `/collaborator`:
 
 | Campo | Descripción |
 |---|---|
@@ -68,7 +74,7 @@ El [[Semáforo del Colaborador]] define 12 estados. A continuación se documenta
 | Transición | Condición | Responsable |
 |---|---|---|
 | → Blanco | Cuando el colaborador completa sus datos en la app (Fase 2 + Fase 3); pendiente de validación por la Reclutadora. Sin accesos habilitados. | Sistema |
-| Blanco → Verde fuerte | Cuando la Reclutadora aprueba la validación (RF-08). Colaborador habilitado en el Pool, accesos propagados. | Reclutadora |
+| Blanco → Verde fuerte | Cuando la Reclutadora aprueba la validación (RF-08). Colaborador habilitado en el Pool, accesos propagados. Puede validarlo con el expediente a medias **a sabiendas**: lo de Fase 1 lo completa Reclutamiento con «Editar»; lo de Fases 2 y 3 el colaborador tiene **3 días** para completarlo desde su app o su acceso se bloquea hasta que lo haga (solo por su parte); el semáforo no retrocede. Ver [[Reglas de Negocio#Validación con expediente incompleto]] | Reclutadora |
 | Verde fuerte → Verde manzana | Al ser asignado a una posición y asistir el Día 1 | [[Inspector]] (verifica en sitio) |
 | Verde manzana → Azul claro | Al ponchar en la propiedad el tercer día | Sistema + [[Inspector]] (entrega uniforme) |
 | Azul claro → Naranja | Al completar 7 días | Sistema (automático) |

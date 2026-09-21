@@ -207,6 +207,8 @@ if (requisition.statusLight !== RequisitionStatusLight.APPLE_GREEN) {
 > | Clases, métodos, variables, ramas de Git | Descripciones de test, comentarios, asunto del commit |
 > | Esquemas, tablas y columnas de Postgres | Los IDs de requerimiento (`RF-H-05`) y los nombres del vault |
 >
+> Desde D-36 «en español» significa **español como fuente**: el texto se escribe en español dentro del componente y el inglés vive en el catálogo `.po`; el mensaje de error del API es respaldo de desarrollo, el texto final lo pone el front.
+>
 > Un `it('RF-H-05 · rechaza autorizar una requisición sin posiciones')` se queda tal cual: es la regla del vault citada, y traducirla rompe el puente que hace útil el nombre del test cuando falla.
 
 ### Códigos de estado

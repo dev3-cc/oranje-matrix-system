@@ -44,7 +44,7 @@ DEPARTAMENTO DE VENTAS — BUSINESS DEVELOPER
 │   │   ├── Editar borrador
 │   │   └── Ver borradores / enviadas / aceptadas / rechazadas / histórico
 │   │
-│   ├── 📄 Documentos T&C
+│   ├── 📄 Contratos
 │   │   ├── Crear Documento de T&C (Amarillo)
 │   │   ├── Editar borrador del T&C
 │   │   ├── Enviar al BDC para validación

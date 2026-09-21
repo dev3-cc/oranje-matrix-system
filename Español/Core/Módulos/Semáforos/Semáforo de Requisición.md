@@ -38,6 +38,9 @@ Sistema de estados visuales que representa el ciclo de vida de una [[Requisició
 | Rojo          | Cubierta parcialmente | Reclutadores activos (varios)                               | Requisición cubierta parcialmente.    |
 | Morado        | Eliminada             | Creador ([[Hotel/Manager General\|GM]], [[Hotel/Manager de Área\|GH]] o [[Hotel/Supervisor\|SUP]]) desde Verde manzana; [[Hotel/Manager de Área\|GH]] (su departamento) o [[Hotel/Manager General\|GM]] (cualquiera) desde Verde/Amarillo/Rojo | Requisición eliminada. No existe desde Azul claro. |
 
+> [!info] Herencia por jerarquía
+> El [[Hotel/Manager de Área|GH]] hereda las atribuciones del [[Hotel/Supervisor|SUP]], y el [[Hotel/Manager General|GM]] hereda las de ambos — por eso donde el SUP crea o edita la requisición, también puede el GH y el GM, y donde el GH autoriza o elimina, también puede el GM. El alcance no se hereda, se conserva (D-09): el GH sigue acotado a su departamento. Ver [[Core/Módulos/Reglas de Negocio#Herencia por jerarquía|Reglas de Negocio · Herencia por jerarquía]].
+
 ## Detalle por estado
 
 ### Verde manzana — En elaboración

@@ -117,7 +117,7 @@ ciclo.
 
 LO QUE NO EXISTE TODAVÍA: el Documento de Términos y Condiciones. El estado Rosa
 dice "negociando términos" pero no hay tabla que guarde esos términos. En el
-maquetado, la pantalla de T&C va como PLACEHOLDER marcado, no inventes campos.
+maquetado, la pantalla de Contratos va como PLACEHOLDER marcado, no inventes campos.
 
 ## Estructura de la aplicación
 
@@ -133,7 +133,7 @@ avatar con menú de perfil.
 - Pipeline (mis prospectos por estado)
 - Mi Territorio (rutas, zonas y mapa)
 - Propuestas
-- Documentos T&C
+- Contratos
 - Clientes Activos
 
 **Sidebar del BDC:** lo mismo, más Conversión, Mi Equipo y Reportes. Sin "Mi

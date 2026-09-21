@@ -28,7 +28,10 @@ Estado de revisión de **un día** del [[Timesheet]]: si el [[Hotel/Supervisor|S
 | ---------- | --------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | Azul claro | Pendiente | — (automático)        | Día sin anomalía y sin nota de revisión. No bloquea nada.                                                                                        |
 | Amarillo   | Observado | — (automático)        | El día tiene una anomalía sin resolver: jornada incompleta (falta marca de entrada o de salida) o duración inválida (0 minutos o negativa, ej. salida antes que entrada). Bloquea el envío de la semana a aprobación. |
-| Morado     | Revisado  | [[Hotel/Supervisor\|Supervisor]] | El Supervisor escribió una nota de revisión (obligatoria en ambos casos) y el día queda resuelto, tenga o no anomalía.                            |
+| Morado     | Revisado  | [[Hotel/Supervisor\|Supervisor]] (+ [[Hotel/Manager de Área\|GH]]/[[Hotel/Manager General\|GM]], herencia) | El Supervisor escribió una nota de revisión (obligatoria en ambos casos) y el día queda resuelto, tenga o no anomalía.                            |
+
+> [!info] Herencia por jerarquía
+> El [[Hotel/Manager de Área|Manager de Área]] hereda las atribuciones del [[Hotel/Supervisor|Supervisor]], y el [[Hotel/Manager General|Manager General]] hereda las de ambos, así que también pueden escribir la nota de revisión de un día. Ver [[Core/Módulos/Reglas de Negocio#Herencia por jerarquía|Reglas de Negocio · Herencia por jerarquía]].
 
 ## Derivación
 
@@ -63,7 +66,7 @@ El día no tiene marca de entrada, no tiene marca de salida, o la duración resu
 ---
 
 ### Morado — Revisado
-**Responsable:** [[Hotel/Supervisor|Supervisor]]
+**Responsable:** [[Hotel/Supervisor|Supervisor]] (también el [[Hotel/Manager de Área|Manager de Área]] o el [[Hotel/Manager General|Manager General]], por herencia)
 
 El Supervisor escribió su nota de revisión — obligatoria tanto si el día tenía anomalía como si no — y el día queda resuelto. Es el estado terminal **por diseño**: no hay transición documentada de vuelta a Pendiente ni a Observado.
 
@@ -73,7 +76,7 @@ El Supervisor escribió su nota de revisión — obligatoria tanto si el día te
 ## Reglas clave
 
 - Es un semáforo **derivado**: el color no vive en una columna de estado propia, se calcula al leer el día.
-- Solo el [[Hotel/Supervisor|Supervisor]] escribe la nota de revisión que mueve un día a Morado.
+- Escribe la nota de revisión que mueve un día a Morado el [[Hotel/Supervisor|Supervisor]] — también el [[Hotel/Manager de Área|Manager de Área]] o el [[Hotel/Manager General|Manager General]], por herencia.
 - La nota de revisión es obligatoria en los dos caminos hacia Morado: resolviendo una anomalía o revisando un día sin anomalía.
 - Bloquea al [[Semáforo de Aprobación de la Semana]]: una semana con al menos un día en Observado no puede enviarse a aprobación.
 

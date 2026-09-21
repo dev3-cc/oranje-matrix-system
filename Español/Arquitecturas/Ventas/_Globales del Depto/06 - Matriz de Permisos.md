@@ -18,6 +18,12 @@ aliases:
 >
 > El resto de CONFIGURACIÓN sigue por confirmar.
 
+> [!note] El módulo se llama Contratos desde el 2026-09-15
+> Antes «Documentos T&C». Ruta `/contratos` (la vieja `/documentos-tc` redirige). El [[Ventas/Onboarding-Hotel/Conceptos/Documento de Términos y Condiciones|Documento de Términos y Condiciones]] sigue siendo el concepto de negocio: la pantalla lista el mismo papel en sus dos momentos — borrador en negociación y contrato vigente.
+
+> [!info] Herencia por jerarquía (2026-09-14)
+> El **BDC** hereda todo lo del **BD**: identificar y perfilar prospectos, registrar intentos, elaborar y enviar la Propuesta Personalizada, mover el Semáforo Onboarding en Gris, Azul claro, Verde, Amarillo y Rojo, archivar el ciclo. Lo exclusivo del BDC (conversión Rosa → Naranja, Café, Naranja, Negro) no baja al BD. Las celdas con «—» para el jefe donde el subordinado sí tiene la acción quedan **superadas por la herencia**: el jefe la tiene, con su propio alcance (D-09). Regla en [[Core/Módulos/Reglas de Negocio#Herencia por jerarquía|Reglas de Negocio · Herencia por jerarquía]]; la tabla de herencia vive junto a los permisos en `apps/api/prisma/permissions.ts`.
+
 ---
 
 | Módulo                               | Funcionalidad / Acción                 | ROL-V-01 BD | ROL-V-02 BDC | ROL-V-03 Sistema | ROL-V-04 Admin   |
@@ -43,7 +49,7 @@ aliases:
 | **PROPUESTAS**                       | 👁️ Ver propuestas                     | Ver         | Ver          | Auto             | ⏸️               |
 |                                      | ➕ Elaborar Propuesta Personalizada     | Crear       | —            | —                | ⏸️               |
 |                                      | 📤 Enviar propuesta al hotel           | C · E       | —            | —                | ⏸️               |
-| **DOCUMENTOS T&C**                   | 👁️ Ver Documentos T&C                 | Ver         | Ver          | Auto             | ⏸️               |
+| **CONTRATOS**                        | 👁️ Ver contratos y sus T&C                 | Ver         | Ver          | Auto             | ⏸️               |
 |                                      | ➕ Crear Documento de T&C               | Crear       | Crear        | —                | ⏸️               |
 |                                      | 📝 Editar Documento de T&C             | C · E       | C · E        | —                | ⏸️               |
 |                                      | ✓ Validar T&C                          | —           | Aprobar      | —                | ⏸️               |

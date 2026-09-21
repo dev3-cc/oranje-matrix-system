@@ -125,11 +125,11 @@ La autoridad de identidad es Firebase Auth; los **permisos** viven en Postgres (
 **Las fotos no pasan por Firestore.** Un documento de Firestore tope 1 MB. La imagen se guarda en el almacenamiento local del dispositivo y sube a **Cloud Storage con URL firmada** cuando hay señal; en Firestore solo viaja la marca con su referencia.
 
 > [!important] Enmienda del 2026-08-22 · `apps/mobile` queda pospuesta; el Colaborador opera en web
-> Esta decisión fijaba Firebase Auth + FCM + Firestore para **la app móvil** del Colaborador y del [[Inspector]]. Para el Colaborador esa app **no se construye por ahora**: su experiencia es la sección web `/colaborador` (check de asistencia, datos, alta, notificaciones, accidente), no una app nativa React Native.
+> Esta decisión fijaba Firebase Auth + FCM + Firestore para **la app móvil** del Colaborador y del [[Inspector]]. Para el Colaborador esa app **no se construye por ahora**: su experiencia es la sección web `/collaborator` (check de asistencia, datos, alta, notificaciones, accidente), no una app nativa React Native.
 >
 > Lo que sigue vigente sin cambio: Firebase Auth como autoridad de identidad, los permisos en Postgres (`identity.role_permission`), y todo lo descrito aquí para el **Inspector**, que sí conserva su app móvil.
 >
-> Lo que queda pendiente de diseñar para `/colaborador`: el mecanismo de sincronización offline del ponche (GPS + foto) sin Firestore como buzón — un navegador no tiene el mismo control sobre almacenamiento local y cámara que una app nativa. Hasta que eso se resuelva, [[Core/Módulos/Reglas de Negocio#Mecanismo de ponchado|Mecanismo de ponchado]] sigue documentado en términos de app móvil y no se ha propagado el cambio a esa sección.
+> Lo que queda pendiente de diseñar para `/collaborator`: el mecanismo de sincronización offline del ponche (GPS + foto) sin Firestore como buzón — un navegador no tiene el mismo control sobre almacenamiento local y cámara que una app nativa. Hasta que eso se resuelva, [[Core/Módulos/Reglas de Negocio#Mecanismo de ponchado|Mecanismo de ponchado]] sigue documentado en términos de app móvil y no se ha propagado el cambio a esa sección.
 
 ---
 
@@ -272,10 +272,14 @@ Seis archivos afirmaban que el overtime se calculaba **por hotel**, contradicien
 | Qué | Idioma |
 |---|---|
 | Tabla, columna, modelo Prisma, DTO, endpoint | **Inglés** |
+| **Ruta del front** (`/contracts`, `/my-team`, `/collaborator/punch`) | **Inglés** *(decisión de Hugo, 2026-09-15)* |
 | Esquema Postgres | **Español** — los 10 módulos de D-01 |
 | `code` de un estado de semáforo | **Inglés** (`ORANGE`, `LIGHT_BLUE`) |
 | `name` y `description` de catálogos, mensajes de error, textos de UI | **Español** |
 | Términos que ya son ingleses en el vault (Schedule, Timesheet, Blacklist, Self-Pick, Onboarding) | Sin cambio |
+
+> [!note] Enmienda del 2026-09-15 · las rutas pasan al inglés
+> El 2026-08-31 se decidió lo contrario (la app del Colaborador pasó de `/empleado` a `/colaborador` «porque la URL la lee una persona»). Hugo revisó el criterio al renombrar el módulo de Contratos y lo invirtió: la ruta es un **identificador del sistema**, no una frase, así que va en inglés como el resto del código. Todas las rutas en español se renombraron y **las viejas siguen vivas redirigiendo**, conservando parámetros y cadena de consulta — lo que obliga a eso no son los marcadores del navegador sino los **códigos QR ya impresos y pegados en la puerta de un hotel**, que apuntan a `/colaborador/ponchar?qr=…`.
 
 ### Por qué
 
@@ -1103,7 +1107,7 @@ Un documento verificado **no se borra** — deja rastro de quién lo revisó, qu
 
 **Decisión (2026-08-21):** cuando una pantalla necesita datos que el backend reparte en varios recursos, el front los **compone en un `queryFn`** de RTK Query — no se inventa un endpoint que no existe ni se bloquea la pantalla esperando uno. La composición vive en la capa de API de la feature, detrás del mismo adaptador de siempre: la pantalla no sabe cuántas llamadas hubo.
 
-Pantallas que ya operan así: la **ficha del prospecto** (5 recursos), **Mi Territorio** (`/me` + zonas asignadas + `/hotels` + `/prospects`), el **Dashboard** (3 recursos), **Conversión** (4), **Clientes Activos** (3 + detalle de contratos) y **Documentos T&C** (2 + detalles).
+Pantallas que ya operan así: la **ficha del prospecto** (5 recursos), **Mi Territorio** (`/me` + zonas asignadas + `/hotels` + `/prospects`), el **Dashboard** (3 recursos), **Conversión** (4), **Clientes Activos** (3 + detalle de contratos) y **Contratos** (2 + detalles).
 
 **Por qué así:** el contrato real es la única fuente; duplicar su lógica en un endpoint agregador prematuro son dos lugares que mantener. El costo es N+1 conocido y acotado (los detalles se piden en paralelo y las listas son cortas). **El camino de salida está pactado:** cuando el volumen lo pida, cada composición se muda a un endpoint del backend con la MISMA forma de respuesta — el adaptador es la frontera y la pantalla no se entera.
 
@@ -1117,7 +1121,7 @@ Pantallas que ya operan así: la **ficha del prospecto** (5 recursos), **Mi Terr
 
 El archivo vigente de maquetas es **`Oranje` (fileKey `06ASqY3QUA17UQQLJSNjfm`)**, página *v1.0 · Ventas*, organizado por secciones de rol (Supervisor, Manager de Área, Reclutadora, BD, BDC, Colaborador móvil) — **37 pantallas** al 2026-08-21. El archivo anterior (`g1cYWZisiq6jbXvULvUVOw`) quedó reducido a la portada y ya no es fuente.
 
-**Consecuencia operativa:** el trabajo de front se ordena por disponibilidad de maqueta. Conectadas ya: Pipeline, Territorio, Propuestas, Dashboard, Conversión, Documentos T&C, Clientes Activos. Con maqueta esperando construcción: Requisiciones, Pool, Timesheet, Blacklist. Sin maqueta (bloqueadas): Alta de Colaborador, Nómina, Facturas, Mi Equipo, Schedule (vista semanal), Reportes, Accidentes, y el modal de vetar de Blacklist.
+**Consecuencia operativa:** el trabajo de front se ordena por disponibilidad de maqueta. Conectadas ya: Pipeline, Territorio, Propuestas, Dashboard, Conversión, Contratos, Clientes Activos. Con maqueta esperando construcción: Requisiciones, Pool, Timesheet, Blacklist. Sin maqueta (bloqueadas): Alta de Colaborador, Nómina, Facturas, Mi Equipo, Schedule (vista semanal), Reportes, Accidentes, y el modal de vetar de Blacklist.
 
 ---
 
@@ -1293,6 +1297,59 @@ El backfill resolvió **14 de 22** hoteles, 12 con foto. Los 8 restantes son hot
 | **Restricciones que el back rechaza** | se anticipan en el control cuando se puede: el picker de nacimiento ya no ofrece fechas de menores de 18 |
 
 **Alcance del primer barrido (2026-08-24):** los cinco helpers migrados (login queda local: sus errores son de Firebase, no del sobre de la API), los nueve genéricos sustituidos, y pistas de «qué falta» en el alta de colaborador, las Fases 2-3 del Colaborador, Stand-by, la asignación de slot y el cambio de estado del Expediente. Quedan por migrar a RHF+zod los ocho formularios a mano.
+
+## D-36 · La interfaz habla el idioma de la persona: español por defecto, inglés como segundo idioma
+
+**Decisión (2026-09-09, Hugo):** `apps/web` se vuelve bilingüe. El **español sigue siendo la fuente** y no se toca: cada texto se queda escrito en español, literal, en el componente donde vive, y la herramienta de i18n lo extrae a un catálogo donde una UX writer redacta el inglés con contexto (archivo, línea, comentario). A un texto sin inglés se le ve el español, nunca un hueco ni una clave. D-11 no cambia: sigue mandando sobre el **código** (identificadores, rutas, esquemas); esta decisión es sobre lo que **lee una persona**.
+
+**Herramienta.** [Lingui](https://lingui.dev) (`@lingui/react` con macros, catálogos `.po`, plugin de Vite). Se eligió sobre i18next porque con i18next cada texto se convierte en una clave inventada (`users.hotel.create`) y el español se muda a un JSON: se pierde la redacción en su contexto y se duplica la revisión. Con Lingui el español ES el mensaje: `<Trans>Agregar cuenta del hotel</Trans>`. Locales: `es` (fuente) y `en`.
+
+**Quién es dueño de cada texto.**
+
+| Texto | Dueño | Cómo |
+|---|---|---|
+| Pantallas, botones, avisos, validaciones, toasts | `apps/web` | Lingui: español en el código, inglés en `src/locales/en/messages.po` |
+| Mensajes de error del API | `apps/web` | El API manda **código y datos**; el front cubre los 176 códigos en los dos idiomas (`apiError.ts`, D-35). El `message` del API se queda en español como respaldo de desarrollo |
+| Nombres de estados de semáforo, roles, modalidades sembradas | `apps/web` | Se traducen **por `code`** en el front; el `name` sembrado sigue en español |
+| Catálogos que captura el Administrador (departamentos, posiciones, reactivos) | nadie | Son **datos**, no textos: se muestran como se capturaron |
+| Fechas, horas, números | `Intl` | Con el locale activo (`es-MX` / `en-US`), nunca formato fijo |
+| Correo de invitación (Firebase) | Firebase | Plantilla en el idioma de la persona (`X-Firebase-Locale`) |
+
+**Dónde vive la preferencia.** En dos lugares, a propósito: en el **navegador** (`localStorage`), para que el cambio sea inmediato y funcione en el login antes de saber quién entra; y en la **persona** (`identity.user.locale`, `es` | `en`, `PATCH /me`), para que la siga entre dispositivos y sirva a correos y notificaciones. Al iniciar sesión gana lo guardado en la persona; al cambiar de idioma se escriben los dos. `<html lang>` se actualiza con el locale activo.
+
+**Dónde va el interruptor** (Convenciones de Diseño): siempre junto a la cuenta, nunca en la navegación principal, y en los tres contextos donde hay cuenta: la tarjeta inferior del **login**, la tarjeta de perfil del pie del **sidebar** del personal, y el menú del avatar del **Colaborador**. Se escribe «Español · English», cada idioma en su propio idioma; **sin banderas** (una bandera es un país, no un idioma).
+
+**Glosario de la interfaz en inglés.** No se inventa: sale del vault en inglés (`Inglés/`, 305 notas). Lo que allí tiene nombre, se usa tal cual.
+
+| Español (UI) | English (UI) |
+|---|---|
+| Colaborador | Collaborator (`Worker` es solo del código, D-11) |
+| Requisición · Slot · Posición | Requisition · Slot · Position |
+| Semáforo (del Colaborador, de Requisición, de Urgencia, de Posiciones, Onboarding) | Status Light (Collaborator / Requisition / Requisition Urgency / Requisition Positions / Onboarding) |
+| Semáforo de Revisión del Día · de Aprobación de la Semana | Day Review Status Light · Week Approval Status Light |
+| Indicador de Calidad · de Cumplimiento del Timesheet | Quality Indicator · Timesheet Compliance Indicator |
+| Ponche (la marca) · Ponchar entrada / salida (la acción) | punch (the record) · **Clock in / Clock out** (the action) |
+| Método de ponche: Selfie · QR del hotel | Punch method: Selfie · Hotel QR |
+| Manager General · Manager de Área · Supervisor | General Manager · Area Manager · Supervisor |
+| Business Developer · BDC · Reclutadora · Líder de Grupo · Manager de Reclutamiento | Business Developer · Business Developer Coordinator · Recruiter · Recruiters Group Leader · Recruitment Manager |
+| Inspector · Coordinador · Administrador | Inspector · Coordinator · Administrator |
+| Usuario del Hotel · Cuentas del hotel | Hotel User · Hotel accounts |
+| Propuesta Personalizada · Conversión · Documento de T&C · Contrato | Personalized Proposal · Conversion · T&C Document · Contract |
+| Pipeline · Clientes Activos · Mi Territorio · Mi Equipo · Reportes | Pipeline · Active Clients · My Territory · My Team · Reports |
+| Pool de Colaboradores · Self-Pick · Blacklist · Stand-by | Collaborator Pool · Self-Pick · Blacklist · Stand-by |
+| Schedule · Timesheet · Timesheet Global · Mi Personal | Schedule · Timesheet · Global Timesheet · My Staff |
+| Accidente Laboral | Work Accident |
+| Auditoría de Presentación y Ambiente · Reactivos de Auditoría | Presentation & Environment Audit · Audit Checklist Items |
+| Catálogos · Zonas · Departamentos del Hotel · Modalidades de Contratación · Niveles de Inglés | Catalogs · Zones · Hotel Departments · Hiring Modalities · English Levels |
+| Usuarios · Personal Oranje · Personal de hoteles | Users · Oranje Staff · Hotel Staff |
+| Roles del Sistema · Plan de Pruebas QA | System Roles · QA Test Plan |
+| Borrador · Autorizada · En proceso · Cubierta parcial · Cubierta · Eliminada | Draft · Authorized · In progress · Partially covered · Covered · Deleted |
+
+Los nombres que van después de junio (auditorías, reactivos, los dos semáforos del Timesheet, método de ponche, cuentas del hotel, Roles del Sistema, plan de QA) no existen en `Inglés/` porque esa carpeta se detuvo el 2026-07-07: quedan fijados aquí y son la referencia hasta que la carpeta en inglés alcance a la española.
+
+**Fases.** (1) Este ADR y el glosario. (2) Infraestructura: Lingui, `Intl` centralizado, `lang`, los tres interruptores, `identity.user.locale` y `PATCH /me`. (3) Extracción por módulo, cada módulo queda bilingüe al cerrarse: Colaborador, Hotel, Ventas, Reclutamiento, Administrador. (4) Los 176 códigos del API en los dos idiomas e idioma del correo de invitación. (5) QA: locale pseudo para cazar textos sin extraer y recorrido por pantalla en cada idioma ([[Plan de Pruebas QA por Rol]]).
+
+**Consecuencias.** Todo texto nuevo del front nace envuelto (`<Trans>` / `t`), en español; un PR que agregue texto sin envolver falla en la extracción. Los mensajes del API dejan de considerarse texto final. La carpeta `Inglés/` del vault queda como deuda documental explícita.
 
 ---
 

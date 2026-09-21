@@ -9,7 +9,7 @@ aliases:
 
 # Auditoría de Presentación y Ambiente
 
-Dos auditorías que el [[Hotel/Supervisor|Supervisor]] realiza, semana a semana, sobre su hotel asignado (uno solo, mismo alcance de `identity.user.hotel_id` que el resto de su rol). Son un **registro sin consecuencia**: no mueven ningún semáforo.
+Dos auditorías que **solo** el [[Hotel/Supervisor|Supervisor]] realiza y ve (sus Managers no las ven, ni por [[Core/Módulos/Reglas de Negocio#Herencia por jerarquía|herencia]]), semana a semana, sobre su hotel asignado (uno solo, mismo alcance de `identity.user.hotel_id` que el resto de su rol). Son un **registro sin consecuencia**: no mueven ningún semáforo.
 
 > [!info]
 > Módulo definido a partir de dos mockups externos (ajenos a este vault) que Hugo compartió como referencia visual. Antes de esta nota no existía nada equivalente en el vault.

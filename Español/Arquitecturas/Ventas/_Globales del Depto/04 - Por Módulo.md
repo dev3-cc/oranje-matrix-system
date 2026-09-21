@@ -57,7 +57,7 @@ Construcción y envío de la Propuesta Personalizada al hotel. Se elabora exclus
 
 ---
 
-## 📄 Documentos T&C
+## 📄 Contratos
 
 Creación del Documento de Términos y Condiciones con los 5 campos obligatorios (Pay rate, Bill rate, Overtime, Festivos, Calendario — RR-V-10) y validación final por parte del BDC. Prerequisito para iniciar Rosa.
 

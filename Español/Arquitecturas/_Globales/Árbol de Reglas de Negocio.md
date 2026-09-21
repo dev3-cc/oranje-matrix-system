@@ -75,7 +75,7 @@ VENTAS
 │   └── ROL-V-04  Administrador ................... en pausa
 │
 ├── Módulos del sidebar
-│   ├── Dashboard · Pipeline (Prospectos) · Propuestas · Documentos T&C
+│   ├── Dashboard · Pipeline (Prospectos) · Propuestas · Contratos
 │   ├── Conversión ....... exclusivo BDC
 │   ├── Mi Territorio .... exclusivo BD
 │   ├── Mi Equipo ........ exclusivo BDC

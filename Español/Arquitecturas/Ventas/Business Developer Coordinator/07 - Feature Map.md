@@ -32,7 +32,7 @@ DEPARTAMENTO DE VENTAS — BUSINESS DEVELOPER COORDINATOR
 │   │   ├── Reactivar desde Café (a Azul Claro)
 │   │   └── Marcar Café (compartido con BD)
 │   │
-│   ├── 📄 Documentos T&C
+│   ├── 📄 Contratos
 │   │   ├── Validar T&C (sí final)
 │   │   ├── Rechazar T&C con observaciones
 │   │   ├── Crear Documento de T&C (apoyo al BD)

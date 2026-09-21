@@ -26,21 +26,24 @@ Sistema de estados que representa el seguimiento de la negociación comercial co
 
 | Color      | Estado                                                                                      | Responsable                                                          |
 | ---------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Gris       | [[#Gris — Hotel identificado\|Hotel identificado]]                                          | [[Business Developer\|BD]]                                           |
-| Azul claro | [[#Azul Claro — Contacto y recopilación de datos\|Contacto y recopilación de datos]]        | [[Business Developer\|BD]]                                           |
+| Gris       | [[#Gris — Hotel identificado\|Hotel identificado]]                                          | [[Business Developer\|BD]] (+ [[Business Developer Coordinator\|BDC]], herencia) |
+| Azul claro | [[#Azul Claro — Contacto y recopilación de datos\|Contacto y recopilación de datos]]        | [[Business Developer\|BD]] (+ [[Business Developer Coordinator\|BDC]], herencia) |
 | Café       | [[#Café — Renegociación / desbloqueo\|Renegociación / desbloqueo]]                          | [[Business Developer Coordinator\|BDC]]                              |
-| Verde      | [[#Verde — Propuesta enviada\|Propuesta enviada]]                                           | [[Business Developer\|BD]]                                           |
-| Amarillo   | [[#Amarillo — En seguimiento tras propuesta\|En seguimiento tras propuesta]]                | [[Business Developer\|BD]]                                           |
+| Verde      | [[#Verde — Propuesta enviada\|Propuesta enviada]]                                           | [[Business Developer\|BD]] (+ [[Business Developer Coordinator\|BDC]], herencia) |
+| Amarillo   | [[#Amarillo — En seguimiento tras propuesta\|En seguimiento tras propuesta]]                | [[Business Developer\|BD]] (+ [[Business Developer Coordinator\|BDC]], herencia) |
 | Rosa       | [[#Rosa — Negociación de términos\|Negociación de términos]]                                | [[Business Developer\|BD]] + [[Business Developer Coordinator\|BDC]] |
 | Naranja    | [[#Naranja — Acuerdo firmado, hotel cliente activo\|Acuerdo firmado, hotel cliente activo]] | [[Business Developer Coordinator\|BDC]]                              |
-| Rojo       | [[#Rojo — Rechazo o no interés\|Rechazo o no interés]]                                      | [[Business Developer\|BD]]                                           |
+| Rojo       | [[#Rojo — Rechazo o no interés\|Rechazo o no interés]]                                      | [[Business Developer\|BD]] (+ [[Business Developer Coordinator\|BDC]], herencia) |
 | Negro      | [[#Negro — Cliente pausado o inactivo\|Cliente pausado o inactivo]]                         | [[Business Developer Coordinator\|BDC]]                              |
+
+> [!info] Herencia por jerarquía
+> El [[Business Developer Coordinator|BDC]] hereda todas las atribuciones del [[Business Developer|BD]], incluidas las transiciones de este semáforo — ver [[Core/Módulos/Reglas de Negocio#Herencia por jerarquía|Reglas de Negocio · Herencia por jerarquía]]. Lo que es exclusivo del BDC (Café, Naranja, Negro, la conversión Rosa→Naranja) no se hereda hacia el BD.
 
 ---
 
 ## Gris — Hotel identificado
 
-**Responsable:** [[Business Developer]]
+**Responsable:** [[Business Developer]] (también el [[Business Developer Coordinator|BDC]], por herencia)
 
 El BD identifica el hotel dentro de su territorio como posible cliente.
 
@@ -50,7 +53,7 @@ El BD identifica el hotel dentro de su territorio como posible cliente.
 
 ## Azul Claro — Contacto y recopilación de datos
 
-**Responsable:** [[Business Developer]]
+**Responsable:** [[Business Developer]] (también el [[Business Developer Coordinator|BDC]], por herencia)
 
 ### Acciones durante este status
 
@@ -66,7 +69,7 @@ El BD identifica el hotel dentro de su territorio como posible cliente.
 
 ## Verde — Propuesta enviada
 
-**Responsable:** [[Business Developer]]
+**Responsable:** [[Business Developer]] (también el [[Business Developer Coordinator|BDC]], por herencia)
 
 ### Acciones durante este status
 
@@ -93,7 +96,7 @@ El BD identifica el hotel dentro de su territorio como posible cliente.
 
 ## Amarillo — En seguimiento tras propuesta
 
-**Responsable:** [[Business Developer]] (con apoyo del [[Business Developer Coordinator]])
+**Responsable:** [[Business Developer]] (también el [[Business Developer Coordinator|BDC]], por herencia)
 
 ### Acciones durante este status
 
@@ -173,7 +176,7 @@ Se dispara el [[Trigger Automático de Conversión]] (en paralelo):
 
 ## Rojo — Rechazo o no interés
 
-**Responsable:** [[Business Developer]]
+**Responsable:** [[Business Developer]] (también el [[Business Developer Coordinator|BDC]], por herencia)
 
 El hotel rechazó la propuesta o no está interesado.
 

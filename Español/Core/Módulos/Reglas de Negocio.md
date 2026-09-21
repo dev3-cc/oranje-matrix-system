@@ -13,28 +13,56 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 
 > [!info] Las reglas aquí documentadas son la fuente de verdad. Los semáforos y flujos implementan estas reglas, pero este archivo las define.
 
+## Herencia por jerarquía
+
+### Quien tiene subordinados hereda lo de sus subordinados
+- Dentro de un departamento, cada rol con subordinados tiene **todas las atribuciones de los roles que le reportan**: permisos y transiciones de semáforo. Con siete roles se recorre el flujo completo sin necesitar a nadie por debajo.
+- Cadenas vigentes:
+  - **Ventas:** el [[Business Developer Coordinator|BDC]] hereda del [[Business Developer|BD]].
+  - **Reclutamiento:** el [[Reclutamiento/Líder de Grupo de Reclutadoras|Líder de Grupo]] hereda de la [[Reclutadora]]; el [[Manager de Reclutamiento]] hereda del Líder y de la Reclutadora.
+  - **Hotel:** el [[Hotel/Manager de Área|Manager de Área]] hereda del [[Hotel/Supervisor|Supervisor]]; el [[Hotel/Manager General|Manager General]] hereda de ambos.
+  - **Inspección:** el [[Inspección/Coordinador|Coordinador]] hereda del [[Inspector]].
+- La herencia va del jefe hacia abajo, nunca al revés: el BD no gana lo del BDC, ni la Reclutadora lo del Líder.
+- **El alcance no se hereda, se conserva** (D-09): el Manager de Área sigue acotado a su departamento y el Supervisor al suyo; el Manager General ve todo su hotel; el BD, su territorio.
+- **Las exclusividades escritas siguen escritas**: la conversión Rosa → Naranja es del BDC (RR-V-01), levantar un veto es del Administrador, y cerrar un accidente exige ser el Inspector asignado a la tarjeta (D-32) aunque el Coordinador tenga el permiso.
+- **Quedan fuera:** la [[Core/Módulos/Auditoría de Presentación y Ambiente|Auditoría de Presentación y Ambiente]] (solo el Supervisor audita, corrige y ve auditorías; sus Managers no las ven), [[Contabilidad/Manager de Contabilidad|Contabilidad]] (las dos firmas de la nómina son de personas distintas a propósito), el [[Colaborador]] (nadie hereda del Colaborador: el ponche es un acto propio), QA, Customer Service, el Administrador y el Sistema.
+- Se resuelve al sembrar la base (tabla de herencia junto a los permisos; se aplica a los permisos y a las transiciones sembradas), así que el guard de la API no conoce la jerarquía: ve permisos planos. Las pantallas que dicen «quién sigue» nombran a los dos: «lo mueve el BD o el BDC».
+
 ## Colaborador
 
 > [!tip] Para la referencia completa, ver [[Reglas del Colaborador]].
 
 ### Captura de datos en 3 fases
-- **Fase 1 — Entrevista inicial:** la [[Reclutadora]] captura los datos básicos del candidato (nombre completo, edad, género, domicilio y teléfono) y además define **Posición, Modalidad de contratación, Nivel de inglés y Nivel de experiencia** — son decisiones de Oranje, no del colaborador *(cambiado el 2026-08-22; antes los llenaba el colaborador en Fase 2)*
-- **Fase 2 — Alta en la plataforma (`/colaborador`):** el propio Colaborador completa Tipo de transporte (obligatorio); SSN, ITIN y el documento de SSN/ITIN son opcionales; si no proporciona SSN ni ITIN, se activa automáticamente la retención del 16% sobre su pago (reembolsable) — ver [[Deducciones]]. Tiene **3 días desde su alta** para cargar SSN o ITIN (ver *Plazo de SSN/ITIN* abajo). También puede subir, de forma **opcional**, su comprobante de domicilio como documento del expediente; no bloquea la validación *(decisión del 2026-08-22)*
-- **Fase 3 — Datos de emergencia:** el Colaborador completa desde `/colaborador`: contacto de emergencia (nombre, teléfono, parentesco), tipo de sangre y alergias o condiciones médicas (opcional)
+- **Fase 1 — Entrevista inicial:** la [[Reclutadora]] captura los datos básicos del candidato (nombre completo, edad, género, domicilio y teléfono) y además define **Posición, Modalidad de contratación, Nivel de inglés y Nivel de experiencia** — son decisiones de Oranje, no del colaborador *(cambiado el 2026-08-22; antes los llenaba el colaborador en Fase 2)*. Si en la entrevista ya tiene los datos de las Fases 2 y 3 (transporte, contacto de emergencia, tipo de sangre), **puede capturarlos ahí mismo**; siguen siendo del colaborador y él los puede corregir después desde su app *(decisión del 2026-09-17)*
+- **Fase 2 — Alta en la plataforma (`/collaborator`):** el propio Colaborador completa Tipo de transporte (obligatorio); SSN, ITIN y el documento de SSN/ITIN son opcionales; si no proporciona SSN ni ITIN, se activa automáticamente la retención del 16% sobre su pago (reembolsable) — ver [[Deducciones]]. Tiene **3 días desde su alta** para cargar SSN o ITIN (ver *Plazo de SSN/ITIN* abajo). También puede subir, de forma **opcional**, su comprobante de domicilio como documento del expediente; no bloquea la validación *(decisión del 2026-08-22)*
+- **Fase 3 — Datos de emergencia:** el Colaborador completa desde `/collaborator`: contacto de emergencia (nombre, teléfono, parentesco), tipo de sangre y alergias o condiciones médicas (opcional)
+
+### Acceso del Colaborador
+- El acceso a la app y el correo corporativo **nacen juntos, desde el alta**: la [[Reclutadora]] (o quien edite el expediente) crea la cuenta de Oranje del colaborador y su buzón `@oranjepeople.com` con **una sola contraseña temporal** que genera el sistema
+- La contraseña **se muestra una sola vez** a quien la creó y **se entrega en mano**: nada viaja por correo, porque el buzón al que llegaría es justo el que se está creando *(antes quedaba en un bucle: el correo de restablecimiento iba a un buzón que no existía)*
+- Si el buzón no se puede crear (el proveedor de correo no responde), la cuenta de Oranje existe igual y quien dio el alta le pide al [[Administrador]] que cree el buzón desde *Correos corporativos*
+- El colaborador tiene **3 días** para cambiar la contraseña temporal desde su app. Vencido el plazo, su acceso **se bloquea** hasta que la cambie: cambiarla es lo único que se le permite y lo que levanta el bloqueo al instante. Es solo de acceso: datos e historial no se pierden
+- El plazo se calcula al leer, como el de SSN/ITIN: no depende de ningún proceso programado *(decisión del 2026-09-17)*
 
 ### Plazo de SSN/ITIN
-- El colaborador tiene **3 días desde su alta** para cargar SSN o ITIN en `/colaborador`, con recordatorio por notificación los días 1 a 3
-- **Día 4:** al entrar a `/colaborador` se le muestra un aviso interceptor — ya debió cargarlo por temas fiscales; la retención del 16% sigue activa (reembolsable)
+- El colaborador tiene **3 días desde su alta** para cargar SSN o ITIN en `/collaborator`, con recordatorio por notificación los días 1 a 3
+- **Día 4:** al entrar a `/collaborator` se le muestra un aviso interceptor — ya debió cargarlo por temas fiscales; la retención del 16% sigue activa (reembolsable)
 - **Día 5:** su acceso a la plataforma **se suspende** hasta que contacte a Oranje ([[Customer Service/Customer Service|Customer Service]]); el desbloqueo lo hace Oranje tras verificar. La suspensión es solo de acceso: datos e historial no se pierden
 - La retención del 16% es independiente del plazo: aplica mientras no haya SSN/ITIN verificado
 
 ### Progresión del colaborador (Semáforo)
 - **→ Blanco:** cuando el colaborador completa sus datos en la app (Fase 2 + Fase 3) y queda pendiente de validación por la Reclutadora. Sin accesos habilitados, sin asignación.
-- **Blanco → Verde fuerte:** cuando la Reclutadora aprueba la validación (RF-08). Colaborador habilitado en el Pool, disponible para asignación.
+- **Blanco → Verde fuerte:** cuando la Reclutadora aprueba la validación (RF-08). Colaborador habilitado en el Pool, disponible para asignación. Ver *Validación con expediente incompleto* abajo.
 - **Verde fuerte → Verde manzana:** al ser asignado a una posición y asistir el Día 1. El [[Inspector]] verifica su llegada en sitio
 - **Verde manzana → Azul claro:** cuando poncha en la propiedad al tercer día. El [[Inspector]] le entrega su uniforme
 - **Azul claro → Naranja:** al completar 7 días (automático por sistema)
 - **Naranja → Verde fuerte:** cuando el colaborador queda libre (fin de asignación fija o reincorporado)
+
+### Validación con expediente incompleto
+- Por regla, el expediente debe estar completo para validar (Blanco → Verde fuerte). A veces hace falta asignar antes: quien valida **puede hacerlo con el expediente a medias, a sabiendas** —confirmándolo de forma explícita— y con eso el colaborador gana **3 días para completarlo desde su app** *(decisión de Hugo, 2026-09-17)*
+- Se puede validar falte lo que falte. Cada parte del expediente tiene dueño: lo de la **Fase 1** (posición, modalidad, inglés, experiencia) lo completa Reclutamiento con «Editar»; lo de las **Fases 2 y 3** (transporte, contacto de emergencia, tipo de sangre) lo completa el colaborador desde su app
+- El plazo de 3 días **solo se le cobra al colaborador por su parte**: vencido sin completarla, su acceso a la app **se bloquea** hasta que la complete; completar los datos es lo único que se le permite y levanta el bloqueo al instante. Lo que falte de Fase 1 nunca le bloquea nada — queda a la vista de Reclutamiento en el Pool y el expediente. El semáforo **no** retrocede: sigue en Verde fuerte
+- El plazo se calcula al leer; el Pool y el expediente muestran hasta cuándo tiene, o que ya venció
 
 ### Estado Amarillo (Disponible voluntario)
 - Lo activa el propio colaborador durante un descanso
@@ -224,12 +252,21 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 ### Documento de Términos y Condiciones
 - Se crea en Status Onboarding Amarillo por el BD o el BDC
 - Se negocia en Status Onboarding Rosa
-- Contenido: Pay rate, Bill rate, Overtime, Festivos, Calendario
+- Contenido: el **cuadro de tarifas por puesto** (pay rate y bill rate de cada [[Posiciones|posición]]), Overtime, Festivos, Calendario
+- **El cuadro de la Propuesta Personalizada es el mismo que firma el hotel**: al crear el Documento se copia renglón por renglón, no se vuelve a capturar
+- Lleva un encabezado fijo, igual para todos los hoteles: el personal es de Oranje y no puede ser contratado por el hotel de forma directa ni indirecta, pasa por antidoping, antecedentes y verificación I-9, y Oranje responde por la nómina, sus impuestos y los seguros
+- El documento se genera con el **clausulado completo del acuerdo de servicio vigente** (veinte cláusulas, ley aplicable del estado de Georgia y arbitraje en Atlanta) y su Exhibit «A» con el cuadro de tarifas. **Se genera sin firmas**: las líneas quedan en blanco para firmarse fuera del sistema. La app no firma ni guarda firmas
 - Validación final: [[Ventas/Roles/Business Developer Coordinator|Business Developer Coordinator]] antes del cierre del [[Contrato]]
 
 ### Propuesta Personalizada
 - Se elabora y envía en Status Onboarding Verde
 - Se ajusta/retoma desde Status Onboarding Café cuando hay estancamiento
+- **Se cotiza por puesto, no con una tarifa global**: un renglón por [[Posiciones|posición]] del catálogo, con su pay rate y su bill rate por hora. No se puede enviar una propuesta sin al menos un puesto cotizado
+- El bill rate **se captura, no se calcula**: el margen es distinto en cada puesto porque cada renglón se negocia. Lo único que el sistema impone es que el bill nunca quede por debajo del pay
+- Un puesto no se cotiza dos veces en la misma propuesta
+- Cada versión lleva su cuadro completo; al abrir una versión nueva arranca con el cuadro de la anterior, para renegociar sobre lo que el hotel ya vio
+- Los puestos del cuadro salen del catálogo de [[Posiciones]], que administra el Administrador: lo que no está en el catálogo no se puede cotizar
+- **Las tarifas son por hotel, no una lista de precios de Oranje**: el mismo puesto puede costar distinto en dos hoteles, porque cada cuadro se negocia con su cliente. El catálogo de [[Posiciones]] guarda el nombre del puesto, nunca su precio
 
 ### Reactivación de estados
 - Rojo, Negro y Café siempre reactivan hacia Azul Claro
@@ -318,10 +355,12 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
   - **Salida** — fin de jornada · **obligatoria** · requiere evidencia de presencia
 - El par de lunch es **opcional a propósito**: si el colaborador no lo poncha, no pasa nada — se le deducen los 30 minutos igual. Existe para **medir**, no para calcular la nómina
 - La **evidencia de presencia** de Entrada y Salida depende del **método de ponche del hotel** (ver abajo). La geocerca aplica siempre, con cualquier método
+- Entre una marca y la siguiente pasan **al menos 15 minutos**: el sistema **rechaza** la marca que llegue antes, **sin decirle al colaborador desde qué hora** puede: la espera no es un cronómetro *(autorizado el 2026-09-12; sin esto, Entrada, lunch y regreso se podían ponchar en el mismo minuto)*. Las marcas siguen el orden Entrada → Salida a lunch → Regreso de lunch → Salida y cada una se registra una sola vez por jornada; la Entrada no tiene hora mínima respecto al turno
 
 #### Método de ponche por hotel *(autorizado el 2026-09-07)*
 
 - Cada hotel tiene **un método de ponche**, que aplica a **todas sus requisiciones**: **Selfie** (el método por defecto) o **QR del hotel**. Es un dato del hotel, no de la requisición: lo elige el [[Ventas/Roles/Business Developer|BD]] o el [[Ventas/Roles/Business Developer Coordinator|BDC]] al dar de alta el hotel en el Pipeline y se puede cambiar después en la ficha del hotel
+- El **QR impreso es una liga a la app** con el código del hotel adentro *(autorizado el 2026-09-12)*: escaneado con la cámara del teléfono abre la pantalla de Ponchar (pasando por el login del Colaborador si hace falta) con el código ya leído; escaneado desde el lector de la app, es el mismo código que valida el servidor. Regenerar el QR invalida las hojas anteriores igual que antes
 - **Selfie**: la foto se toma con la cámara en el momento del ponche; no se admite una imagen guardada
 - **QR del hotel**: el sistema genera un **código secreto del hotel, con versión**. Se descarga como PDF desde la ficha del hotel —por el BD, el BDC o cualquier rol del hotel con cuenta— y se imprime en el acceso donde se poncha. El hotel no genera nada por su cuenta: solo pega la hoja
 - **Regenerar** el QR invalida el anterior al instante y entrega el PDF nuevo. Se hace cuando la hoja se pierde, se fotografía o el hotel lo pide

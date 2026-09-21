@@ -13,6 +13,9 @@ aliases:
 > [!info]
 > El rol **Administrador (ROL-05)** se encuentra **en pausa** mientras se estabilizan las reglas de negocio. Los permisos del Admin se completarán al final.
 
+> [!info] Herencia por jerarquía (2026-09-14)
+> El **Líder de Grupo** hereda todo lo de la **Reclutadora** y el **Manager** hereda lo de ambos: tomar o unirse a una requisición, marcarla en proceso, asignar al Self-Pick, validar al colaborador. Se retira la restricción de que el Manager solo supervisa y no toma requisiciones. El cierre de cobertura (RF-05) no cambia: la Reclutadora solicita y el Líder aprueba. Las celdas con «—» para el jefe donde el subordinado sí tiene la acción quedan **superadas por la herencia**: el jefe la tiene, con su propio alcance (D-09). Regla en [[Core/Módulos/Reglas de Negocio#Herencia por jerarquía|Reglas de Negocio · Herencia por jerarquía]]; la tabla de herencia vive junto a los permisos en `apps/api/prisma/permissions.ts`.
+
 ---
 
 | Módulo | Funcionalidad / Acción | ROL-01 Reclutadora | ROL-02 Líder de Grupo | ROL-03 Manager | ROL-04 Sistema | ROL-05 Admin |
@@ -34,6 +37,7 @@ aliases:
 | | 🔍 Buscar / filtrar candidatos | Ver | Ver | Ver | Auto | ⏸️ |
 | | ➕ Crear colaborador (alta Fase 1) | Crear | Crear | Crear | — | ⏸️ |
 | | 📝 Editar colaborador | C · E | C · E | C · E | — | ⏸️ |
+| | 🗑️ Eliminar colaborador del Pool | Eliminar | Eliminar | Eliminar | — | ⏸️ |
 | | 📝 Validar alta en app (Fase 2) | C · E | C · E | — | Auto | ⏸️ |
 | | ➕ Habilitar accesos | Crear | Crear | — | Auto | ⏸️ |
 | | ➕ Registrar entrevista | Crear | Crear | — | Auto | ⏸️ |

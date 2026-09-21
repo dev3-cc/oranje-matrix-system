@@ -25,11 +25,11 @@ aliases:
 | Pipeline              | Reactivar desde Café               | 📝 C · E      | Vuelve a Azul Claro (RR-V-07)                                  |
 | Pipeline              | Comentar al expediente             | 📝 C · E      | Visible para el BD                                             |
 | Pipeline              | Reasignar prospecto a otro BD      | 📝 C · E      | Excepcional                                                    |
-| **Documentos T&C**    | Ver Documentos T&C                 | 👁️ Ver       | Todos los del territorio                                       |
-| Documentos T&C        | Crear Documento de T&C             | ➕ Crear       | Compartido con BD                                              |
-| Documentos T&C        | Editar Documento de T&C            | 📝 C · E      | —                                                              |
-| Documentos T&C        | ✓ Validar T&C                      | ✓ Aprobar     | **Acción exclusiva — sí final** (RR-V-15)                      |
-| Documentos T&C        | ✗ Rechazar T&C con observaciones   | ✗ Rechazar    | Devuelve al BD                                                 |
+| **Contratos**          | Ver contratos y sus T&C                 | 👁️ Ver       | Todos los del territorio                                       |
+| Contratos              | Crear Documento de T&C             | ➕ Crear       | Compartido con BD                                              |
+| Contratos              | Editar Documento de T&C            | 📝 C · E      | —                                                              |
+| Contratos              | ✓ Validar T&C                      | ✓ Aprobar     | **Acción exclusiva — sí final** (RR-V-15)                      |
+| Contratos              | ✗ Rechazar T&C con observaciones   | ✗ Rechazar    | Devuelve al BD                                                 |
 | **Conversión**        | Crear Usuario del Hotel            | ➕ Crear       | **Precondición exclusiva** (RR-V-02)                           |
 | Conversión            | ✓ Aprobar conversión               | ✓ Aprobar     | **Sí final exclusivo** (RR-V-01)                               |
 | **Mi Equipo**         | Ver BDs a cargo                    | 👁️ Ver       | Lista con métricas                                             |

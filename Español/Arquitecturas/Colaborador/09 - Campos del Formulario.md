@@ -12,7 +12,7 @@ aliases:
 
 ## A) Formulario de Alta — Fase 2 (RF-C-01)
 
-Completado por el propio Colaborador desde `/colaborador`. Fuente: [[Colaborador#Fase 2 — Alta en la plataforma (/colaborador)]]
+Completado por el propio Colaborador desde `/collaborator`. Fuente: [[Colaborador#Fase 2 — Alta en la plataforma (/collaborator)]]
 
 | Campo                  | Tipo de Input | Obligatorio | Validación                                                                          | Descripción                                     |
 | ---------------------- | ------------- | ----------- | ----------------------------------------------------------------------------------- | ----------------------------------------------- |

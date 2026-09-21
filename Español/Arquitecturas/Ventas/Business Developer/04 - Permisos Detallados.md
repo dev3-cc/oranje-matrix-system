@@ -33,11 +33,11 @@ aliases:
 | Propuestas            | Editar borrador de propuesta        | 📝 C · E | Antes de enviar                           |
 | Propuestas            | Enviar propuesta al hotel           | ➕ Crear  | Cambio a estado "Enviada"                 |
 | Propuestas            | Duplicar propuesta como plantilla   | ➕ Crear  | Para usar en otro prospecto               |
-| **Documentos T&C**    | Ver Documentos T&C                  | 👁️ Ver  | Mis T&C                                   |
-| Documentos T&C        | Crear Documento de T&C              | ➕ Crear  | En status Amarillo (RR-V-10)              |
-| Documentos T&C        | Editar borrador del T&C             | 📝 C · E | Antes de enviar al BDC                    |
-| Documentos T&C        | Enviar T&C al BDC para validación   | ➕ Crear  | Solicita validación final                 |
-| Documentos T&C        | Validar T&C                         | —        | Sin acceso (exclusivo BDC)                |
+| **Contratos**          | Ver contratos y sus T&C                  | 👁️ Ver  | Mis T&C                                   |
+| Contratos              | Crear Documento de T&C              | ➕ Crear  | En status Amarillo (RR-V-10)              |
+| Contratos              | Editar borrador del T&C             | 📝 C · E | Antes de enviar al BDC                    |
+| Contratos              | Enviar T&C al BDC para validación   | ➕ Crear  | Solicita validación final                 |
+| Contratos              | Validar T&C                         | —        | Sin acceso (exclusivo BDC)                |
 | **Conversión**        | Crear Usuario del Hotel             | —        | Sin acceso (exclusivo BDC)                |
 | Conversión            | Aprobar conversión                  | —        | Sin acceso (exclusivo BDC)                |
 | **Mi Territorio**     | Ver mis rutas y zonas               | 👁️ Ver  | Mapa con prospectos                       |
