@@ -282,6 +282,7 @@ entregar el resultado:
 
 | Fecha | Cambio | Por |
 |---|---|---|
+| 2026-09-25 | **Se cierra el pendiente de A2: el correo corporativo ya se consulta desde Cloud Run.** El ticket **TZI-906-41270** quedó resuelto y la pantalla de Correos corporativos —que desde el 2026-09-15 respondía que cPanel no aceptaba la conexión— funciona. Verificado pidiendo la lista de buzones al API, que es justo la llamada que cPanel rechazaba: **producción devuelve 303 cuentas, las 303 con buzón confirmado**, y el dato sale de `listMailboxes()`, o sea de cPanel, no de nuestra base. **Staging también pasa**, y staging sale por IP dinámica: la restricción se levantó en general, no solo para la IP fija. Consecuencia anotada sin tocar nada: el **Cloud NAT de producción** (IP `107.178.210.134`, ~36 USD/mes, montado el 2026-09-19 precisamente para esto) deja de ser indispensable para cPanel y es un ahorro disponible cuando se decida. | Claude |
 | 2026-09-23 | **El anillo del Pool dice si el colaborador YA se puede asignar, editar deja de ser otra pantalla, y la app suena.** Cinco pedidos de Hugo. **(1) «Autorizada» no decía quién**: el front escribía «—» porque del firmante solo viajaba el uuid — la relación `authorizer` ya existía en Prisma y nadie la seleccionaba. El API expone `authorizer` e `inspector` con la misma forma que `createdBy` (id, nombre y foto firmada, D-30), las tres fotos se firman en una pasada, y el **Inspector tenía el mismo hueco**; caso nuevo de integración (4/4). **(2) El anillo del avatar, corregido a media construcción**: la primera versión contaba los 7 campos de `is_profile_complete` y marcaba como incompleto a un **Disponible** — Hugo lo cazó con Álvaro Geovanni. Contra el vault: Blanco → Verde fuerte es «habilitado en el Pool, **disponible para asignación**», se puede validar a sabiendas con el expediente a medias y **lo que falte de Fase 1 «nunca bloquea nada»**. Así que el anillo contesta otra pregunta: **¿ya se puede meter a una requisición?** — verde con palomita para los Disponibles y los que ya trabajan; en Pre-asignación cuenta **lo de la entrevista** (posición, modalidad, inglés, experiencia), que es lo que Reclutamiento necesita para validarlo; y en Stand-by, Reportado, Accidentado o vetado no opina, porque ahí «listo o no» no es la pregunta. El de dentro sigue siendo el [[Semáforo del Colaborador]]: son dos dimensiones y compartir anillo las confundiría. **Tooltip que nombra lo que falta** («Inglés y Experiencia»), no un número, arriba y no al costado, donde tapaba el nombre. **(3) Editar deja de ser otra pantalla**: se borró la hoja de 387 líneas y usa el MISMO asistente del alta, con «Guardar cambios», guardando desde cualquier paso y con los tres navegables (`allowAnyStep` en `StepIndicator`, que solo dejaba volver a los recorridos); su encabezado dice de quién es el expediente y ya no hereda el ancho angosto del tutorial. **(4) «Ver Expediente» pasa a «Ver perfil»** en el Pool y en Mi Personal. **(5) Sonido**: `shared/lib/sound.ts` sintetiza los tonos con Web Audio **sin un solo archivo**, generalizando lo del ponche — navegar y volver suenan distinto, la notificación son dos notas y solo cuando el contador SUBE; se apaga desde el interruptor junto al idioma y la preferencia vive en el navegador, porque es del aparato. **Percance del día: el trabajo se perdió una vez.** Quedó sin commitear en `/tmp` y macOS limpió la carpeta al cambiar de día; se rehízo completo desde la bitácora, ahora en worktrees bajo `Documents/` — **no volver a dejar trabajo sin commitear en `/tmp`**. PR #113 (API) y #114 (front) a staging con CI verde y los dos despliegues en verde; verificado en `staging.oranjepeople.com` (botón, tooltip y anillo, cero errores de consola). **Flaky nuevo detectado, ajeno a este trabajo**: `ConversionPage.spec` deja a veces un error no manejado de `@radix-ui/react-focus-scope` (un temporizador que dispara `dispatchEvent` tras desmontar) que tumba el run aunque las 256 pruebas pasen; el mismo commit pasó en un run y falló en otro, y en local pasa 3/3. 256 pruebas, typecheck, lint y catálogo con inglés. | Claude |
 | 2026-09-22 | **Producción se queda sin requisiciones: eran las tres de prueba que vinieron en el clon de staging.** Orden de Hugo. Las tres nacieron en staging antes del 19 de septiembre (Home2 Suites del 11-sep en Amarillo, Fairfield del 12-sep en Azul claro —la que se armó para probar el ponche de Juan David— y Home2 Suites del 18-sep en Borrador) y se copiaron tal cual al clonar. Antes de borrar se censaron **las 11 llaves foráneas** que apuntan a la cadena: timesheet, detalle de consolidado y detalle de factura también cuelgan de la requisición, y los tres estaban en cero, así que el borrado no dejó nada a medias. Borrado en **una sola transacción**, ensayada antes con ROLLBACK: 5 turnos, 3 asignaciones, 2 participaciones, 7 slots, 4 posiciones, 8 filas de historia y las 3 requisiciones; además los **2 Schedule que quedaron sin un solo turno** —cuelgan del hotel y no de la requisición, así que no se van solos, y eran del mismo montaje de prueba—. **El journal no se toca** (regla de la casa: el rastro se conserva). Producción queda con 0 requisiciones y sus 303 colaboradores, 13 hoteles, 1 contrato y 641 usuarios activos intactos; el semáforo de los dos colaboradores asignados no había que corregirlo (Juan David en Blanco, Álvaro en Verde fuerte, que es disponible). **Staging no se tocó**: conserva sus 15 requisiciones, 3 asignaciones y 5 turnos. | Claude |
 | 2026-09-22 | **El Observador queda auditado (no crea ni edita nada), y el ancho de los modales deja de improvisarse.** Tras el alta del Observador, Hugo preguntó directo: «¿puede crear, registrar, eliminar?». Auditoría de cada botón de escritura alcanzable desde sus pantallas nuevas contra su permiso real: el back ya estaba protegido en las dos capas (permisos sin `create`/`update`/`delete`, y «Cambiar estado» del Pipeline resuelto por la tabla de transiciones sembradas, no por el guard flojo del controlador); el único hueco era de honestidad en el front — 4 botones en la ficha del prospecto (Registrar intento, Archivar ciclo, Editar hotel, Editar contactos) que siempre habrían dado 403, ahora gateados con `useCan()`. **Modales que se «estiraban»**: reportado varias veces por Hugo en vivo — Agregar contacto (64rem→3xl), Crear colaborador (5xl→4xl), y la intro de bienvenida de tres wizards (Crear colaborador, Nueva requisición, Nuevo contrato) que se mostraba dentro de la caja ancha del wizard en vez de su propio ancho angosto. Nueva tabla fija en [Convenciones de Diseño](Español/Arquitecturas/_Globales/Convenciones%20de%20Diseño.md#Ancho%20de%20modales) (confirmado con Hugo que el mapa de «Nuevo prospecto» se queda como excepción, por diseño) para que el ancho ya no se elija a ojo. **Dos pedidos más de Hugo**: la Reclutadora ya edita el expediente completo del colaborador —fecha de nacimiento y género estaban fijos «se fijan en el alta y no se editan»—, y la contraseña temporal pasa de 3 a 30 días de plazo antes de bloquear el acceso (muchos colaboradores comparten hoy Oranje.2026 y necesitan más margen para ponchar). Verificado con el CSS realmente servido en staging (`.max-w-4xl{...}` y el `16rem_minmax(...)` del grid, ambos presentes en el bundle desplegado) que el reporte de "sigue estirado" era una pestaña de Chrome restaurada con el build viejo en caché, no un defecto del código. PR #107 (front) y #108 (API) a staging, CI y despliegues en verde; PR #109 `staging → main` con merge commit real de dos padres; aprobado por Hugo y desplegado a producción. | Claude |
@@ -425,3 +426,60 @@ entregar el resultado:
 Mantén esta tabla en orden cronológico inverso o directo (directo aquí).
 Una línea por sesión con cambio estructural. Fecha YYYY-MM-DD.
 -->
+
+
+<!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:46cd31e7 -->
+## Beads Issue Tracker
+
+This project uses **bd (beads)** for issue tracking. Run `bd prime` to see full workflow context and commands.
+
+### Quick Reference
+
+```bash
+bd ready              # Find available work
+bd show <id>          # View issue details
+bd update <id> --claim  # Claim work
+bd close <id>         # Complete work
+```
+
+### Rules
+
+- Use `bd` for ALL task tracking — do NOT use TodoWrite, TaskCreate, or markdown TODO lists
+- Run `bd prime` for detailed command reference and session close protocol
+- Use `bd remember` for persistent knowledge — do NOT use MEMORY.md files
+
+**Architecture in one line:** issues live in a local Dolt DB; sync uses `refs/dolt/data` on your git remote; `.beads/issues.jsonl` is a passive export. See https://github.com/gastownhall/beads/blob/main/docs/core-concepts/sync-concepts.md for details and anti-patterns.
+
+## Agent Context Profiles
+
+The managed Beads block is task-tracking guidance, not permission to override repository, user, or orchestrator instructions.
+
+- **Conservative (default)**: Use `bd` for task tracking. Do not run git commits, git pushes, or Dolt remote sync unless explicitly asked. At handoff, report changed files, validation, and suggested next commands.
+- **Minimal**: Keep tool instruction files as pointers to `bd prime`; use the same conservative git policy unless active instructions say otherwise.
+- **Team-maintainer**: Only when the repository explicitly opts in, agents may close beads, run quality gates, commit, and push as part of session close. A current "do not commit" or "do not push" instruction still wins.
+
+## Session Completion
+
+This protocol applies when ending a Beads implementation workflow. It is subordinate to explicit user, repository, and orchestrator instructions.
+
+1. **File issues for remaining work** - Create beads for anything that needs follow-up
+2. **Run quality gates** (if code changed) - Tests, linters, builds
+3. **Update issue status** - Close finished work, update in-progress items
+4. **Handle git/sync by active profile**:
+   ```bash
+   # Conservative/minimal/default: report status and proposed commands; wait for approval.
+   git status
+
+   # Team-maintainer opt-in only, unless current instructions forbid it:
+   git pull --rebase
+   bd dolt push
+   git push
+   git status
+   ```
+5. **Hand off** - Summarize changes, validation, issue status, and any blocked sync/commit/push step
+
+**Critical rules:**
+- Explicit user or orchestrator instructions override this Beads block.
+- Do not commit or push without clear authority from the active profile or the current user request.
+- If a required sync or push is blocked, stop and report the exact command and error.
+<!-- END BEADS INTEGRATION -->
