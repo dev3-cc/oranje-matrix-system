@@ -80,6 +80,7 @@ aliases:
 | **SISTEMA** *(transversal)* | 👁️ Recibir notificación | Ver | Ver | Ver | Auto | ⏸️ |
 | | ⚙️ Enviar notificación automática | — | — | — | Auto | ⏸️ |
 | | 🔢 Numeración automática de requisiciones | — | — | — | Auto | ⏸️ |
+| **CUENTAS DEL HOTEL** | 🏨 Invitar cuentas de su hotel (`users:invite_hotel`) | — | Crear | Crear | — | Crear |
 | **CONFIGURACIÓN** *(Admin EN PAUSA)* | ⏸️ Configurar alertas | — | — | — | — | ⏸️ Por confirmar |
 | | ⏸️ CRUD de usuarios | — | — | — | — | ⏸️ Por confirmar |
 | | ⏸️ Editar catálogos | — | — | — | — | ⏸️ Por confirmar |
@@ -99,3 +100,4 @@ aliases:
 - **Indicador de Lunch Extendido (RR-H-15):** restringido para todos los roles del Hotel — solo lo ven Inspector, Coordinador de Inspección y Manager de Reclutamiento.
 - **Manager General:** tiene **operación + supervisión**. Comparte todas las acciones operativas con Manager de Área, más funciones exclusivas ejecutivas (visibilidad global, reportes a dirección, supervisión de Managers de Área).
 - **En jerarquía simple:** Manager General opera también como Manager de Área (misma persona, dos roles).
+- **Invitar cuentas del hotel:** el **Manager de Área** y el **Manager General** invitan gente de su hotel; el **Supervisor no invita**, y por eso `users:invite_hotel` **no se hereda** (si lo hiciera, el jefe tomaría la regla de alcance del subordinado). Lo que el hotel propone para un **rol gerencial** queda **pendiente** de que Oranje lo confirme (Administrador o BDC); el Manager de Área solo puede proponer un Manager General si el hotel **no tiene uno activo** — el caso de la rotación. Regla en [[Core/Módulos/Reglas de Negocio#Cuentas del hotel|Reglas de Negocio · Cuentas del hotel]].

@@ -543,6 +543,38 @@ de hotel que NO se suben (vienen de Places, D-34).
 - QA-AR-10 🚫 Fotos de hotel NO se suben: el DTO ya no acepta `photoUrl` del cliente (D-34) — mandarla debe ignorarse/rechazarse; la foto la resuelve el servidor vía Places.
 - QA-AR-11 📋 Pendientes conocidos de D-30 que las pruebas mantienen visibles: la **retención del bucket** no está definida, y el **objeto huérfano** (subir un archivo y nunca asociar su path a nada) no se limpia.
 
+### cambio 2026-10-01 — el hotel invita a su gente y Oranje confirma la gerencia
+
+Regla en [[Core/Módulos/Reglas de Negocio#Cuentas del hotel|Reglas de Negocio · Cuentas del hotel]].
+Cada negativa se prueba **también por API**: el 403 tiene que venir del servidor,
+no de un botón escondido.
+
+**Quién invita y hasta dónde**
+- QA-INV-01 Manager General de su hotel: invita un Supervisor de **su** hotel → entra **directo**, con invitación enviada.
+- QA-INV-02 Manager de Área: invita un Supervisor de su hotel → directo. Intenta invitar en **otro** hotel (por API, cambiando el `hotelId`) → **403 `HOTEL_OUT_OF_SCOPE`**.
+- QA-INV-03 **Supervisor**: no ve la tarjeta de invitar, y por API → **403**, porque su rol no invita.
+- QA-INV-04 **BD**: invita en un hotel de **sus zonas** → directo. En un hotel fuera de sus zonas → **403 `HOTEL_OUT_OF_ZONE`**.
+- QA-INV-05 **BDC** y **Administrador**: invitan en cualquier hotel, sin límite de zona.
+
+**Lo gerencial propuesto por el hotel queda pendiente**
+- QA-INV-06 Manager General invita un **Manager de Área** de su hotel → la cuenta nace **pendiente**, **inactiva**, y **no sale correo**.
+- QA-INV-07 La misma alta hecha por el **Administrador** o el **BDC** → entra **directo**: Oranje no se aprueba a sí misma.
+- QA-INV-08 Un **Supervisor** invitado por su gerente → directo, aunque lo proponga el hotel: el pendiente es solo para roles gerenciales.
+- QA-INV-09 `admin@` y `bdc@` ven la **cola de pendientes** en su tablero; un rol sin `users:approve_hotel` no la ve **ni la consulta** (la pantalla no pide el endpoint).
+- QA-INV-10 Al **confirmar**: la cuenta se activa, **ahí** sale la invitación por correo, y queda registrado quién confirmó. Confirmar **dos veces** no reenvía nada.
+- QA-INV-11 Mientras está pendiente, la persona **no entra**: intentar iniciar sesión falla como cualquier cuenta inactiva.
+
+**La excepción de la rotación**
+- QA-INV-12 Manager de Área en un hotel **con** Manager General activo: proponer otro Manager General → **403 `HOTEL_HAS_GENERAL_MANAGER`**, con el mensaje que nombra a quién sí (él mismo, su BD o el Administrador).
+- QA-INV-13 El mismo caso en un hotel **sin** Manager General activo → se puede proponer, y queda pendiente de confirmación.
+
+**Herencia**
+- QA-INV-14 `users:invite_hotel` y `users:approve_hotel` **no se heredan**: el Manager General no gana la regla de alcance del Supervisor, y el censo de excepciones del `herencia-jerarquia.spec` lista las cinco (las tres de Auditorías más estas dos).
+
+**Notificaciones**
+- QA-INV-15 El **Administrador** recibe el aviso de una cuenta pendiente — es el primer aviso que le llega, y no tiene hotel ni zona.
+- QA-INV-16 **Tocar el aviso lleva a la acción**, no al inicio. La **foto** de quien lo provocó se ve, incluida la de un colaborador (vive en `personal.worker`, no en `identity.user`).
+
 ## 4. Matriz cruzada mínima (la que más bugs caza)
 
 Cada celda es "el rol de la fila intenta la acción de la columna". Se prueba

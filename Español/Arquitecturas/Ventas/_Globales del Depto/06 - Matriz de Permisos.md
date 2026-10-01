@@ -75,6 +75,8 @@ aliases:
 |                                      | ⚙️ Enviar notificación automática      | —           | —            | Auto             | ⏸️               |
 | **CONFIGURACIÓN** *(Admin EN PAUSA)* | 👥 CRUD de usuarios (`users:manage`)   | —           | —            | —                | Gestionar        |
 |                                      | 🏨 Cuentas del hotel (`users:manage_hotel`) | —      | Crear (ficha del hotel) | — | Gestionar        |
+|                                      | 🏨 Invitar cuentas del hotel (`users:invite_hotel`) | Crear (hoteles de sus zonas) | Crear | — | Crear |
+|                                      | ✅ Confirmar gerencia propuesta por el hotel (`users:approve_hotel`) | — | Aprobar | — | Aprobar |
 |                                      | ⏸️ Editar catálogos                    | —           | —            | —                | ⏸️ Por confirmar |
 
 ---
