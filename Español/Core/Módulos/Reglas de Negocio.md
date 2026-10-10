@@ -24,7 +24,7 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
   - **Inspección:** el [[Inspección/Coordinador|Coordinador]] hereda del [[Inspector]].
 - La herencia va del jefe hacia abajo, nunca al revés: el BD no gana lo del BDC, ni la Reclutadora lo del Líder.
 - **El alcance no se hereda, se conserva** (D-09): el Manager de Área sigue acotado a su departamento y el Supervisor al suyo; el Manager General ve todo su hotel; el BD, su territorio.
-- **Las exclusividades escritas siguen escritas**: la conversión Rosa → Naranja es del BDC (RR-V-01), levantar un veto es del Administrador, y cerrar un accidente exige ser el Inspector asignado a la tarjeta (D-32) aunque el Coordinador tenga el permiso.
+- **Las exclusividades escritas siguen escritas**: la conversión Rosa → Naranja es del BDC (RR-V-01), levantar un veto es del Administrador o de los tres roles de Reclutamiento (nunca del hotel), y cerrar un accidente exige ser el Inspector asignado a la tarjeta (D-32) aunque el Coordinador tenga el permiso.
 - **Quedan fuera:** la [[Core/Módulos/Auditoría de Presentación y Ambiente|Auditoría de Presentación y Ambiente]] (solo el Supervisor audita, corrige y ve auditorías; sus Managers no las ven), [[Contabilidad/Manager de Contabilidad|Contabilidad]] (las dos firmas de la nómina son de personas distintas a propósito), el [[Colaborador]] (nadie hereda del Colaborador: el ponche es un acto propio), QA, Customer Service, el Administrador y el Sistema.
 - Se resuelve al sembrar la base (tabla de herencia junto a los permisos; se aplica a los permisos y a las transiciones sembradas), así que el guard de la API no conoce la jerarquía: ve permisos planos. Las pantallas que dicen «quién sigue» nombran a los dos: «lo mueve el BD o el BDC».
 
@@ -196,7 +196,8 @@ Documento centralizado con las reglas de negocio que gobiernan el sistema Oranje
 - El [[Inspector]] de la zona decide con autoridad propia; no requiere validación del [[Manager de Reclutamiento]]
 
 ### Salida del estado Negro
-- Negro **se puede levantar**, pero solo por un perfil de **Administrador** (`ROL-ADM-01`). Ningún rol de Reclutamiento ni del hotel puede hacerlo *(regla cambiada el 2026-08-13; antes el veto era permanente y sin apelación)*
+- Negro **se puede levantar** por un perfil de **Administrador** (`ROL-ADM-01`) o por cualquier rol de Reclutamiento: [[Reclutadora]] (`ROL-R-01`), [[Reclutamiento/Líder de Grupo de Reclutadoras|Líder de Grupo]] (`ROL-R-02`) o [[Manager de Reclutamiento]] (`ROL-R-03`). Ningún rol del hotel puede hacerlo *(regla cambiada el 2026-08-13; antes el veto era permanente y sin apelación; ampliada el 2026-10-10 por decisión de Hugo, cuando era exclusivo del Administrador)*
+- **Riesgo asumido:** Reclutamiento también es quien pone el veto (`blacklist:create`), así que la misma persona puede ponerlo y levantarlo y se pierde el segundo par de ojos. Se le advirtió a Hugo y eligió los tres roles
 - **No es rehabilitación automática ni instancia de apelación:** es una acción administrativa deliberada, con motivo obligatorio, que queda en el historial
 - Al levantarse, el colaborador regresa a **Blanco** —no a Verde fuerte— y tiene que volver a pasar por la validación de la [[Reclutadora]] antes de ser asignable
 - El registro del veto **no se borra**: se marca como levantado. Un colaborador puede haber sido vetado más de una vez a lo largo del tiempo, pero **solo un veto puede estar vigente**

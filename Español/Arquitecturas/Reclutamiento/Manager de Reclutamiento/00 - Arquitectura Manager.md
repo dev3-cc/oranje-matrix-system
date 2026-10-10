@@ -205,7 +205,7 @@ Mismo formulario que Reclutadora / Líder. El Manager solo lo usa cuando intervi
 - ✅ Agregar a Blacklist (con motivo y evidencia — igual que cualquier rol de Reclutamiento)
 
 > [!note]
-> El Manager **agrega** a Blacklist pero **no puede remover**: levantar un veto es exclusivo de un perfil de Administrador (`ROL-ADM-01`), y el colaborador regresa a Blanco para ser revalidado *(cambiado el 2026-08-13; antes el veto era permanente)*. Las disputas (estado Rojo del colaborador) las resuelve el **Inspector de zona**, no el Manager.
+> El Manager **agrega** a Blacklist y **también puede levantar un veto**, igual que el Administrador (`ROL-ADM-01`); el colaborador regresa a Blanco para ser revalidado *(cambiado el 2026-08-13; ampliado el 2026-10-10 por decisión de Hugo, cuando era exclusivo del Administrador)*. Las disputas (estado Rojo del colaborador) las resuelve el **Inspector de zona**, no el Manager.
 
 ---
 

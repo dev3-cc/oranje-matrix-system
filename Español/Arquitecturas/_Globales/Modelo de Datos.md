@@ -309,7 +309,7 @@ El mismo journal cubre la auditoría de acceso a PII: quién consultó qué expe
 
 `blacklist_entry` — `worker_id`, `reason`, `evidence_path`, `entered_by`, `source` (`MANUAL` | `ABSENCES` | `DISPUTE`), `occurred_at`, más `lifted_at`, `lifted_by` y `lift_reason`.
 
-**Sin borrado, pero con baja.** El registro nunca se elimina; el veto se **levanta** marcando los tres campos de `lifted_*`, que van juntos o no van (un CHECK lo obliga: levantar un veto es la acción que más necesita quedar atribuida). Solo un perfil de Administrador puede hacerlo, y el colaborador regresa a **Blanco**.
+**Sin borrado, pero con baja.** El registro nunca se elimina; el veto se **levanta** marcando los tres campos de `lifted_*`, que van juntos o no van (un CHECK lo obliga: levantar un veto es la acción que más necesita quedar atribuida). Solo un perfil de Administrador o de Reclutamiento puede hacerlo, y el colaborador regresa a **Blanco**.
 
 Es por eso una tabla de **historial**: la misma persona puede entrar, salir y volver a entrar. Lo que impide dos vetos vigentes a la vez es un único parcial, `ux_blacklist_active` sobre `worker_id WHERE lifted_at IS NULL`.
 

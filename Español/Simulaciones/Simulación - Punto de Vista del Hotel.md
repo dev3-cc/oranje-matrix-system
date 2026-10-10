@@ -330,7 +330,7 @@ Después de su investigación, Miguel determina que la disputa **favorece al hot
 > [!info] Semáforo del Colaborador
 > Juan Hernández: Rojo → **Negro** (Blacklist)
 
-Juan Hernández queda **vetado** del sistema Oranje. No puede ser asignado a ningún hotel mientras el veto siga vigente; solo un perfil de Administrador puede levantarlo.
+Juan Hernández queda **vetado** del sistema Oranje. No puede ser asignado a ningún hotel mientras el veto siga vigente; solo un perfil de Administrador o de Reclutamiento puede levantarlo.
 
 ### 6.3 — Requisición de reemplazo
 

@@ -43,10 +43,10 @@ Cuando un colaborador entra en estado Rojo (reporte del hotel), el [[Inspector]]
 
 ## Salida del estado Negro
 
-> [!important] El veto se puede levantar, pero **solo por un perfil de Administrador**.
-> Cambiado el 2026-08-13. Antes este documento decía que Negro era permanente y que no existía rehabilitación ni apelación.
+> [!important] El veto se puede levantar por un perfil de **Administrador** o por cualquier rol de Reclutamiento ([[Reclutadora]], [[Reclutamiento/Líder de Grupo de Reclutadoras|Líder de Grupo]] o [[Manager de Reclutamiento]]).
+> Cambiado el 2026-08-13 (antes Negro era permanente y no existía rehabilitación ni apelación) y ampliado el 2026-10-10 por decisión de Hugo, de exclusivo del Administrador a también los tres roles de Reclutamiento. Se advirtió que Reclutamiento es quien pone el veto, así que quien lo levanta puede ser quien lo puso y se pierde el segundo par de ojos; Hugo lo eligió así de todos modos.
 
-**No es rehabilitación automática ni una instancia de apelación**: es una acción administrativa deliberada, con **motivo obligatorio**, y ningún rol de Reclutamiento o del hotel la puede ejecutar.
+**No es rehabilitación automática ni una instancia de apelación**: es una acción administrativa deliberada, con **motivo obligatorio**, y ningún rol del hotel la puede ejecutar.
 
 Al levantarse, el colaborador regresa a **Blanco** —no a Verde fuerte— y vuelve a pasar por la validación de la [[Reclutadora]] antes de ser asignable. Es el mismo patrón de punto único de reingreso que usa el [[Semáforo Onboarding]].
 

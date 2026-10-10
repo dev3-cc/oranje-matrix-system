@@ -49,7 +49,7 @@ aliases:
 | **BLACKLIST** | 👁️ Consultar Blacklist | Ver | Ver | Ver | Auto | ⏸️ |
 | | ➕ Agregar a Blacklist | Crear | Crear | Crear | — | ⏸️ |
 | | 🔍 Resolver disputa | — | — | — (Inspector de zona) | — | ⏸️ |
-| | 📝 Remover de Blacklist | — | — | — (solo el Administrador) | — | ⏸️ |
+| | 📝 Remover de Blacklist | Editar | Editar | Editar | — | ⏸️ |
 | **MI GRUPO** *(Líder)* | 👁️ Ver Reclutadoras del grupo | — | Ver | — | — | ⏸️ |
 | | 👁️ Ver métricas individuales | — | Ver | Ver | Auto | ⏸️ |
 | | 👁️ Ver carga detallada de Reclutadora | — | Ver | — | — | ⏸️ |
@@ -80,7 +80,7 @@ aliases:
 ## Cambios respecto a la versión anterior
 
 - **Requisición colaborativa** — `Tomar requisición (Self-Pick colaborativo)` ahora agrega un reclutador participante (no es exclusivo) y `Liberar` pasa a ser `Salir`. Se añaden `Tomar/Unirse a requisición ya tomada` (Reclutadora/Líder), `Ver reclutadores activos` y `Ver Historial de la requisición` (RR-15 y RR-16).
-- **Blacklist** — La columna `Agregar a Blacklist` es `Crear` para los 3 roles del depto (Reclutadora, Líder, Manager). **Remover NO es de este departamento:** solo un perfil de Administrador (`ROL-ADM-01`) levanta el veto *(cambiado el 2026-08-13; antes no existía la acción)*. Las disputas (estado Rojo) las resuelve el **Inspector de zona**, no el Manager. Las filas "Resolver disputa" y "Remover de Blacklist" quedan sin permiso para los tres roles del depto (RR-03 actualizado).
+- **Blacklist** — La columna `Agregar a Blacklist` es `Crear` para los 3 roles del depto (Reclutadora, Líder, Manager). **Remover** (levantar el veto) es de los 3 roles del depto y también del Administrador (`ROL-ADM-01`) *(acción creada el 2026-08-13 solo para el Administrador; ampliada a Reclutamiento el 2026-10-10 por decisión de Hugo, con la advertencia de que quien pone el veto puede levantarlo)*. Las disputas (estado Rojo) las resuelve el **Inspector de zona**, no el Manager. La fila "Resolver disputa" queda sin permiso para los tres roles del depto (RR-03 actualizado).
 - **Submódulos reorganizados** — Pool, Entrevistas y Asignación quedan dentro del módulo **RECLUTAMIENTO**. La toma de requisición y los semáforos quedan dentro del módulo **REQUISICIÓN**.
 - **Notificaciones** ya no es módulo del sidebar — pasó a sección "Sistema (transversal)".
 - **Schedule** ya no es módulo aparte — es vista contextual dentro del proceso de asignar.

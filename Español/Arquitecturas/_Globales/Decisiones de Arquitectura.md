@@ -1090,6 +1090,11 @@ Al escribirlo puse 1470 de margen sin calcularlo y el test lo atrapó. Es exacta
 
 Permiso nuevo `blacklist:lift`, **solo para `ROL-ADM-01`**. Es la tercera fila que se siembra sin matriz —tras `pipeline:close_cycle` y las seis de `payroll`— y sale de [[Core/Módulos/Blacklist|Blacklist]]: *"solo por un perfil de Administrador"*, cambiado el 2026-08-13. Coincide con la única transición `BLACK → WHITE` sembrada.
 
+> [!note] Enmienda del 2026-10-10
+> `blacklist:lift` deja de ser exclusivo del Administrador: lo tienen también los **tres roles de Reclutamiento** (`ROL-R-01`, `ROL-R-02`, `ROL-R-03`), y la transición `BLACK → WHITE` se siembra con los mismos cuatro — el permiso y el semáforo tienen que decir lo mismo, o el botón aparece y el servidor lo rechaza.
+> **Riesgo asumido:** Reclutamiento es también quien **pone** el veto (`blacklist:create`), así que la misma persona puede ponerlo y levantarlo. Se le advirtió a Hugo y eligió los tres roles con eso enfrente.
+> Lo demás de esta decisión no cambia: al levantarlo vuelve a **Blanco**, el motivo es obligatorio y el registro nunca se borra.
+
 ### El expediente entra sin los campos cifrados
 
 Decisión del usuario: el cifrado de campo de la sección 12 no se aplica todavía en el back, así que `worker_document` guarda la **referencia** al archivo y su verificación, no el SSN ni el ITIN.

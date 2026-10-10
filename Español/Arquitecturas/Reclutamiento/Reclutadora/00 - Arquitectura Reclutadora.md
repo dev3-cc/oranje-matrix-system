@@ -328,7 +328,7 @@ SIDEBAR
 - Quién lo propuso
 
 > [!warning]
-> La Reclutadora **NO puede** agregar/remover de Blacklist — esa acción es exclusiva del [[Manager de Reclutamiento]].
+> La Reclutadora puede **levantar un veto** de Blacklist, con motivo obligatorio (ampliado el 2026-10-10; antes era exclusivo del Administrador). El colaborador regresa a Blanco.
 > **Consulta obligatoria antes de cada reclutamiento** (regla del [[Flujo de Reclutamiento]]) — para evitar volver a reclutar a alguien vetado.
 
 ---

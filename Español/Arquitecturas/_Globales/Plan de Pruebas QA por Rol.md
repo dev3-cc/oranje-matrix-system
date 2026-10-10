@@ -66,7 +66,7 @@ tiene guard).
 | ROL-CO-02 | Manager de Contabilidad | — (dirección de Contabilidad) | **Autoriza** la nómina (segunda firma); no puede validar | mgr-contabilidad@casacurtidor.com |
 | ROL-C-01 | Colaborador | Operativamente, al Supervisor del hotel asignado | Todo su alcance es `_own` (RR-C-01) | *no existe* (su app es `/empleado`) |
 | ROL-SYS-01 | Sistema | — | Actor de transiciones automáticas; **jamás debe tener login** | *no existe (a propósito)* |
-| ROL-ADM-01 | Administrador | — | ÚNICO que levanta vetos (`blacklist:lift`); CRUD de personal (`users:manage`); `territory:assign` compartido con BDC | admin@casacurtidor.com |
+| ROL-ADM-01 | Administrador | — | Levanta vetos (`blacklist:lift`, también los 3 roles de Reclutamiento); CRUD de personal (`users:manage`); `territory:assign` compartido con BDC | admin@casacurtidor.com |
 
 ## 3. Plan de pruebas por rol
 
@@ -97,7 +97,7 @@ Playwright contra los usuarios de prueba, salvo donde se indica API/Postman.
 - QA-H3-01 ✅ Aprueba horas de CUALQUIER departamento — la prueba del respaldo D-09: lo que en QA-H2-03 dio 403, aquí pasa.
 - QA-H3-02 ✅ Autoriza requisiciones de cualquier departamento.
 - QA-H3-03 ✅ Ve el Timesheet Global (Indicador de Cumplimiento; GRIS no evalúa).
-- QA-H3-04 🚫 Revisar/levantar vetos de Blacklist → **403** (solo ROL-ADM-01 levanta).
+- QA-H3-04 🚫 Revisar/levantar vetos de Blacklist → **403** (solo ROL-ADM-01 y los 3 roles de Reclutamiento levantan).
 - QA-H3-05 📋 Documentar: el respaldo es MANUAL — nadie le transfiere la jornada al vencer un plazo; las horas sin aprobar quedan en espera (sin pago, sin factura).
 
 ### Reclutamiento
@@ -107,7 +107,7 @@ Playwright contra los usuarios de prueba, salvo donde se indica API/Postman.
 - QA-R1-02 ✅ Valida el alta (BLANCO → VERDE FUERTE, RF-08) solo si `is_profile_complete` (los 9 campos; la foto no cuenta).
 - QA-R1-03 ✅ Toma un slot de la Bolsa Self-Pick; dos sesiones simultáneas sobre el MISMO slot: una gana, la otra recibe 409 (RR-15, `SKIP LOCKED` — correr por API).
 - QA-R1-04 ✅ Veta a un colaborador con evidencia (`ck_blacklist_evidence`); colaborador en GRIS → el motor rechaza el veto (D-27).
-- QA-R1-05 🚫 Levantar un veto → **403** (solo Administrador).
+- QA-R1-05 ✅ Levanta un veto con motivo → el colaborador vuelve a BLANCO (desde el 2026-10-10 la Reclutadora puede; antes era 403).
 - QA-R1-06 ✅ Marca cierre en Azul claro… ⚠ hueco documentado: hoy el sistema NO exige la aprobación del Líder (RF-05 pide "pendiente de aprobación"; pendiente de D-23). La prueba deja constancia del comportamiento actual.
 - QA-R1-07 🚫 Ver pantallas de Ventas (pipeline, propuestas) → ocultas/403.
 
@@ -208,7 +208,7 @@ poscondiciones se asertan todas.
 - QA-FL-06 **Asignar slot** (VERDE FUERTE/Amarillo → CAFÉ · Reclutadora/Líder). Poscondiciones: slot `occupied` (y un slot ocupado no se puede borrar); al **vencer la vigencia** el SISTEMA lo regresa solo a VERDE FUERTE — la prueba observa el efecto del actor automático.
 - QA-FL-07 **Stand-by y regreso** (Rosa → VERDE FUERTE · los 3 roles de Hotel, seed). Ponerlo lo comparten Supervisor y Managers; quitarlo lo regresa a disponible. Negativa: la Reclutadora intenta quitar un Stand-by → 403.
 - QA-FL-08 **Accidente: crear y cerrar como transacción** (GRIS). Crear la tarjeta mueve a GRIS en la MISMA transacción; cerrar con alta médica devuelve a VERDE FUERTE **solo si sigue en GRIS** — si el estado cambió entre tanto, cerrar NO lo pisa.
-- QA-FL-09 **Levantar veto** (NEGRO → BLANCO · solo Administrador, con motivo). Poscondición fuerte: NO vuelve a disponible — queda BLANCO y tiene que reingresar por la validación de la Reclutadora (QA-FL-05 otra vez).
+- QA-FL-09 **Levantar veto** (NEGRO → BLANCO · Administrador o Reclutamiento, con motivo). Poscondición fuerte: NO vuelve a disponible — queda BLANCO y tiene que reingresar por la validación de la Reclutadora (QA-FL-05 otra vez).
 - QA-FL-10 **La cadena de nómina completa, multi-actor**: día sin salida bloquea el envío → el Supervisor manda a revisión → el Manager de Área aprueba (su depto) → la Contadora genera y valida → el Manager de Contabilidad autoriza → el consolidado PAID aparece en `/consolidations/me` del colaborador SIN el pay rate interno. Cada eslabón con el actor equivocado → **403**.
 - QA-FL-11 **Renovar contrato** (`ux_contract_active`): activar un segundo ACTIVE sin expirar el primero → rechazado; la renovación es EXPIRED + ACTIVE **en la misma transacción**.
 - QA-FL-12 **Incidencias solo en estados operativos** (seed `WORKER_OPERATIONAL`): faltar o accidentarse solo se registra desde Verde manzana/Azul claro/Naranja/Café — "no se falta sin Schedule". Registrar una falta a un colaborador en Amarillo o Rosa → rechazado.
@@ -586,7 +586,7 @@ diagonal documentada arriba.
 | Supervisor | 403 | 403 | 403 | 403 | 403 | 403 |
 | Manager de Área | ✅ su depto | ✅ | 403 | 403 | 403 | 403 |
 | Manager General | ✅ todos | ✅ | 403 | 403 | 403 | 403 |
-| Reclutadora | 403 | 403 | 403 | 403 | 403 | 403 |
+| Reclutadora | 403 | 403 | 403 | 403 | 403 | ✅ |
 | BD | 403 | 403 | 403 | 403 | 403 | 403 |
 | BDC | 403 | 403 | ✅ | 403 | 403 | 403 |
 | Contadora | 403 | 403 | 403 | ✅ | 403 | 403 |
